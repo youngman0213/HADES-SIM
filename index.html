@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v8.7</title>
+    <title>하데스 키우기 v9.0</title>
     <style>
-        :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; }
+        :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
         .nav-bar { display: flex; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .nav-btn { flex: 1; padding: 18px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 14px; }
@@ -77,7 +77,7 @@
 
     <div id="manual" class="page">
         <div class="card">
-            <h2>수동 트레이닝 </h2>
+            <h2>수동 지시 </h2>
             <select id="sel-member" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;"></select>
             <select id="sel-stat" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;">
                 <option value="vocal">🎤 보컬 집중 훈련</option>
@@ -86,6 +86,7 @@
                 <option value="variety">🗣️ 예능 스피치</option>
                 <option value="charm">🎀 매력 강화</option>
                 <option value="stream">📡 실시간 스트리밍 (랜덤 상승)</option>
+                <option value="rest">💤 꿀같은 휴식 (피로도 추가 회복)</option>
             </select>
             <button class="primary-btn" onclick="manualTrainAction()">지시 완료</button>
         </div>
@@ -106,7 +107,7 @@
 
 <script>
     let gameState = {
-        day: 1, startDate: new Date('2025-09-05'), finance: 200,000,000, fandom: 12405,
+        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 12405,
         youtube: 8200, sns: 15300,
         members: [
             {name: '키마', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
@@ -172,11 +173,13 @@
         
         const sel = document.getElementById('sel-member');
         if(sel.options.length === 0) gameState.members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
+        
         document.getElementById('member-grid-container').innerHTML = gameState.members.map(m => `
-            <div class="member-card">
-                <strong>${m.name}</strong> ${m.manualAct ? '<small style="color:var(--point)">(지시됨)</small>' : ''}
+            <div class="member-card" style="${m.fatigue >= 100 ? 'border-color:var(--danger); background:#fff5f5;' : ''}">
+                <strong>${m.name}</strong> 
+                ${m.fatigue >= 100 ? '<small style="color:var(--danger)">(번아웃: 훈련불가)</small>' : (m.manualAct ? '<small style="color:var(--point)">(지시됨)</small>' : '')}
                 ${renderStat('보컬',m.vocal,'var(--vocal)')}${renderStat('댄스',m.dance,'var(--dance)')}${renderStat('비주얼',m.visual,'var(--visual)')}${renderStat('예능',m.variety, 'var(--variety)')}${renderStat('매력',m.charm,'var(--charm)')}
-                <div style="font-size:11px; text-align:right; color:#888;">피로도: ${m.fatigue}%</div>
+                <div style="font-size:11px; text-align:right; color:${m.fatigue >= 100 ? 'var(--danger)' : '#888'};">피로도: ${m.fatigue}%</div>
             </div>
         `).join('');
         document.getElementById('comm-container').innerHTML = gameState.community.map(c => `
@@ -197,7 +200,10 @@
         const name = document.getElementById('sel-member').value;
         const stat = document.getElementById('sel-stat').value;
         const m = gameState.members.find(i => i.name === name);
-        if (stat !== 'stream' && m[stat] >= 20) return alert("이미 최대치입니다.");
+        
+        if (stat !== 'rest' && m.fatigue >= 100) return alert("피로도가 100입니다. 휴식이 필요합니다!");
+        if (stat !== 'rest' && stat !== 'stream' && m[stat] >= 20) return alert("이미 최대치입니다.");
+        
         m.manualAct = stat;
         alert(`${name} 지시 완료`);
         updateDisplay();
@@ -206,15 +212,39 @@
     function nextDay() {
         let totalProfit = Math.floor(Math.random() * (1000000 - 400000 + 1)) + 400000;
         let dailyReport = [];
-        const stats = ['vocal', 'dance', 'visual', 'variety', 'charm'];
+        // 자동 선택 풀에 'rest' 추가
+        const actionsPool = ['vocal', 'dance', 'visual', 'variety', 'charm', 'rest'];
 
         gameState.members.forEach(m => {
-            let action = m.manualAct || stats[Math.floor(Math.random() * stats.length)];
+            // 수동 지시가 있거나, 없으면 랜덤으로 액션 결정
+            let action = m.manualAct || actionsPool[Math.floor(Math.random() * actionsPool.length)];
+
+            // 휴식 (수동/자동 공통)
+            if (action === 'rest') {
+                let heal = Math.random() < 0.8 ? 5 : 10;
+                m.fatigue = Math.max(0, m.fatigue - (heal + 10)); // 기본 자연회복 10 + 휴식 효과
+                m.manualAct = null;
+                return;
+            }
+
+            // 피로도가 100이면 무조건 패스 (이미 지시된 rest는 위에서 처리됨)
+            if (m.fatigue >= 100) {
+                m.manualAct = null;
+                return;
+            }
+
+            // 일반 훈련
             if (m[action] < 20) {
-                let inc = Math.random() < 0.3 ? 1 : 0; 
-                m[action] = Math.min(20, m[action] + inc);
-                m.fatigue = Math.min(100, m.fatigue + 15);
-                dailyReport.push({name: m.name, stat: action, msg: inc > 0 ? "성공(+1)" : "실패"});
+                let success = Math.random() < 0.3;
+                if (success) {
+                    m[action] = Math.min(20, m[action] + 1);
+                    m.fatigue = Math.min(100, m.fatigue + 15);
+                    dailyReport.push({name: m.name, stat: action, msg: "성공(+1)"});
+                } else {
+                    // 실패 시 5~10 랜덤 증가
+                    m.fatigue = Math.min(100, m.fatigue + (Math.floor(Math.random() * 6) + 5));
+                    dailyReport.push({name: m.name, stat: action, msg: "실패"});
+                }
             }
             m.manualAct = null;
         });
@@ -223,7 +253,7 @@
         gameState.finance -= 500000;
         updateFandom(Math.floor(totalProfit / 10000));
         gameState.day++;
-        gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
+        gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10)); // 자연 회복 10
 
         gameState.weeklyLog.push({day: gameState.day-1, data: dailyReport});
         if(gameState.weeklyLog.length > 7) gameState.weeklyLog.shift();
@@ -243,21 +273,17 @@
         let day = gameState.day;
         let eventId = null;
 
-        // 신규의상, 공모전, 전광판 (30일 전후: 27~33일 사이 랜덤)
         if (day >= 27 && day <= 33 && Math.random() < 0.3) {
             const pool = ['costume', 'contest', 'ad'];
             eventId = pool[Math.floor(Math.random()*pool.length)];
         } 
-        // 공식굿즈, 팝업스토어 (90일 전후: 87~93일 사이 랜덤)
         else if (day >= 87 && day <= 93 && Math.random() < 0.4) {
             const pool = ['goods', 'popup'];
             eventId = pool[Math.floor(Math.random()*pool.length)];
         }
-        // 팬미팅 (180일 전후: 177~183일 사이 랜덤)
         else if (day >= 177 && day <= 183 && Math.random() < 0.5) {
             eventId = 'meeting';
         }
-        // 나머지 일반 이벤트 (일주일 단위)
         else if (day % 7 === 0) {
             const commonPool = virtualEvents.filter(e => !['costume', 'contest', 'ad', 'goods', 'popup', 'meeting'].includes(e.id));
             if(commonPool.length > 0) eventId = commonPool[Math.floor(Math.random()*commonPool.length)].id;
