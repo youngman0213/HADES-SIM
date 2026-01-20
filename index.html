@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v11.8</title>
+    <title>하데스 키우기 v11.9</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -58,7 +58,7 @@
             </div>
             <h2>상태</h2>
             <div class="stat-grid">
-                <div class="stat-item"><small>보유 자산</small><strong id="p-finance" class="money-text">200,000,000</strong></div>
+                <div class="stat-item"><small>보유 자산</small><strong id="p-finance" class="money-text">100,000,000</strong></div>
                 <div class="stat-item"><small>케로 팬덤수</small><strong id="p-fandom">12,405</strong></div>
                 <div class="stat-item"><small>너튜브 구독자</small><strong id="p-youtube">8,200</strong></div>
                 <div class="stat-item"><small>SNS 팔로워</small><strong id="p-sns">15,300</strong></div>
@@ -99,7 +99,7 @@
 
 <script>
     let gameState = {
-        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 12405, youtube: 8200, sns: 15300,
+        day: 1, startDate: new Date('2025-09-05'), finance: 100000000, fandom: 12405, youtube: 8200, sns: 15300,
         members: [
             {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
             {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
@@ -112,26 +112,7 @@
 
     const ebemMsgs = ["키마 고음 미쳤네 ㅋㅋ", "연초록 비주얼 실화냐?", "하데스 폼 미쳤다", "에뱀 인기글 하데스가 먹었네", "오늘 방송 꿀잼이었음", "솜주먹 커엽노", "챈나 예능감 무엇?", "띵귤 목소리 보물이다", "근데 하데스 수익 어디로 가냐?", "요즘 버튜버 판 하데스가 점령함", "아니 훈련 실패 실화? ㅋㅋㅋ", "키마 노래 실력 억까하는 애들 뭐냐", "띵귤 매력에 정신 못차리겠다", "하데스 무지성 개추", "이번에 신규 아바타 뽑자", "오늘 방송 채팅창 관리 좀 해라", "에뱀 형님들 하데스 입덕했다", "연초록은 사람 홀리는 재주가 있음", "챈나 웃음소리 중독성 갑", "솜주먹 이름값 하네 ㅋㅋ", "하데스 코인 타길 잘했다", "버추얼 시장의 혁명이다", "솔직히 얘네가 1황임", "오늘도 물풍선 쐈다", "훈련 효율 실화냐 대표야 일해라"];
     const cafeMsgs = ["케로 1기 모여라!", "오늘도 멤버들 고생했어요", "대표님 고기 사주세요", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!", "키마 언니 노래 불러줘서 고마워요", "띵귤이 오늘 너무 예뻤다", "하데스 덕분에 하루가 행복해", "우리 멤버들 아프지 마요", "연초록 공주님 ㅠㅠ", "챈나 덕분에 오늘 배 찢어짐", "솜주먹이 우리 지켜주는 거야?", "카페 등급업 드디어 했다!", "하데스 영원하자", "오늘 방송 요약본 올라왔나요?", "멤버들 피로도가 걱정돼요 ㅠㅠ", "대표님 장비 좀 바꿔주세요", "하데스 굿즈 나오면 바로 삼", "매일 밤 하데스 방송만 기다려", "세상에서 제일 빛나는 하데스", "띵귤님 목소리 듣고 꿀잠 잠", "키마는 노래천재가 확실해", "하데스 팬미팅 언제 하나요?", "멤버들 밥 잘 챙겨 먹길"];
-    
-    const ytComments = [
-        "하데스 영상 퀄리티 대박! 조회수 떡상 가자!", "편집 실력 무엇? 전율 돋네", "이게 버튜버야 영화야.. 퀄리티 미쳤다",
-        "알고리즘아 일해라, 하데스 세상이 온다", "해외 팬들 유입되는 소리 들린다 ㅋㅋ", "무한 반복 재생 중.. 멈출 수가 없어",
-        "이번 영상 색감이랑 연출 역대급임", "하데스 멤버들 케미 터지는 영상이네", "쇼츠 보고 풀버전 보러 왔습니다",
-        "100만 유튜버 가즈아!!", "썸네일 홀린 듯이 클릭함 ㅋㅋ", "영상미 실화냐? 배경화면 각이다",
-        "노래랑 영상이랑 찰떡궁합임", "댓글 잘 안 쓰는데 이건 진짜 대박", "편집자 누구임? 보너스 줘야 한다",
-        "하데스 덕분에 삶의 질이 올라감", "이 영상 안 본 사람이랑 겸상 안 함", "입덕 부정기 끝내고 오늘 구독함",
-        "와.. 중간에 연출 소름 돋았어", "우리 멤버들 다 예쁘게 잘 나왔다",
-        "하데스 세계관 정리 영상도 만들어주세요!", "진짜 버추얼 아이돌의 정점이다", "영상이 너무 짧게 느껴질 정도로 몰입함",
-        "고화질로 보니까 멤버들 아바타 디테일 장난 아니네", "실시간 인기 급상승 가자!", "이번 기획 누가 했냐 진짜 천재인 듯",
-        "부모님도 하데스 좋아하심 ㅋㅋ 온 가족 덕질 중", "댓글 창 화력 보소 하데스 폼 미쳤다", "다음 영상 기다리다 목 빠지겠음",
-        "해외 댓글 많은 거 보니까 글로벌 가겠다", "이거 보고 입덕 안 하면 사람 아님", "멤버들 목소리랑 영상 분위기 미쳤다",
-        "성장 서사 보니까 가슴이 웅장해진다", "광고인 줄 알았는데 고퀄 영상이었네", "하데스 코인 타길 진짜 잘했다",
-        "이 영상은 전설이 될 거다", "매일 아침 이 영상 보면서 시작함", "편집 디테일 하나하나가 예술이다",
-        "하데스 멤버들 매력이 영상에 꽉꽉 담겼네", "조회수 떡상해서 공중파 진출 가자!",
-        "오늘 영상은 진짜 레전드 갱신이다", "하데스 멤버들 합이 너무 좋음", "이 영상 보고 잠 다 잤네",
-        "퀄리티 실화냐? 대기업인줄", "하데스는 영상 하나하나가 예술임", "팬들을 위해 고민한 흔적이 보임",
-        "이 채널은 구독 안하면 손해임", "하데스 영상 보려고 1년을 기다렸다", "조회수 1억뷰 가보자고!", "하데스 멤버들 화이팅!"
-    ];
+    const ytComments = ["하데스 영상 대박!", "편집 실력 무엇?", "알고리즘아 일해라", "해외 팬 유입 소리 들린다", "100만 가자", "썸네일 홀림", "영상미 실화?", "성장 서사 웅장하다" ]; // 축약형
 
     const virtualEvents = [
         { id: 'server', title: "💻 서버 렉 발생", desc: "방송 중 서버가 불안정합니다.", choices: [{ text: "서버 증설 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "방종 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "방치 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
@@ -162,9 +143,7 @@
             if (modal.style.display === 'block') {
                 const btn = modal.querySelector('.primary-btn');
                 if(btn) btn.click();
-            } else {
-                nextDay();
-            }
+            } else { nextDay(); }
         }
     });
 
@@ -191,7 +170,6 @@
             </div>
         `).join('');
 
-        // [수정] 반응글 3개만 유지
         const latestComm = gameState.community.slice(-3);
         document.getElementById('comm-container').innerHTML = latestComm.map(c => `
             <div class="comm-post">
@@ -213,38 +191,37 @@
 
         gameState.members.forEach(m => {
             let action = m.manualAct || actionsPool[Math.floor(Math.random() * actionsPool.length)];
-            if (action === 'rest') { 
-                m.fatigue = Math.max(0, m.fatigue - 25); 
-            } else if (m.fatigue < 100) {
+            if (action === 'rest') { m.fatigue = Math.max(0, m.fatigue - 25); } 
+            else if (m.fatigue < 100) {
                 if (m[action] < 20 && Math.random() < 0.4) { 
                     m[action]++; 
                     gameState.weeklyStats.push({name: m.name, stat: action});
                     m.fatigue = Math.min(100, m.fatigue + 15); 
-                } else {
-                    m.fatigue = Math.min(100, m.fatigue + 10);
-                }
+                } else { m.fatigue = Math.min(100, m.fatigue + 10); }
             }
             m.manualAct = null;
         });
 
+        // 주간 결산
         if(gameState.day % 7 === 0 && gameState.day > 1) {
             const views = (Math.floor(Math.random() * 291) + 10) * 10000;
             const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
-            gameState.community.push({
-                site: '너튜브', 
-                content: `🎥 <b>주간 인기 급상승!</b> 이번 주 주인공 <b>${star}</b> 조회수 ${views.toLocaleString()}회 달성! <br><small>${ytComments[Math.floor(Math.random()*ytComments.length)]}</small>`
-            });
+            gameState.community.push({ site: '너튜브', content: `🎥 <b>주간 인기 급상승!</b> ${star} 조회수 ${views.toLocaleString()}회 달성!` });
             gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]});
             gameState.weeklyStats = [];
         }
 
+        // 일일 커뮤니티
         if (Math.random() < 0.5) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
         if (Math.random() < 0.5) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
 
+        // 생일 체크
         let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
         let dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         gameState.members.forEach(m => { if (m.birth === dateStr) gameState.popupQueue.push({type: 'birthday', member: m}); });
-        if(Math.random() < 0.2) gameState.popupQueue.push({type: 'virtual'});
+
+        // [수정] 이벤트 발생 로직 (타임라인 반영)
+        checkVirtualEvent();
 
         gameState.finance += totalProfit; 
         gameState.finance -= 500000; 
@@ -252,15 +229,34 @@
         
         gameState.day++;
         gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
-        
         document.getElementById('profit-report').style.display = 'block';
         document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
         
-        // 커뮤니티 배열 관리 (전체 데이터 보존하되 화면 출력에서 3개 제한)
-        if(gameState.community.length > 50) gameState.community.shift();
-
         updateDisplay();
         processNextPopup();
+    }
+
+    // [추가] 타임라인 기반 이벤트 체크 로직
+    function checkVirtualEvent() {
+        if (Math.random() > 0.15) return; // 기본 발생 확률
+
+        const day = gameState.day;
+        let pool = [];
+
+        // 30일 내외: 신규의상(costume), 팬아트공모전(contest), 장비고장(gear), 금손작가(goldfan)
+        if (day >= 25 && day <= 35) { pool.push('costume', 'contest', 'gear', 'goldfan'); }
+        // 90일 내외: 공식굿즈(goods), 오프라인전광판(ad), 쇼핑몰팝업(popup)
+        else if (day >= 85 && day <= 95) { pool.push('goods', 'ad', 'popup'); }
+        // 180일 내외: 대규모팬미팅(meeting), 신인발굴(gen2)
+        else if (day >= 175 && day <= 185) { pool.push('meeting', 'gen2'); }
+        // 나머지: 상시 랜덤 (서버렉, 저작권, 합방, AI논란, 게임대회, ASMR, 채팅테러, 믹싱, 불화설, 전력누전, 숏츠)
+        else { pool.push('server', 'copyright', 'collab', 'ai', 'game', 'asmr', 'shorts', 'chat', 'mix', 'rumor', 'power'); }
+
+        if (pool.length > 0) {
+            const selectedId = pool[Math.floor(Math.random() * pool.length)];
+            const ev = virtualEvents.find(e => e.id === selectedId);
+            if (ev) gameState.popupQueue.push({type: 'virtual', event: ev});
+        }
     }
 
     function processNextPopup() {
@@ -270,14 +266,22 @@
         const item = gameState.popupQueue.shift();
         if(item.type === 'training_report') showTrainingReport(item.data);
         else if(item.type === 'birthday') showBirthdayPopup(item.member);
-        else if(item.type === 'virtual') showVirtualEventPopup();
+        else if(item.type === 'virtual') renderEventPopup(item.event);
     }
 
-    // [수정] 결산 팝업 능력치 상승 수치 포함
+    function renderEventPopup(ev) {
+        const modal = document.getElementById('eventModal');
+        document.getElementById('modal-title').innerText = ev.title;
+        document.getElementById('modal-body').innerText = ev.desc;
+        document.getElementById('modal-choices').innerHTML = ev.choices.map((c, idx) => `
+            <button class="choice-btn" onclick="executeVirtualChoice('${ev.id}', ${idx})">${c.text}</button>
+        `).join('');
+        modal.style.display = 'block';
+    }
+
     function showTrainingReport(logs) {
         const modal = document.getElementById('eventModal');
         document.getElementById('modal-title').innerText = "🗓️ 주간 트레이닝 결산";
-        
         if (logs.length === 0) {
             document.getElementById('modal-body').innerHTML = `<div style="text-align:center; padding:15px;">이번 주는 스탯 변화가 없었습니다.</div>`;
         } else {
@@ -287,34 +291,15 @@
                 const statName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
                 summary[l.name].push(statName);
             });
-
             let listHtml = Object.entries(summary).map(([name, stats]) => {
                 const counts = {};
                 stats.forEach(s => counts[s] = (counts[s] || 0) + 1);
-                const statString = Object.entries(counts)
-                    .map(([s, c]) => `${s} <span style="color:var(--success); font-weight:bold;">+${c}</span>`)
-                    .join(', ');
-                
-                return `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;">
-                            <span style="color:var(--point); font-weight:bold; font-size:15px;">${name}</span><br>
-                            <span style="color:#555;">${statString}</span>
-                        </div>`;
+                const statString = Object.entries(counts).map(([s, c]) => `${s} <span style="color:var(--success); font-weight:bold;">+${c}</span>`).join(', ');
+                return `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;"><span style="color:var(--point); font-weight:bold;">${name}</span><br>${statString}</div>`;
             }).join('');
-
             document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#f8f9fa; padding:15px; border-radius:10px; font-size:14px; max-height:300px; overflow-y:auto;">${listHtml}</div>`;
         }
         document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
-        modal.style.display = 'block';
-    }
-
-    function showVirtualEventPopup() {
-        const ev = virtualEvents[Math.floor(Math.random()*virtualEvents.length)];
-        const modal = document.getElementById('eventModal');
-        document.getElementById('modal-title').innerText = ev.title;
-        document.getElementById('modal-body').innerText = ev.desc;
-        document.getElementById('modal-choices').innerHTML = ev.choices.map((c, idx) => `
-            <button class="choice-btn" onclick="executeVirtualChoice('${ev.id}', ${idx})">${c.text}</button>
-        `).join('');
         modal.style.display = 'block';
     }
 
