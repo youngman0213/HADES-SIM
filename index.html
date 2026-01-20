@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v6.7</title>
+    <title>하데스 키우기 v6.8</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -48,7 +48,7 @@
         <div class="card">
             <div class="date-display">
                 <span class="day-count">운영 <span id="current-day">1</span>일차</span>
-                <span class="real-date" id="current-date">2025-09-05</span>
+                <span class="real-date" id="current-date">2026-01-20</span>
             </div>
             <h2>상태 콘솔</h2>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -95,7 +95,7 @@
 
 <div id="eventModal" class="modal-overlay">
     <div class="modal-content">
-        <h2 id="modal-title" style="color:var(--point);">돌발 상황!</h2>
+        <h2 id="modal-title" style="color:var(--point);">알림</h2>
         <div id="modal-body" style="margin: 20px 0;"></div>
         <div id="modal-choices"></div>
     </div>
@@ -103,7 +103,7 @@
 
 <script>
     let gameState = {
-        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 12405,
+        day: 1, startDate: new Date('2026-01-20'), finance: 200000000, fandom: 12405,
         members: [
             {name: '키마', vocal: 12, dance: 8, visual: 10, variety: 7, charm: 9, fatigue: 10, manualAct: null},
             {name: '띵귤', vocal: 13, dance: 7, visual: 9, variety: 8, charm: 10, fatigue: 10, manualAct: null},
@@ -111,7 +111,8 @@
             {name: '솜주먹', vocal: 7, dance: 11, visual: 10, variety: 14, charm: 12, fatigue: 10, manualAct: null},
             {name: '연초록', vocal: 12, dance: 9, visual: 12, variety: 6, charm: 11, fatigue: 10, manualAct: null}
         ],
-        community: [], weeklyLog: []
+        community: [], weeklyLog: [],
+        popupQueue: [] // 팝업 순차 처리를 위한 큐
     };
 
     window.addEventListener('keydown', e => { if (e.code === 'Space' && document.getElementById('eventModal').style.display !== 'block') nextDay(); });
@@ -204,14 +205,23 @@
 
         updateDisplay();
         
-        // 로직 순서: 7일째 밤에 주간 리포트 팝업 -> 리포트 닫으면 7일 주기 이벤트 팝업(동일 주기일 경우)
-        if(gameState.day % 7 === 1 && gameState.day > 1) {
-            showWeeklyReportPopup();
-        } else if(gameState.day % 7 === 0) {
-            triggerEvent(); 
-        } else {
+        // 팝업 큐 생성
+        gameState.popupQueue = [];
+        if(gameState.day % 7 === 1 && gameState.day > 1) gameState.popupQueue.push('weekly');
+        if(gameState.day % 7 === 0) gameState.popupQueue.push('event');
+        
+        processNextPopup();
+    }
+
+    function processNextPopup() {
+        if(gameState.popupQueue.length === 0) {
             openPage('home');
+            return;
         }
+        
+        const type = gameState.popupQueue.shift();
+        if(type === 'weekly') showWeeklyReportPopup();
+        else if(type === 'event') triggerEvent();
     }
 
     function showWeeklyReportPopup() {
@@ -232,7 +242,6 @@
         }).join('');
         
         body.innerHTML = reportHtml + `<p style="font-size:11px; color:#888; margin-top:15px;">지난 7일간의 훈련 성과입니다.</p>`;
-        
         choices.innerHTML = `<button class="primary-btn" style="background:#339af0;" onclick="closeModal()">확인</button>`;
         document.getElementById('eventModal').style.display = 'block';
     }
@@ -267,12 +276,7 @@
 
     function closeModal() {
         document.getElementById('eventModal').style.display = 'none';
-        // 주간 결산 팝업을 닫았을 때, 만약 오늘이 이벤트 날이라면 이벤트를 이어서 띄움
-        if(gameState.day % 7 === 0) {
-            triggerEvent();
-        } else {
-            openPage('home');
-        }
+        processNextPopup(); // 큐에 남은 다음 팝업 처리
     }
 
     function openPage(pId, btn) {
