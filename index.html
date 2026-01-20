@@ -2,33 +2,42 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>HADES Management System</title>
+    <title>HADES 시뮬레이션</title>
     <style>
-        :root { --bg: #050505; --point: #00ffcc; --vocal: #ff4d94; --stream: #4dadff; --text: #e0e0e0; }
+        :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
         
-        /* 상단 네비게이션 버튼 */
-        .nav-bar { display: flex; background: #111; border-bottom: 1px solid var(--point); position: sticky; top: 0; z-index: 100; }
-        .nav-btn { flex: 1; padding: 15px; border: none; background: transparent; color: #888; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .nav-btn.active { color: var(--point); border-bottom: 2px solid var(--point); background: rgba(0, 255, 204, 0.05); }
+        /* 네비게이션 */
+        .nav-bar { display: flex; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .nav-btn { flex: 1; padding: 18px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 15px; }
+        .nav-btn.active { color: var(--point); border-bottom: 3px solid var(--point); }
 
         .container { max-width: 800px; margin: 20px auto; padding: 0 20px; }
-        .page { display: none; animation: fadeIn 0.3s; }
+        .page { display: none; }
         .page.active { display: block; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 공통 스타일 */
-        .card { background: #151515; border: 1px solid #333; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        h2 { color: var(--point); font-size: 1.2rem; margin-top: 0; }
+        /* 카드 스타일 */
+        .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
+        .date-display { position: absolute; top: 20px; right: 25px; font-weight: bold; color: var(--point); font-size: 18px; }
+        h2 { color: #222; font-size: 1.3rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; }
         
-        /* 멤버 리스트 스타일 */
-        .member-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #222; }
-        .tag { padding: 2px 8px; border-radius: 4px; font-size: 12px; }
-        .tag.vocal { background: var(--vocal); color: white; }
-        .tag.stream { background: var(--stream); color: white; }
+        /* 멤버 아이템 */
+        .member-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .member-item:hover { background: #fff0f6; border-color: var(--point); }
+        .tag { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .vocal-tag { background: #ffe3ed; color: #ff4d94; }
+        .stream-tag { background: #e3f2ff; color: #4dadff; }
 
-        .log-box { background: #000; padding: 15px; height: 300px; overflow-y: auto; font-family: monospace; font-size: 13px; color: #0f0; border: 1px solid #222; }
+        /* 팝업(모달) */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; width: 320px; border-radius: 20px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        
+        /* 버튼 */
+        .primary-btn { width: 100%; padding: 15px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; transition: 0.2s; }
+        .next-day-btn { background: var(--success); margin-top: 20px; font-size: 18px; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(64, 192, 87, 0.3); }
+        .primary-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .log-box { background: #f9f9f9; padding: 15px; height: 200px; overflow-y: auto; font-size: 13px; color: #555; border: 1px solid var(--border); border-radius: 10px; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -42,88 +51,156 @@
 <div class="container">
     <div id="home" class="page active">
         <div class="card">
-            <h2>HADES STATUS CONSOLE</h2>
-            <p>미래시 오차: <span id="d-error" style="color:var(--point)">0.02%</span></p>
-            <p>보유 자산: <span id="d-finance">45,000,000</span> KRW</p>
-            <p>KERO 팬덤: <span id="d-fandom">12,405</span> 명</p>
-        </div>
-        <div class="card">
-            <h2>최근 활동 로그</h2>
-            <div class="log-box" id="main-log">
-                [SYSTEM] 하데스 매니지먼트 시스템 접속 성공...<br>
-                [INFO] 대표 봉준님, 오늘도 정밀한 지시 부탁드립니다.
+            <div class="date-display">운영 <span id="current-day">1</span>일차</div>
+            <h2>하데스 상태 콘솔</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div><small>미래시 오차</small><br><strong id="p-error">0.02%</strong></div>
+                <div><small>보유 자산</small><br><strong id="p-finance">45,000,000</strong></div>
+                <div><small>케로 팬덤</small><br><strong id="p-fandom">12,405</strong></div>
+                <div><small>평균 피로도</small><br><strong id="p-fatigue">15</strong>%</div>
             </div>
         </div>
+        
+        <div class="card">
+            <h2>데일리 로그</h2>
+            <div class="log-box" id="main-log">
+                [시스템] 하데스 프로젝트 가동 시작...<br>
+                [정보] 대표 봉준님, 오늘의 지시를 이행해주세요.
+            </div>
+        </div>
+
+        <button class="primary-btn next-day-btn" onclick="nextDay()">🌙 하루 마무리하고 다음 날로</button>
     </div>
 
     <div id="members" class="page">
         <div class="card">
-            <h2>하데스 멤버 명단</h2>
-            <div id="member-list-container">
-                </div>
+            <h2>멤버 상세 정보</h2>
+            <div id="member-list-container"></div>
         </div>
     </div>
 
     <div id="schedule" class="page">
         <div class="card">
-            <h2>데일리 매니지먼트</h2>
-            <label>대상 멤버:</label>
-            <select id="sel-member" style="width:100%; padding:10px; margin: 10px 0;">
-                <option>키마</option><option>띵귤</option><option>챈나</option><option>솜주먹</option><option>연초록</option>
+            <h2>오늘의 트레이닝 지시</h2>
+            <select id="sel-member" style="width:100%; padding:15px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 10px;">
+                <option value="키마">키마</option><option value="띵귤">띵귤</option><option value="챈나">챈나</option><option value="솜주먹">솜주먹</option><option value="연초록">연초록</option>
             </select>
-            <button onclick="trainAction()" style="width:100%; padding:15px; background:var(--point); border:none; cursor:pointer; font-weight:bold;">트레이닝 실행</button>
-        </div>
-        <div class="card">
-            <h2>오늘의 돌발 상황</h2>
-            <p id="event-text">모션 캡처 수신 장비에 노이즈가 발생합니다.</p>
-            <button onclick="alert('대처 완료')">A) 장비 즉시 교체</button>
-            <button onclick="alert('대처 완료')">B) 버그인 척 연기</button>
+            <button class="primary-btn" onclick="trainAction()">트레이닝 실행 (피로도+20)</button>
         </div>
     </div>
 </div>
 
+<div id="commonModal" class="modal">
+    <div class="modal-content">
+        <h2 id="modal-title">알림</h2>
+        <div id="modal-body" style="margin: 20px 0; line-height: 1.5;"></div>
+        <button class="primary-btn" onclick="closeModal()">확인</button>
+    </div>
+</div>
+
 <script>
-    const members = [
-        {name: '키마', type: '보컬', vocal: 50, stream: 30},
-        {name: '띵귤', type: '보컬', vocal: 55, stream: 25},
-        {name: '챈나', type: '방송', vocal: 30, stream: 55},
-        {name: '솜주먹', type: '방송', vocal: 25, stream: 60},
-        {name: '연초록', type: '보컬', vocal: 52, stream: 28}
-    ];
+    let gameState = {
+        day: 1,
+        error: 0.02,
+        finance: 45000000,
+        fandom: 12405,
+        members: [
+            {name: '키마', type: '보컬', vocal: 50, stream: 35, fatigue: 10, acted: false},
+            {name: '띵귤', type: '보컬', vocal: 55, stream: 28, fatigue: 10, acted: false},
+            {name: '챈나', type: '방송', vocal: 32, stream: 58, fatigue: 10, acted: false},
+            {name: '솜주먹', type: '방송', vocal: 28, stream: 62, fatigue: 10, acted: false},
+            {name: '연초록', type: '보컬', vocal: 52, stream: 30, fatigue: 10, acted: false}
+        ]
+    };
 
     function openPage(pageId) {
-        // 모든 페이지 숨기기
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        // 모든 버튼 비활성화
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        
-        // 선택한 페이지/버튼만 활성화
         document.getElementById(pageId).classList.add('active');
         event.currentTarget.classList.add('active');
     }
 
-    function loadMembers() {
+    function updateDisplay() {
+        document.getElementById('current-day').innerText = gameState.day;
+        document.getElementById('p-error').innerText = gameState.error.toFixed(2) + "%";
+        document.getElementById('p-finance').innerText = gameState.finance.toLocaleString();
+        document.getElementById('p-fandom').innerText = gameState.fandom.toLocaleString();
+        
+        let avgFatigue = gameState.members.reduce((acc, m) => acc + m.fatigue, 0) / 5;
+        document.getElementById('p-fatigue').innerText = Math.floor(avgFatigue);
+
         const container = document.getElementById('member-list-container');
-        container.innerHTML = members.map(m => `
-            <div class="member-row">
-                <div>
-                    <strong>${m.name}</strong> 
-                    <span class="tag ${m.type === '보컬' ? 'vocal' : 'stream'}">${m.type}</span>
-                </div>
-                <div>V:${m.vocal} | S:${m.stream}</div>
+        container.innerHTML = gameState.members.map(m => `
+            <div class="member-item" onclick="showMemberDetail('${m.name}')">
+                <strong>${m.name}</strong>
+                <span>${m.acted ? '✅완료' : '⏳대기'}</span>
+                <span class="tag ${m.type === '보컬' ? 'vocal-tag' : 'stream-tag'}">${m.type}</span>
             </div>
         `).join('');
     }
 
     function trainAction() {
         const name = document.getElementById('sel-member').value;
-        const log = document.getElementById('main-log');
-        log.innerHTML += `<br>> [지시] ${name} 멤버 트레이닝 시작...`;
-        alert(`${name} 멤버의 능력이 향상되었습니다!`);
+        const m = gameState.members.find(item => item.name === name);
+
+        if(m.acted) {
+            alert("해당 멤버는 이미 오늘의 일정을 마쳤습니다.");
+            return;
+        }
+
+        m.vocal += (m.type === '보컬' ? 5 : 2);
+        m.stream += (m.type === '방송' ? 5 : 2);
+        m.fatigue += 20;
+        m.acted = true;
+
+        addLog(`[지시] ${name} 트레이닝 완료. (보컬/방송 실력 향상)`);
+        updateDisplay();
+        alert(`${name}의 훈련이 끝났습니다!`);
     }
 
-    // 초기 실행
-    loadMembers();
+    function nextDay() {
+        gameState.day++;
+        gameState.finance -= 500000; // 일일 유지비
+        
+        gameState.members.forEach(m => {
+            m.fatigue = Math.max(0, m.fatigue - 15); // 자고 일어나면 피로도 감소
+            m.acted = false; // 행동 가능 상태로 리셋
+        });
+
+        updateDisplay();
+        addLog(`--- ${gameState.day}일차 아침이 밝았습니다. ---`);
+        
+        // 돌발 상황 팝업
+        showModal("☀️ 새로운 하루", `${gameState.day}일차가 되었습니다.<br>유지비 50만 원이 차감되었고, 멤버들의 피로도가 회복되었습니다.`);
+    }
+
+    function showMemberDetail(name) {
+        const m = gameState.members.find(item => item.name === name);
+        showModal(`${m.name} 상세 정보`, `
+            특화: ${m.type}<br>
+            🎤 보컬: ${m.vocal}<br>
+            📺 방송: ${m.stream}<br>
+            🔋 피로도: ${m.fatigue}%
+        `);
+    }
+
+    function showModal(title, body) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-body').innerHTML = body;
+        document.getElementById('commonModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('commonModal').style.display = 'none';
+    }
+
+    function addLog(msg) {
+        const log = document.getElementById('main-log');
+        log.innerHTML += `<br>> ${msg}`;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    updateDisplay();
 </script>
 
 </body>
