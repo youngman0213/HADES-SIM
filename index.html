@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이돌 육성 시뮬레이션</title>
+    <style>
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .game-container { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        .status-board { background: #fff0f6; border-radius: 15px; padding: 15px; margin: 20px 0; border: 2px solid #ffdeeb; }
+        .stat-item { display: flex; justify-content: space-between; margin: 5px 0; font-weight: bold; }
+        button { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: bold; }
+        .btn-vocal { background-color: #ff8787; color: white; }
+        .btn-dance { background-color: #74c0fc; color: white; }
+        button:hover { opacity: 0.8; transform: scale(0.98); }
+        #message { height: 20px; color: #666; font-size: 14px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h2>🌟 연습생 가이드</h2>
+    <div id="idol-name">이름: 미정 (연습생)</div>
+    
+    <div class="status-board">
+        <div class="stat-item"><span>🎤 보컬</span> <span id="vocal">10</span></div>
+        <div class="stat-item"><span>💃 댄스</span> <span id="dance">10</span></div>
+        <div class="stat-item"><span>🔋 에너지</span> <span id="energy">100</span></div>
+    </div>
+
+    <button class="btn-vocal" onclick="train('vocal')">보컬 레슨 받기 (-10🔋)</button>
+    <button class="btn-dance" onclick="train('dance')">댄스 연습 하기 (-10🔋)</button>
+    <button style="background: #63e6be;" onclick="rest()">휴식하기 (+30🔋)</button>
+
+    <div id="message">환영합니다! 연습을 시작하세요.</div>
+</div>
+
+<script>
+    let stats = { vocal: 10, dance: 10, energy: 100 };
+
+    function updateDisplay() {
+        document.getElementById('vocal').innerText = stats.vocal;
+        document.getElementById('dance').innerText = stats.dance;
+        document.getElementById('energy').innerText = stats.energy;
+    }
+
+    function train(type) {
+        if (stats.energy >= 10) {
+            stats[type] += Math.floor(Math.random() * 5) + 1; // 1~5 랜덤 상승
+            stats.energy -= 10;
+            document.getElementById('message').innerText = `${type === 'vocal' ? '보컬' : '댄스'} 실력이 향상되었습니다!`;
+        } else {
+            document.getElementById('message').innerText = "에너지가 부족합니다! 휴식이 필요해요.";
+        }
+        updateDisplay();
+    }
+
+    function rest() {
+        stats.energy = Math.min(100, stats.energy + 30);
+        document.getElementById('message').innerText = "꿀맛 같은 휴식을 취했습니다.";
+        updateDisplay();
+    }
+</script>
+
+</body>
+</html>
