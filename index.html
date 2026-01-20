@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v6.0</title>
+    <title>하데스 키우기 v6.1</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -13,7 +13,9 @@
         .page { display: none; }
         .page.active { display: block; }
         .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
-        .date-display { position: absolute; top: 20px; right: 25px; font-weight: bold; color: var(--point); font-size: 18px; }
+        .date-display { position: absolute; top: 15px; right: 25px; text-align: right; }
+        .day-count { font-weight: bold; color: var(--point); font-size: 18px; display: block; }
+        .real-date { font-size: 12px; color: #888; }
         h2 { color: #222; font-size: 1.1rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; margin-bottom: 15px; }
         .comm-post { border-bottom: 1px solid #eee; padding: 12px 0; }
         .comm-site { font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px; margin-right: 8px; }
@@ -30,7 +32,8 @@
         .next-day-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid var(--border); text-align: center; z-index: 100; }
         .modal-overlay { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
         .modal-content { background:white; margin:10% auto; padding:30px; width:400px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
-        .report-line { text-align: left; font-size: 13px; margin: 5px 0; border-bottom: 1px dashed #eee; padding-bottom: 3px; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; background: #fff; padding: 10px; border-radius: 8px; margin-top: 5px; }
+        .report-line { font-size: 12px; border-bottom: 1px dashed #eee; padding: 2px 0; }
     </style>
 </head>
 <body>
@@ -43,22 +46,28 @@
 <div class="container">
     <div id="home" class="page active">
         <div class="card">
-            <div class="date-display">운영 <span id="current-day">1</span>일차</div>
+            <div class="date-display">
+                <span class="day-count">운영 <span id="current-day">1</span>일차</span>
+                <span class="real-date" id="current-date">2025-09-05</span>
+            </div>
             <h2>상태 콘솔</h2>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div><small>보유 자산</small><br><strong id="p-finance">200,000,000</strong></div>
                 <div><small>케로 팬덤</small><br><strong id="p-fandom">12,405</strong></div>
             </div>
         </div>
+        
         <div class="card" id="weekly-report-card" style="display:none; background: #e7f5ff; border-color: #339af0;">
-            <h2>📈 주간 트레이닝 결산 (최근 7일)</h2>
+            <h2>📈 주간 트레이닝 결산 (누적 상승치)</h2>
             <div id="weekly-report-content"></div>
         </div>
+
         <div class="card" style="background: #fff9db; border-color: #fab005;">
             <h2>🗞️ 오늘의 통합 리포트</h2>
             <div class="news-item" id="daily-headline" style="font-size:14px; margin-bottom:10px;">• 하데스 매니지먼트 시스템 가동 중.</div>
             <div id="daily-best-comm" style="font-size:13px; color:#666; font-style:italic;">"하데스 멤버들 비주얼 실화냐?" - 에뱀코리아</div>
         </div>
+        
         <div class="card">
             <h2>🌐 실시간 커뮤니티 반응</h2>
             <div id="comm-container" style="max-height: 300px; overflow-y: auto;"></div>
@@ -72,7 +81,6 @@
 
 <div class="next-day-bar">
     <button class="primary-btn" style="background: #40c057; width: auto; padding: 12px 40px;" onclick="nextDay()">🌙 오늘 일과 마무리 (Space)</button>
-    <div style="font-size: 11px; color: #888; margin-top: 5px;">* 클릭/스페이스 시 모든 멤버가 랜덤 트레이닝을 진행합니다.</div>
 </div>
 
 <div id="eventModal" class="modal-overlay">
@@ -85,7 +93,9 @@
 
 <script>
     let gameState = {
-        day: 1, finance: 200000000, fandom: 12405,
+        day: 1, 
+        startDate: new Date('2025-09-05'),
+        finance: 200000000, fandom: 12405,
         members: [
             {name: '키마', vocal: 12, dance: 8, visual: 10, variety: 7, charm: 9, fatigue: 10},
             {name: '띵귤', vocal: 13, dance: 7, visual: 9, variety: 8, charm: 10, fatigue: 10},
@@ -94,22 +104,19 @@
             {name: '연초록', vocal: 12, dance: 9, visual: 12, variety: 6, charm: 11, fatigue: 10}
         ],
         community: [],
-        weeklyLog: [] // 트레이닝 기록 저장용
+        weeklyLog: [] 
     };
 
     window.addEventListener('keydown', e => { if (e.code === 'Space' && document.getElementById('eventModal').style.display !== 'block') { nextDay(); e.preventDefault(); } });
 
-    const ebemMsgs = ["키마 노래 주머니 대박 ㄷㄷ", "연초록 모델링 진짜 잘뽑혔네", "에뱀 형들아 하데스 봐라 진짜", "하데스 떡상 가즈아!!", "오늘 방송 폼 미쳤는데?", "봉준 대표님 안목 인정한다", "아니 챈나 예능감 뭐임? ㅋㅋㅋ", "띵귤 고음 듣고 지렸다", "버츄얼은 결국 하데스가 먹을듯", "솜주먹 커엽노", "VRC 아바타 퀄 미침", "풀트래킹 댄스 실화냐?"];
-    const cafeMsgs = ["케로 1기 정모 언제인가요?", "띵귤님 고음 듣고 광명 찾았습니다", "솜주먹님 너무 귀여워요 ㅠㅠ", "챈나님 오늘 텐션 최고였음!", "초록님 비주얼 보고 입덕함", "매니저님 멤버들 고기 사주세요!", "하데스 데뷔만 기다려요 사랑해", "오늘도 고생 많으셨습니다!", "팬카페 회원수 실시간으로 느는 중!"];
+    const ebemMsgs = ["키마 노래 주머니 대박 ㄷㄷ", "연초록 모델링 진짜 잘뽑혔네", "에뱀 형들아 하데스 봐라 진짜", "하데스 떡상 가즈아!!", "오늘 방송 폼 미쳤는데?", "봉준 대표님 안목 인정한다", "아니 챈나 예능감 뭐임? ㅋㅋㅋ", "띵귤 고음 듣고 지렸다", "솜주먹 커엽노", "VRC 아바타 퀄 미침"];
+    const cafeMsgs = ["케로 1기 정모 언제인가요?", "띵귤님 고음 듣고 광명 찾았습니다", "솜주먹님 너무 귀여워요 ㅠㅠ", "챈나님 오늘 텐션 최고였음!", "초록님 비주얼 보고 입덕함", "매니저님 멤버들 고기 사주세요!"];
 
     const randomEvents = [
-        { title: "📡 방송 장비 노후화", desc: "송출용 컴퓨터가 자꾸 렉이 걸립니다.", choices: [{ text: "최신형 교체 (500만)", effect: () => { gameState.finance -= 5000000; addComm('에뱀', '컴퓨터 바꿨나 보네? 프레임 미쳤다'); } }, { text: "그냥 버틴다", effect: () => { gameState.fandom -= 500; addComm('에뱀', '방송 자꾸 끊기는데 운영진 뭐하냐'); } }] },
-        { title: "🍗 야식 유혹", desc: "멤버들이 연습 끝나고 야식을 시켜달라고 조릅니다.", choices: [{ text: "사준다 (자금 -10만)", effect: () => { gameState.finance -= 100000; gameState.members.forEach(m=>m.fatigue=Math.max(0,m.fatigue-10)); addComm('카페', '멤버들 맛난거 먹었대요! 대표님 최고'); } }, { text: "거절", effect: () => { gameState.members.forEach(m=>m.visual=Math.min(20,m.visual+1)); addComm('에뱀', '하데스 애들 관리 빡세게 한듯?'); } }] },
-        { title: "🌐 메타버스 팬미팅", desc: "VRChat 전용 맵에서 팬미팅을 엽니다.", choices: [{ text: "개최 (자금 -200만)", effect: () => { gameState.finance -= 2000000; gameState.fandom += 2000; addComm('에뱀', '오늘 하데스 팬미팅 맵 퀄리티 지리더라'); } }, { text: "취소", effect: () => { addComm('카페', '팬미팅 아쉽지만 다음을 기약해요!'); } }] },
-        { title: "😱 아바타 오류 발생", desc: "방송 중 아바타 관절이 꺾이는 버그가 발생했습니다!", choices: [{ text: "기술팀 호출 (자금 -50만)", effect: () => { gameState.finance -= 500000; addComm('에뱀', '기술 대응 빠른 거 보소'); } }, { text: "웃음으로 승화", effect: () => { gameState.members.forEach(m=>m.variety=Math.min(20,m.variety+1)); addComm('카페', '버그 대처하는 거 너무 웃겼음 ㅋㅋㅋ'); } }] },
-        { title: "📺 VR 게임 합방", desc: "타 버츄얼 그룹과 대규모 합방 제안이 왔습니다.", choices: [{ text: "참여 (피로도+20)", effect: () => { gameState.members.forEach(m=>{m.variety=Math.min(20,m.variety+2); m.fatigue+=20;}); addComm('에뱀', '이번 합방 하데스가 하드캐리함 ㅋㅋㅋ'); } }, { text: "휴식", effect: () => { gameState.members.forEach(m=>m.fatigue=Math.max(0,m.fatigue-15)); } }] },
-        { title: "🎁 팬들의 서포트", desc: "익명의 팬이 멤버들에게 고급 마이크를 선물했습니다.", choices: [{ text: "감사히 받는다", effect: () => { gameState.members.forEach(m=>m.vocal=Math.min(20,m.vocal+1)); addComm('카페', '서포트 인증 올라왔다! 대박'); } }] },
-        { title: "🔥 커뮤니티 념글 등극", desc: "어제 방송 하이라이트가 에뱀 념글에 올라갔습니다!", choices: [{ text: "댓글 모니터링", effect: () => { gameState.fandom += 800; addComm('에뱀', '하데스 어제 방송은 ㅇㅈ이지'); } }] }
+        { title: "📡 방송 장비 노후화", desc: "송출용 컴퓨터가 자꾸 렉이 걸립니다.", choices: [{ text: "최신형 교체 (500만)", effect: () => { gameState.finance -= 5000000; addComm('에뱀', '컴퓨터 바꿨나 보네? 프레임 미쳤다'); } }, { text: "버틴다", effect: () => { gameState.fandom -= 500; } }] },
+        { title: "🍗 야식 유혹", desc: "멤버들이 연습 끝나고 야식을 시켜달라고 조릅니다.", choices: [{ text: "사준다 (10만)", effect: () => { gameState.finance -= 100000; gameState.members.forEach(m=>m.fatigue=Math.max(0,m.fatigue-10)); } }, { text: "참아라", effect: () => { gameState.members.forEach(m=>m.visual=Math.min(20,m.visual+1)); } }] },
+        { title: "🌐 메타버스 팬미팅", desc: "VRChat 전용 맵에서 팬미팅을 엽니다.", choices: [{ text: "개최 (200만)", effect: () => { gameState.finance -= 2000000; gameState.fandom += 2000; } }, { text: "취소", effect: () => {} }] },
+        { title: "😱 아바타 오류", desc: "방송 중 아바타 관절이 꺾이는 버그가 발생했습니다!", choices: [{ text: "기술팀 호출 (50만)", effect: () => { gameState.finance -= 500000; } }, { text: "밈으로 승화", effect: () => { gameState.members.forEach(m=>m.variety=Math.min(20,m.variety+1)); } }] }
     ];
 
     function openPage(pId, btn) {
@@ -122,6 +129,12 @@
 
     function updateDisplay() {
         document.getElementById('current-day').innerText = gameState.day;
+        
+        // 날짜 계산 (시작일 + 일수-1)
+        let d = new Date(gameState.startDate);
+        d.setDate(d.getDate() + (gameState.day - 1));
+        document.getElementById('current-date').innerText = d.toISOString().split('T')[0];
+        
         document.getElementById('p-finance').innerText = gameState.finance.toLocaleString();
         document.getElementById('p-fandom').innerText = gameState.fandom.toLocaleString();
         
@@ -141,7 +154,6 @@
     function renderStat(l,v,c){return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/20)*100}%; background:${c}"></div></div><div style="width:15px; text-align:right; font-size:10px;">${v}</div></div>`;}
 
     function nextDay() {
-        // 1. 멤버별 랜덤 자동 트레이닝 실행
         let dailyReport = [];
         const stats = ['vocal', 'dance', 'visual', 'variety', 'charm'];
         const statNames = {'vocal':'🎤보컬', 'dance':'💃댄스', 'visual':'✨비주얼', 'variety':'🗣예능', 'charm':'🎀매력'};
@@ -156,19 +168,16 @@
         gameState.weeklyLog.push({day: gameState.day, data: dailyReport});
         if(gameState.weeklyLog.length > 7) gameState.weeklyLog.shift();
 
-        // 2. 날짜 변경 및 유지비 차감
         gameState.day++;
         gameState.finance -= 500000;
-        gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10)); // 자가 회복
+        gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
 
-        // 3. 커뮤니티 업데이트
         const eMsg = ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)];
         const cMsg = cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)];
         gameState.community.push({site:'에뱀', content:eMsg}, {site:'카페', content:cMsg});
         if(gameState.community.length > 20) gameState.community.splice(0,2);
         document.getElementById('daily-best-comm').innerText = `"${eMsg}" - 에뱀코리아`;
 
-        // 4. 주간 리포트 (7일 단위) 출력 체크
         if(gameState.day % 7 === 1 && gameState.day > 1) {
             showWeeklyReport();
         } else {
@@ -176,27 +185,32 @@
         }
 
         updateDisplay();
-
-        // 5. 변수 발생 (3일에 1번 무조건 발생)
-        if(gameState.day % 3 === 0) {
-            triggerEvent();
-        } else {
-            openPage('home');
-        }
+        if(gameState.day % 3 === 0) triggerEvent();
+        else openPage('home');
     }
 
     function showWeeklyReport() {
         const card = document.getElementById('weekly-report-card');
         const content = document.getElementById('weekly-report-content');
         card.style.display = 'block';
-        content.innerHTML = gameState.weeklyLog.map(log => `
-            <div style="margin-bottom:10px;">
-                <div style="font-size:12px; font-weight:bold; color:#339af0;">[${log.day}일차 결과]</div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-                    ${log.data.map(d => `<div class="report-line">${d.name}: ${d.stat} ▲</div>`).join('')}
-                </div>
-            </div>
-        `).join('');
+
+        // 멤버별 총 상승 수치 계산
+        let totals = {};
+        gameState.members.forEach(m => totals[m.name] = {});
+        
+        gameState.weeklyLog.forEach(log => {
+            log.data.forEach(d => {
+                totals[d.name][d.stat] = (totals[d.name][d.stat] || 0) + 1;
+            });
+        });
+
+        content.innerHTML = Object.keys(totals).map(name => {
+            let statSummary = Object.entries(totals[name]).map(([s, val]) => `${s} +${val}`).join(', ');
+            return `<div style="margin-bottom:8px; border-bottom:1px solid #d0ebff; padding-bottom:5px;">
+                <strong style="font-size:13px;">${name}</strong>: <span style="font-size:12px; color:#1971c2;">${statSummary || '상승 없음'}</span>
+            </div>`;
+        }).join('') + `<div style="font-size:11px; color:#888; text-align:right; margin-top:5px;">* 최근 7일간의 훈련 결과입니다.</div>`;
+        
         openPage('home');
     }
 
