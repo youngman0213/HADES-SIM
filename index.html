@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v6.5</title>
+    <title>하데스 키우기 v6.7</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -31,7 +31,8 @@
         .primary-btn { width: 100%; padding: 15px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
         .next-day-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid var(--border); text-align: center; z-index: 100; }
         .modal-overlay { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        .modal-content { background:white; margin:10% auto; padding:30px; width:400px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+        .modal-content { background:white; margin:10% auto; padding:30px; width:420px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+        .weekly-line { text-align: left; font-size: 13px; padding: 8px 0; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -57,18 +58,13 @@
         </div>
 
         <div class="card" id="profit-report" style="display:none; background: #f2fcf0; border-color: #40c057;">
-            <h2>💰 일일 라이브 수익 보고</h2>
+            <h2>🎈 일일 물풍선 수익 보고</h2>
             <div id="profit-content" style="font-size: 14px;"></div>
-        </div>
-
-        <div class="card" id="weekly-report-card" style="display:none; background: #e7f5ff; border-color: #339af0;">
-            <h2>📈 주간 트레이닝 결산</h2>
-            <div id="weekly-report-content"></div>
         </div>
 
         <div class="card">
             <h2>🌐 커뮤니티 반응</h2>
-            <div id="comm-container" style="max-height: 300px; overflow-y: auto;"></div>
+            <div id="comm-container" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
     </div>
 
@@ -99,9 +95,9 @@
 
 <div id="eventModal" class="modal-overlay">
     <div class="modal-content">
-        <h2 id="event-title">돌발 상황!</h2>
-        <p id="event-desc"></p>
-        <div id="event-choices"></div>
+        <h2 id="modal-title" style="color:var(--point);">돌발 상황!</h2>
+        <div id="modal-body" style="margin: 20px 0;"></div>
+        <div id="modal-choices"></div>
     </div>
 </div>
 
@@ -120,7 +116,6 @@
 
     window.addEventListener('keydown', e => { if (e.code === 'Space' && document.getElementById('eventModal').style.display !== 'block') nextDay(); });
 
-    // 커뮤니티 데이터 (기존 로직 유지)
     const ebemMsgs = ["키마 고음 미쳤네 ㅋㅋ", "연초록 비주얼 실화냐?", "하데스 폼 미쳤다", "에뱀 념글 하데스가 먹었네", "오늘 방송 꿀잼이었음", "솜주먹 커엽노", "챈나 예능감 무엇?", "띵귤 목소리 보물이다"];
     const cafeMsgs = ["케로 1기 모여라!", "오늘도 멤버들 고생했어요", "대표님 고기 사주세요", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!"];
 
@@ -168,15 +163,12 @@
     }
 
     function nextDay() {
-        let totalProfit = 0;
+        let totalProfit = Math.floor(Math.random() * (1000000 - 400000 + 1)) + 400000;
         let dailyReport = [];
         const stats = ['vocal', 'dance', 'visual', 'variety', 'charm'];
         const statNames = {'vocal':'🎤보컬', 'dance':'💃댄스', 'visual':'✨비주얼', 'variety':'🗣예능', 'charm':'🎀매력'};
 
         gameState.members.forEach(m => {
-            let streamPower = (m.variety + m.charm + m.visual) / 3;
-            totalProfit += Math.floor(streamPower * (gameState.fandom / 100) * (Math.random() * 500 + 500));
-
             let action = m.manualAct;
             if (action === 'stream') {
                 const avail = stats.filter(s => m[s] < 20);
@@ -196,7 +188,7 @@
 
         gameState.finance += totalProfit;
         gameState.finance -= 500000;
-        gameState.fandom += Math.floor(totalProfit / 5000);
+        gameState.fandom += Math.floor(totalProfit / 10000);
         gameState.day++;
         gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
 
@@ -204,46 +196,83 @@
         if(gameState.weeklyLog.length > 7) gameState.weeklyLog.shift();
 
         document.getElementById('profit-report').style.display = 'block';
-        document.getElementById('profit-content').innerHTML = `어제 라이브 수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
+        document.getElementById('profit-content').innerHTML = `어제 물풍선 수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
 
-        if(gameState.day % 7 === 1 && gameState.day > 1) showWeeklyReport();
-        else document.getElementById('weekly-report-card').style.display = 'none';
-
-        // 커뮤니티 반응 (그대로 유지)
         gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
         gameState.community.push({site:'카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
         if(gameState.community.length > 20) gameState.community.splice(0,2);
 
         updateDisplay();
         
-        // 돌발 변수 주기 변경: 3일에서 7일로
-        if(gameState.day % 7 === 0) triggerEvent(); 
-        else openPage('home');
+        // 로직 순서: 7일째 밤에 주간 리포트 팝업 -> 리포트 닫으면 7일 주기 이벤트 팝업(동일 주기일 경우)
+        if(gameState.day % 7 === 1 && gameState.day > 1) {
+            showWeeklyReportPopup();
+        } else if(gameState.day % 7 === 0) {
+            triggerEvent(); 
+        } else {
+            openPage('home');
+        }
     }
 
-    function showWeeklyReport() {
-        const card = document.getElementById('weekly-report-card');
-        card.style.display = 'block';
+    function showWeeklyReportPopup() {
+        const title = document.getElementById('modal-title');
+        const body = document.getElementById('modal-body');
+        const choices = document.getElementById('modal-choices');
+        
+        title.innerText = "📈 주간 트레이닝 결산";
+        title.style.color = "#339af0";
+        
         let totals = {};
         gameState.members.forEach(m => totals[m.name] = {});
         gameState.weeklyLog.forEach(log => log.data.forEach(d => totals[d.name][d.stat] = (totals[d.name][d.stat] || 0) + 1));
-        document.getElementById('weekly-report-content').innerHTML = Object.keys(totals).map(name => 
-            `<div style="font-size:12px;"><strong>${name}</strong>: ${Object.entries(totals[name]).map(([s,v])=>`${s}+${v}`).join(', ')}</div>`
-        ).join('');
-        openPage('home');
+        
+        let reportHtml = Object.keys(totals).map(name => {
+            let stats = Object.entries(totals[name]).map(([s,v]) => `${s}+${v}`).join(', ');
+            return `<div class="weekly-line"><strong>${name}</strong>: <span style="color:#1971c2;">${stats || '상승 없음'}</span></div>`;
+        }).join('');
+        
+        body.innerHTML = reportHtml + `<p style="font-size:11px; color:#888; margin-top:15px;">지난 7일간의 훈련 성과입니다.</p>`;
+        
+        choices.innerHTML = `<button class="primary-btn" style="background:#339af0;" onclick="closeModal()">확인</button>`;
+        document.getElementById('eventModal').style.display = 'block';
     }
 
     function triggerEvent() {
-        const ev = { title: "🎁 팬들의 대규모 조공", desc: "팬덤에서 멤버들에게 건강식품 조공을 보냈습니다!", choices: [{ text: "감사히 받는다 (피로도-30)", effect: () => { gameState.members.forEach(m=>m.fatigue=Math.max(0, m.fatigue-30)); } }, { text: "거절하고 기부한다 (팬덤+3000)", effect: () => { gameState.fandom += 3000; } }] };
-        document.getElementById('event-title').innerText = ev.title;
-        document.getElementById('event-desc').innerText = ev.desc;
-        const cont = document.getElementById('event-choices'); cont.innerHTML = '';
+        const title = document.getElementById('modal-title');
+        const body = document.getElementById('modal-body');
+        const choices = document.getElementById('modal-choices');
+        
+        title.innerText = "🎁 팬들의 대규모 조공";
+        title.style.color = "var(--point)";
+        
+        const ev = { 
+            desc: "팬덤에서 멤버들에게 건강식품 조공을 보냈습니다!", 
+            choices: [
+                { text: "감사히 받는다 (피로도-30)", effect: () => { gameState.members.forEach(m=>m.fatigue=Math.max(0, m.fatigue-30)); } }, 
+                { text: "거절하고 기부한다 (팬덤+3000)", effect: () => { gameState.fandom += 3000; } }
+            ] 
+        };
+        
+        body.innerHTML = `<p style="font-size:14px; line-height:1.6;">${ev.desc}</p>`;
+        choices.innerHTML = '';
         ev.choices.forEach(c => {
-            const b = document.createElement('button'); b.className = "primary-btn"; b.innerText = c.text;
-            b.onclick = () => { c.effect(); document.getElementById('eventModal').style.display='none'; updateDisplay(); openPage('home'); };
-            cont.appendChild(b);
+            const b = document.createElement('button');
+            b.className = "primary-btn";
+            b.innerText = c.text;
+            b.onclick = () => { c.effect(); closeModal(); };
+            choices.appendChild(b);
         });
         document.getElementById('eventModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('eventModal').style.display = 'none';
+        // 주간 결산 팝업을 닫았을 때, 만약 오늘이 이벤트 날이라면 이벤트를 이어서 띄움
+        if(gameState.day % 7 === 0) {
+            triggerEvent();
+        } else {
+            openPage('home');
+        }
     }
 
     function openPage(pId, btn) {
