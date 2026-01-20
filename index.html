@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v11.2 (Sequential Popup Fixed)</title>
+    <title>하데스 키우기 v11.3 (Youtube Report Integrated)</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -26,6 +26,7 @@
         .site-ebem { background: #e7f5ff; color: #1971c2; }
         .site-cafe { background: #fff0f6; color: #d6336c; }
         .site-sns { background: #f0f1ff; color: var(--sns); }
+        .site-yt { background: #ffe3e3; color: var(--yt); }
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
         .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
         .stat-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 12px; }
@@ -111,7 +112,7 @@
 
     const ebemMsgs = ["하데스 어제 뱅송 폼 미쳤더라", "아바타 이번에 업뎃함?", "동기화 밀리는거 나만 느낌?", "연초록 이번 빨간약 찌라시 뭐임?", "하데스 멤버들 본체 궁금해 죽겠네"];
     const cafeMsgs = ["케로 1기 가입인사 드립니다!", "서포트 도시락 전달 완료됐나요?", "오늘 뱅송 후기.. 갓벽했다"];
-    const ytComments = Array.from({length: 30}, (_, i) => `너튜브 팬 반응 #${i+1}: 하데스 영상 퀄리티 대박! 조회수 떡상 가자!`);
+    const ytComments = Array.from({length: 30}, (_, i) => `하데스 영상 퀄리티 대박! 조회수 떡상 가자!`);
 
     const virtualEvents = [
         { id: 'server', title: "💻 서버 렉 발생", desc: "방송 중 서버가 불안정합니다.", choices: [{ text: "서버 증설 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "방종 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "방치 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
@@ -171,7 +172,10 @@
             </div>
         `).join('');
         document.getElementById('comm-container').innerHTML = gameState.community.map(c => `
-            <div class="comm-post"><span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':'site-cafe')}">${c.site}</span><div style="font-size:13px; margin-top:4px;">${c.content}</div></div>
+            <div class="comm-post">
+                <span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':(c.site==='너튜브'?'site-yt':'site-cafe'))}">${c.site}</span>
+                <div style="font-size:13px; margin-top:4px;">${c.content}</div>
+            </div>
         `).reverse().join('');
     }
 
@@ -194,25 +198,35 @@
             m.manualAct = null;
         });
 
-        // SNS 업로드 (월-금)
+        // 1. 주간 너튜브 결산 (7일마다 - 피드로 이동)
+        if(gameState.day % 7 === 0 && gameState.day > 1) {
+            const views = (Math.floor(Math.random() * 291) + 10) * 10000;
+            const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
+            gameState.community.push({
+                site: '너튜브', 
+                content: `🎥 <b>주간 인기 급상승!</b> 이번 주 주인공 <b>${star}</b> 조회수 ${views.toLocaleString()}회 달성! <br><small>${ytComments[Math.floor(Math.random()*30)]}</small>`
+            });
+        }
+
+        // 2. 일상 피드 생성
         const weekDay = (gameState.day - 1) % 7;
         if (weekDay < 5) {
             const m = gameState.members[weekDay];
-            gameState.community.push({site:'SNS', content: `📱 @${m.name}: 새로운 소식을 확인하세요!`});
+            gameState.community.push({site:'SNS', content: `📱 @${m.name}: 다음 방송에서 만나요! ✨`});
         }
-        if (Math.random() < 0.4) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
-        if (Math.random() < 0.4) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
+        if (Math.random() < 0.3) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
+        if (Math.random() < 0.3) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
 
-        // 팝업 큐 적재 (중요!)
+        // 3. 팝업 큐 적재 (생일, 돌발 이벤트만)
         let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
         let dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         gameState.members.forEach(m => { if (m.birth === dateStr) gameState.popupQueue.push({type: 'birthday', member: m}); });
 
-        if(gameState.day % 7 === 0 && gameState.day > 1) gameState.popupQueue.push({type: 'weekly'});
         if(Math.random() < 0.25) gameState.popupQueue.push({type: 'virtual'});
 
+        // 자산 관리 (2억 고정 로직 유지)
         gameState.finance += totalProfit; 
-        gameState.finance -= 500000; // 유지비
+        gameState.finance -= 500000; 
         updateFandom(Math.floor(totalProfit / 10000));
         
         gameState.day++;
@@ -220,20 +234,18 @@
         
         document.getElementById('profit-report').style.display = 'block';
         document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
-        if(gameState.community.length > 8) gameState.community = gameState.community.slice(-8);
+        if(gameState.community.length > 15) gameState.community = gameState.community.slice(-15);
         
         updateDisplay();
-        processNextPopup(); // 팝업 시퀀스 시작
+        processNextPopup();
     }
 
     function processNextPopup() {
-        // 이미 팝업이 떠있으면 중단 (closeModal에서 재호출)
         if (document.getElementById('eventModal').style.display === 'block') return;
         if (gameState.popupQueue.length === 0) return;
 
         const item = gameState.popupQueue.shift();
-        if(item.type === 'weekly') showWeeklyReportPopup();
-        else if(item.type === 'birthday') showBirthdayPopup(item.member);
+        if(item.type === 'birthday') showBirthdayPopup(item.member);
         else if(item.type === 'virtual') showVirtualEventPopup();
     }
 
@@ -254,16 +266,6 @@
         closeModal();
     }
 
-    function showWeeklyReportPopup() {
-        const modal = document.getElementById('eventModal');
-        const views = (Math.floor(Math.random() * 291) + 10) * 10000;
-        const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
-        document.getElementById('modal-title').innerText = "📈 주간 너튜브 결산";
-        document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#fff5f5; padding:15px; border-radius:10px;"><strong>이번 주 주인공: <span style="color:var(--point)">${star}</span></strong><br>조회수: ${views.toLocaleString()}회<br><br>${ytComments[Math.floor(Math.random()*30)]}</div>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
-        modal.style.display = 'block';
-    }
-
     function showBirthdayPopup(m) {
         const modal = document.getElementById('eventModal');
         updateFandom(15000); 
@@ -275,7 +277,6 @@
 
     function closeModal() { 
         document.getElementById('eventModal').style.display = 'none'; 
-        // 팝업이 닫힌 후 아주 짧은 지연시간 뒤에 다음 팝업이 있는지 체크 (차례대로 띄우기 위함)
         setTimeout(processNextPopup, 150); 
     }
 
@@ -293,7 +294,6 @@
         updateDisplay();
     }
 
-    // 초기 설정
     const sel = document.getElementById('sel-member');
     gameState.members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
     updateDisplay();
