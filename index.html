@@ -2,102 +2,95 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>HADES 관리 시스템 v4.9</title>
+    <title>HADES 관리 시스템 v5.1</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
-        
         .nav-bar { display: flex; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .nav-btn { flex: 1; padding: 18px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 15px; }
-        .nav-btn.active { color: var(--point); border-bottom: 3px solid var(--point); }
-
-        .container { max-width: 900px; margin: 20px auto; padding: 0 20px; }
+        .nav-btn { flex: 1; padding: 18px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .nav-btn.active { color: var(--point); border-bottom: 3px solid var(--point); background: #fffafc; }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 20px 100px 20px; }
         .page { display: none; }
         .page.active { display: block; }
-
         .card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
         .date-display { position: absolute; top: 20px; right: 25px; font-weight: bold; color: var(--point); font-size: 18px; }
-        h2 { color: #222; font-size: 1.3rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; margin-bottom: 20px; }
-        
-        /* 뉴스/여론 박스 */
-        .news-box { background: #fff9db; border: 1px solid #fab005; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
-        .comm-log { background: #000; color: #0f0; padding: 15px; height: 180px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12px; border-radius: 10px; border: 2px solid #333; }
-        .comm-msg { margin-bottom: 5px; }
-        .comm-author { color: #ff4d94; font-weight: bold; }
-
+        h2 { color: #222; font-size: 1.2rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; margin-bottom: 20px; }
+        .comm-post { border-bottom: 1px solid #eee; padding: 12px 0; }
+        .comm-site { font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 4px; margin-right: 8px; }
+        .site-ebem { background: #e7f5ff; color: #1971c2; }
+        .site-cafe { background: #fff0f6; color: #d6336c; }
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
         .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
         .stat-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 12px; }
         .stat-label { width: 45px; color: #777; }
         .stat-bar-bg { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 0 8px; }
         .stat-bar-fill { height: 100%; border-radius: 3px; transition: 0.5s; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 10% auto; padding: 30px; width: 380px; border-radius: 20px; text-align: center; position: relative; }
-        
         .primary-btn { width: 100%; padding: 15px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
-        .choice-btn { background: #333; margin-top: 8px; font-size: 14px; }
+        .choice-btn { background: #333; margin-top: 8px; font-size: 14px; transition: 0.2s; }
+        .choice-btn:hover { background: #555; }
+        .next-day-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid var(--border); text-align: center; z-index: 100; }
     </style>
 </head>
 <body>
 
 <div class="nav-bar">
-    <button class="nav-btn active" onclick="openPage('home')">📊 홈</button>
-    <button class="nav-btn" onclick="openPage('members')">👥 멤버현황</button>
-    <button class="nav-btn" onclick="openPage('schedule')">📅 지시</button>
+    <button class="nav-btn active" onclick="openPage('home', this)">📊 홈</button>
+    <button class="nav-btn" onclick="openPage('community', this)">🌐 커뮤니티</button>
+    <button class="nav-btn" onclick="openPage('members', this)">👥 멤버현황</button>
+    <button class="nav-btn" onclick="openPage('schedule', this)">📅 지시</button>
 </div>
 
 <div class="container">
     <div id="home" class="page active">
         <div class="card">
             <div class="date-display">운영 <span id="current-day">1</span>일차</div>
-            <h2>하데스 상태 콘솔</h2>
+            <h2>상태 콘솔</h2>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div><small>보유 자산</small><br><strong id="p-finance">45,000,000</strong></div>
                 <div><small>케로 팬덤</small><br><strong id="p-fandom">12,405</strong></div>
             </div>
         </div>
-
-        <div class="news-box" id="daily-news">
-            <strong>[오늘의 헤드라인]</strong><br>
-            하데스 프로젝트, 본격적인 시뮬레이션 가동. 에뱀코리아 유저들이 주목하고 있습니다.
+        <div class="card" style="background: #fff9db;">
+            <h2>오늘의 소식</h2>
+            <p id="daily-news">하데스 프로젝트의 첫 발을 내딛었습니다.</p>
         </div>
+    </div>
 
+    <div id="community" class="page">
         <div class="card">
-            <h2>커뮤니티 및 여론 (실시간)</h2>
-            <div class="comm-log" id="comm-log">
-                <div class="comm-msg">[에뱀코리아] 하데스 얘네 진짜 버츄얼 맞음? 퀄리티 미쳤는데?</div>
-                <div class="comm-msg">[팬카페] 케로 1기 가입 언제부터인가요? 대표님 일하세요!</div>
-            </div>
+            <h2>커뮤니티 반응</h2>
+            <div id="comm-container"></div>
         </div>
-        <button class="primary-btn" style="background: #40c057;" onclick="nextDay()">🌙 오늘 일과 종료 및 다음 날로</button>
     </div>
 
     <div id="members" class="page">
-        <h2>전 멤버 능력치 현황</h2>
         <div class="member-grid" id="member-grid-container"></div>
     </div>
 
     <div id="schedule" class="page">
         <div class="card">
             <h2>트레이닝 지시</h2>
-            <select id="sel-member" style="width:100%; padding:15px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 10px;"></select>
-            <select id="sel-stat" style="width:100%; padding:15px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 10px;">
-                <option value="vocal">🎤 보컬 집중 훈련</option>
-                <option value="dance">💃 댄스 안무 연습</option>
+            <select id="sel-member" style="width:100%; padding:15px; margin-bottom: 10px; border-radius: 10px;"></select>
+            <select id="sel-stat" style="width:100%; padding:15px; margin-bottom: 15px; border-radius: 10px;">
+                <option value="vocal">🎤 보컬 훈련</option>
+                <option value="dance">💃 댄스 훈련</option>
                 <option value="visual">✨ 비주얼 케어</option>
-                <option value="variety">🗣️ 예능 스피치</option>
-                <option value="charm">🎀 매력 강화</option>
+                <option value="variety">🗣️ 예능 훈련</option>
+                <option value="charm">🎀 매력 훈련</option>
             </select>
             <button class="primary-btn" onclick="trainAction()">훈련 실행</button>
         </div>
     </div>
 </div>
 
-<div id="eventModal" class="modal">
-    <div class="modal-content">
-        <h2 id="event-title" style="color:var(--point);">돌발 상황 발생!</h2>
-        <p id="event-desc" style="margin: 20px 0; line-height: 1.6;"></p>
+<div class="next-day-bar">
+    <button class="primary-btn" style="background: #40c057; width: auto; padding: 12px 40px;" onclick="nextDay()">🌙 오늘 일과 마무리</button>
+</div>
+
+<div id="eventModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+    <div style="background: white; margin: 15% auto; padding: 30px; width: 350px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+        <h2 id="event-title" style="color:var(--point); margin-bottom:10px;">돌발 상황!</h2>
+        <p id="event-desc" style="margin-bottom: 20px; font-size: 14px; line-height: 1.6;"></p>
         <div id="event-choices"></div>
     </div>
 </div>
@@ -111,49 +104,37 @@
             {name: '챈나', vocal: 8, dance: 9, visual: 11, variety: 12, charm: 13, fatigue: 10, acted: false},
             {name: '솜주먹', vocal: 7, dance: 11, visual: 10, variety: 14, charm: 12, fatigue: 10, acted: false},
             {name: '연초록', vocal: 12, dance: 9, visual: 12, variety: 6, charm: 11, fatigue: 10, acted: false}
-        ]
+        ],
+        community: [{site: '카페', content: '하데스 매니지먼트 가동 소식에 팬들이 설레하고 있습니다.'}]
     };
 
-    const newsList = [
-        "하데스 멤버의 과거 연습 영상 유출? '준비된 아이돌' 찬사.",
-        "버츄얼 기술력 논란, '이게 진짜 가능해?' 업계 주목.",
-        "팬카페 회원수 급증! 케로들의 화력이 심상치 않다.",
-        "대표 봉준, '하데스는 단순한 버츄얼 그 이상' 인터뷰 화제."
-    ];
-
-    const commMsgs = [
-        "[에뱀코리아] 키마 목소리 실화냐... 극락 가네",
-        "[팬카페] 솜주먹님 방송 텐션 무엇 ㅋㅋㅋ 꿀잼",
-        "[에뱀코리아] 연초록 비주얼 모델링 누가 뽑았냐 절받아라",
-        "[팬카페] 띵귤님 고음 지를 때 소름 돋음",
-        "[에뱀코리아] 챈나 예능감 미쳤네, 공중파 가자",
-        "[에뱀코리아] 아니 하데스 굿즈 언제 나옴? 돈 쓰게 해줘"
-    ];
-
-    const events = [
+    const newsList = ["하데스 프로젝트, 인기 급상승 중", "연습 도중 멤버들의 웃음소리가 끊이지 않아", "버츄얼 시장의 새로운 강자 하데스", "대표 봉준, 다음 행보는?"];
+    
+    // 돌발 이벤트 목록
+    const randomEvents = [
         {
-            title: "기술적 결함 발생!",
-            desc: "라이브 도중 모션 트래킹이 심하게 튑니다. 팬들이 당황하고 있습니다!",
+            title: "📡 방송 장비 노후화",
+            desc: "송출 컴퓨터가 노후되어 자꾸 렉이 걸립니다. 어떻게 할까요?",
             choices: [
-                {text: "유머로 승화하여 웃음을 준다", effect: () => { gameState.fandom += 100; addCommLog("에뱀코리아: ㅋㅋㅋㅋ 개웃기네"); }},
-                {text: "즉시 방송을 종료하고 사과한다", effect: () => { gameState.finance -= 100000; addCommLog("팬카페: 운영팀 일 잘하네"); }}
+                { text: "최신형으로 교체 (500만 원)", effect: () => { gameState.finance -= 5000000; addComm('에뱀', '컴퓨터 바꿨나 보네? 프레임 미쳤다 ㄷㄷ'); }},
+                { text: "그냥 참고 버틴다", effect: () => { gameState.fandom -= 500; addComm('에뱀', '방송 자꾸 끊기는데 운영진 뭐함?'); }}
             ]
         },
         {
-            title: "커뮤니티 바이럴 성공!",
-            desc: "멤버의 짧은 영상이 쇼츠에서 대박이 났습니다. 유입이 몰려옵니다!",
+            title: "🍰 멤버 간식 서포트",
+            desc: "팬들이 멤버들을 위해 간식을 보내고 싶어 합니다.",
             choices: [
-                {text: "공식 계정으로 노를 젓는다", effect: () => { gameState.fandom += 1000; addCommLog("에뱀코리아: 떡상 가즈아!"); }},
-                {text: "신비주의를 유지하며 다음을 기약한다", effect: () => { gameState.fandom += 200; addCommLog("팬카페: 역시 근본 아이돌"); }}
+                { text: "정중히 거절하고 마음만 받는다", effect: () => { gameState.fandom += 200; addComm('카페', '역시 신비주의 하데스.. 오히려 좋아'); }},
+                { text: "감사히 받고 인증샷을 올린다", effect: () => { gameState.fandom += 800; addComm('카페', '와 인증샷 떴다!! 다들 너무 예뻐 ㅠㅠ'); }}
             ]
         }
     ];
 
-    function openPage(pageId) {
+    function openPage(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        event.currentTarget.classList.add('active');
+        btn.classList.add('active');
         updateDisplay();
     }
 
@@ -164,66 +145,57 @@
         
         const sel = document.getElementById('sel-member');
         if(sel.options.length === 0) {
-            gameState.members.forEach(m => {
-                let opt = document.createElement('option'); opt.value = m.name; opt.innerText = m.name;
-                sel.appendChild(opt);
-            });
+            gameState.members.forEach(m => { sel.innerHTML += `<option value="${m.name}">${m.name}</option>`; });
         }
 
-        const container = document.getElementById('member-grid-container');
-        if(container) {
-            container.innerHTML = gameState.members.map(m => `
-                <div class="member-card">
-                    <div style="display:flex; justify-content:space-between;"><strong>${m.name}</strong><small>${m.acted?'완료':'대기'}</small></div>
-                    <hr border="0" height="1px" background="#eee">
-                    ${renderStat('보컬', m.vocal, 'var(--vocal)')}
-                    ${renderStat('댄스', m.dance, 'var(--dance)')}
-                    ${renderStat('비주얼', m.visual, 'var(--visual)')}
-                    ${renderStat('예능', m.variety, 'var(--variety)')}
-                    ${renderStat('매력', m.charm, 'var(--charm)')}
-                    <div style="font-size:11px; text-align:right; margin-top:5px; color:#888;">피로도: ${m.fatigue}%</div>
-                </div>
-            `).join('');
-        }
+        const mGrid = document.getElementById('member-grid-container');
+        mGrid.innerHTML = gameState.members.map(m => `
+            <div class="member-card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><strong>${m.name}</strong><small>${m.acted?'완료':'대기'}</small></div>
+                ${renderStat('보컬', m.vocal, 'var(--vocal)')}
+                ${renderStat('댄스', m.dance, 'var(--dance)')}
+                ${renderStat('비주얼', m.visual, 'var(--visual)')}
+                ${renderStat('예능', m.variety, 'var(--variety)')}
+                ${renderStat('매력', m.charm, 'var(--charm)')}
+                <div style="font-size:11px; text-align:right; margin-top:8px; color:#888;">피로도: ${m.fatigue}%</div>
+            </div>
+        `).join('');
+
+        const cCont = document.getElementById('comm-container');
+        cCont.innerHTML = gameState.community.map(c => `
+            <div class="comm-post"><span class="comm-site ${c.site==='에뱀'?'site-ebem':'site-cafe'}">${c.site}</span><div style="font-size:13px; margin-top:4px;">${c.content}</div></div>
+        `).reverse().join('');
     }
 
-    function renderStat(label, value, color) {
-        return `<div class="stat-row"><div class="stat-label">${label}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(value/20)*100}%; background:${color}"></div></div></div>`;
-    }
+    function renderStat(l, v, c) { return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/20)*100}%; background:${c}"></div></div><div style="width:15px; text-align:right; font-size:10px;">${v}</div></div>`; }
 
     function trainAction() {
         const name = document.getElementById('sel-member').value;
         const statKey = document.getElementById('sel-stat').value;
         const m = gameState.members.find(item => item.name === name);
-        if(m.acted) { alert("이미 일과를 마쳤습니다."); return; }
-        m[statKey] = Math.min(20, m[statKey] + 1);
-        m.fatigue += 20; m.acted = true;
+        if(m.acted) { alert("이미 완료했습니다."); return; }
+        m[statKey] = Math.min(20, m[statKey] + 1); m.fatigue += 20; m.acted = true;
         updateDisplay();
-        alert(`${name}의 트레이닝이 완료되었습니다.`);
+        alert(`${name} 트레이닝 완료!`);
     }
 
     function nextDay() {
         gameState.day++;
         gameState.finance -= 500000;
         gameState.members.forEach(m => { m.fatigue = Math.max(0, m.fatigue - 20); m.acted = false; });
+        document.getElementById('daily-news').innerText = newsList[Math.floor(Math.random()*newsList.length)];
         
-        // 뉴스 변경
-        document.getElementById('daily-news').innerHTML = `<strong>[오늘의 헤드라인]</strong><br>${newsList[Math.floor(Math.random()*newsList.length)]}`;
-        
-        // 커뮤니티 로그 추가
-        addCommLog(commMsgs[Math.floor(Math.random()*commMsgs.length)]);
-
-        // 30% 확률로 돌발 상황 발생
+        // 40% 확률로 이벤트 발생
         if(Math.random() < 0.4) {
-            const ev = events[Math.floor(Math.random()*events.length)];
-            triggerEvent(ev);
+            const ev = randomEvents[Math.floor(Math.random()*randomEvents.length)];
+            showEvent(ev);
+        } else {
+            alert(`${gameState.day}일차가 되었습니다.`);
+            updateDisplay();
         }
-
-        updateDisplay();
-        openPage('home');
     }
 
-    function triggerEvent(ev) {
+    function showEvent(ev) {
         document.getElementById('event-title').innerText = ev.title;
         document.getElementById('event-desc').innerText = ev.desc;
         const container = document.getElementById('event-choices');
@@ -232,21 +204,18 @@
             const btn = document.createElement('button');
             btn.className = "primary-btn choice-btn";
             btn.innerText = c.text;
-            btn.onclick = () => { c.effect(); closeModal(); updateDisplay(); };
+            btn.onclick = () => { c.effect(); hideEvent(); updateDisplay(); };
             container.appendChild(btn);
         });
         document.getElementById('eventModal').style.display = 'block';
     }
 
-    function addCommLog(msg) {
-        const log = document.getElementById('comm-log');
-        const div = document.createElement('div');
-        div.className = 'comm-msg';
-        div.innerText = msg;
-        log.prepend(div);
+    function hideEvent() { document.getElementById('eventModal').style.display = 'none'; }
+    function addComm(site, content) {
+        gameState.community.push({ site, content });
+        if(gameState.community.length > 20) gameState.community.shift();
     }
 
-    function closeModal() { document.getElementById('eventModal').style.display = 'none'; }
     updateDisplay();
 </script>
 </body>
