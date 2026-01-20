@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>HADES 관리 시스템 v4.7</title>
+    <title>HADES 관리 시스템 v4.9</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -19,29 +19,24 @@
         .date-display { position: absolute; top: 20px; right: 25px; font-weight: bold; color: var(--point); font-size: 18px; }
         h2 { color: #222; font-size: 1.3rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; margin-bottom: 20px; }
         
-        /* 멤버 대시보드 그리드 */
+        /* 뉴스/여론 박스 */
+        .news-box { background: #fff9db; border: 1px solid #fab005; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; }
+        .comm-log { background: #000; color: #0f0; padding: 15px; height: 180px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12px; border-radius: 10px; border: 2px solid #333; }
+        .comm-msg { margin-bottom: 5px; }
+        .comm-author { color: #ff4d94; font-weight: bold; }
+
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
-        .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; transition: 0.2s; }
-        .member-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        .member-name { font-size: 1.1rem; font-weight: bold; }
-        .member-status { font-size: 11px; padding: 2px 6px; border-radius: 4px; }
-
-        /* 능력치 게이지 */
+        .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
         .stat-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 12px; }
-        .stat-label { width: 45px; color: #777; font-weight: 500; }
+        .stat-label { width: 45px; color: #777; }
         .stat-bar-bg { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 0 8px; }
-        .stat-bar-fill { height: 100%; border-radius: 3px; }
-        .stat-value { width: 20px; text-align: right; font-weight: bold; }
-
-        .fatigue-info { margin-top: 10px; font-size: 12px; text-align: right; color: #888; }
-        .fatigue-bar { height: 4px; background: #eee; border-radius: 2px; margin-top: 4px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; border-radius: 3px; transition: 0.5s; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-        .modal-content { background: white; margin: 15% auto; padding: 30px; width: 320px; border-radius: 20px; text-align: center; position: relative; }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; width: 380px; border-radius: 20px; text-align: center; position: relative; }
         
         .primary-btn { width: 100%; padding: 15px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
-        .next-day-btn { background: var(--success); margin-top: 20px; }
-        .log-box { background: #f9f9f9; padding: 15px; height: 150px; overflow-y: auto; font-size: 13px; color: #555; border: 1px solid var(--border); border-radius: 10px; }
+        .choice-btn { background: #333; margin-top: 8px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -62,24 +57,31 @@
                 <div><small>케로 팬덤</small><br><strong id="p-fandom">12,405</strong></div>
             </div>
         </div>
-        <div class="card">
-            <h2>운영 로그</h2>
-            <div class="log-box" id="main-log">[시스템] v4.7 한눈에 보는 현황판 시스템 가동.</div>
+
+        <div class="news-box" id="daily-news">
+            <strong>[오늘의 헤드라인]</strong><br>
+            하데스 프로젝트, 본격적인 시뮬레이션 가동. 에뱀코리아 유저들이 주목하고 있습니다.
         </div>
-        <button class="primary-btn next-day-btn" onclick="nextDay()">🌙 오늘 일과 종료</button>
+
+        <div class="card">
+            <h2>커뮤니티 및 여론 (실시간)</h2>
+            <div class="comm-log" id="comm-log">
+                <div class="comm-msg">[에뱀코리아] 하데스 얘네 진짜 버츄얼 맞음? 퀄리티 미쳤는데?</div>
+                <div class="comm-msg">[팬카페] 케로 1기 가입 언제부터인가요? 대표님 일하세요!</div>
+            </div>
+        </div>
+        <button class="primary-btn" style="background: #40c057;" onclick="nextDay()">🌙 오늘 일과 종료 및 다음 날로</button>
     </div>
 
     <div id="members" class="page">
-        <h2>전 멤버 능력치 현황 (최대: 20)</h2>
+        <h2>전 멤버 능력치 현황</h2>
         <div class="member-grid" id="member-grid-container"></div>
     </div>
 
     <div id="schedule" class="page">
         <div class="card">
-            <h2>오늘의 트레이닝</h2>
-            <select id="sel-member" style="width:100%; padding:15px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 10px;">
-                <option value="키마">키마</option><option value="띵귤">띵귤</option><option value="챈나">챈나</option><option value="솜주먹">솜주먹</option><option value="연초록">연초록</option>
-            </select>
+            <h2>트레이닝 지시</h2>
+            <select id="sel-member" style="width:100%; padding:15px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 10px;"></select>
             <select id="sel-stat" style="width:100%; padding:15px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 10px;">
                 <option value="vocal">🎤 보컬 집중 훈련</option>
                 <option value="dance">💃 댄스 안무 연습</option>
@@ -92,11 +94,11 @@
     </div>
 </div>
 
-<div id="commonModal" class="modal">
+<div id="eventModal" class="modal">
     <div class="modal-content">
-        <h2 id="modal-title">알림</h2>
-        <div id="modal-body" style="margin: 20px 0;"></div>
-        <button class="primary-btn" onclick="closeModal()">확인</button>
+        <h2 id="event-title" style="color:var(--point);">돌발 상황 발생!</h2>
+        <p id="event-desc" style="margin: 20px 0; line-height: 1.6;"></p>
+        <div id="event-choices"></div>
     </div>
 </div>
 
@@ -104,92 +106,147 @@
     let gameState = {
         day: 1, finance: 45000000, fandom: 12405,
         members: [
-            {name: '키마', type: '보컬', vocal: 12, dance: 8, visual: 10, variety: 7, charm: 9, fatigue: 10, acted: false},
-            {name: '띵귤', type: '보컬', vocal: 13, dance: 7, visual: 9, variety: 8, charm: 10, fatigue: 10, acted: false},
-            {name: '챈나', type: '방송', vocal: 8, dance: 9, visual: 11, variety: 12, charm: 13, fatigue: 10, acted: false},
-            {name: '솜주먹', type: '방송', vocal: 7, dance: 11, visual: 10, variety: 14, charm: 12, fatigue: 10, acted: false},
-            {name: '연초록', type: '보컬', vocal: 12, dance: 9, visual: 12, variety: 6, charm: 11, fatigue: 10, acted: false}
+            {name: '키마', vocal: 12, dance: 8, visual: 10, variety: 7, charm: 9, fatigue: 10, acted: false},
+            {name: '띵귤', vocal: 13, dance: 7, visual: 9, variety: 8, charm: 10, fatigue: 10, acted: false},
+            {name: '챈나', vocal: 8, dance: 9, visual: 11, variety: 12, charm: 13, fatigue: 10, acted: false},
+            {name: '솜주먹', vocal: 7, dance: 11, visual: 10, variety: 14, charm: 12, fatigue: 10, acted: false},
+            {name: '연초록', vocal: 12, dance: 9, visual: 12, variety: 6, charm: 11, fatigue: 10, acted: false}
         ]
     };
+
+    const newsList = [
+        "하데스 멤버의 과거 연습 영상 유출? '준비된 아이돌' 찬사.",
+        "버츄얼 기술력 논란, '이게 진짜 가능해?' 업계 주목.",
+        "팬카페 회원수 급증! 케로들의 화력이 심상치 않다.",
+        "대표 봉준, '하데스는 단순한 버츄얼 그 이상' 인터뷰 화제."
+    ];
+
+    const commMsgs = [
+        "[에뱀코리아] 키마 목소리 실화냐... 극락 가네",
+        "[팬카페] 솜주먹님 방송 텐션 무엇 ㅋㅋㅋ 꿀잼",
+        "[에뱀코리아] 연초록 비주얼 모델링 누가 뽑았냐 절받아라",
+        "[팬카페] 띵귤님 고음 지를 때 소름 돋음",
+        "[에뱀코리아] 챈나 예능감 미쳤네, 공중파 가자",
+        "[에뱀코리아] 아니 하데스 굿즈 언제 나옴? 돈 쓰게 해줘"
+    ];
+
+    const events = [
+        {
+            title: "기술적 결함 발생!",
+            desc: "라이브 도중 모션 트래킹이 심하게 튑니다. 팬들이 당황하고 있습니다!",
+            choices: [
+                {text: "유머로 승화하여 웃음을 준다", effect: () => { gameState.fandom += 100; addCommLog("에뱀코리아: ㅋㅋㅋㅋ 개웃기네"); }},
+                {text: "즉시 방송을 종료하고 사과한다", effect: () => { gameState.finance -= 100000; addCommLog("팬카페: 운영팀 일 잘하네"); }}
+            ]
+        },
+        {
+            title: "커뮤니티 바이럴 성공!",
+            desc: "멤버의 짧은 영상이 쇼츠에서 대박이 났습니다. 유입이 몰려옵니다!",
+            choices: [
+                {text: "공식 계정으로 노를 젓는다", effect: () => { gameState.fandom += 1000; addCommLog("에뱀코리아: 떡상 가즈아!"); }},
+                {text: "신비주의를 유지하며 다음을 기약한다", effect: () => { gameState.fandom += 200; addCommLog("팬카페: 역시 근본 아이돌"); }}
+            ]
+        }
+    ];
 
     function openPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         event.currentTarget.classList.add('active');
-        if(pageId === 'members') updateDisplay();
+        updateDisplay();
     }
 
     function updateDisplay() {
         document.getElementById('current-day').innerText = gameState.day;
         document.getElementById('p-finance').innerText = gameState.finance.toLocaleString();
         document.getElementById('p-fandom').innerText = gameState.fandom.toLocaleString();
+        
+        const sel = document.getElementById('sel-member');
+        if(sel.options.length === 0) {
+            gameState.members.forEach(m => {
+                let opt = document.createElement('option'); opt.value = m.name; opt.innerText = m.name;
+                sel.appendChild(opt);
+            });
+        }
 
         const container = document.getElementById('member-grid-container');
-        container.innerHTML = gameState.members.map(m => `
-            <div class="member-card">
-                <div class="member-header">
-                    <span class="member-name">${m.name}</span>
-                    <span class="member-status" style="background:${m.acted?'#eee':'#e3f2ff'}; color:${m.acted?'#999':'#228be6'}">
-                        ${m.acted ? '완료' : '대기중'}
-                    </span>
+        if(container) {
+            container.innerHTML = gameState.members.map(m => `
+                <div class="member-card">
+                    <div style="display:flex; justify-content:space-between;"><strong>${m.name}</strong><small>${m.acted?'완료':'대기'}</small></div>
+                    <hr border="0" height="1px" background="#eee">
+                    ${renderStat('보컬', m.vocal, 'var(--vocal)')}
+                    ${renderStat('댄스', m.dance, 'var(--dance)')}
+                    ${renderStat('비주얼', m.visual, 'var(--visual)')}
+                    ${renderStat('예능', m.variety, 'var(--variety)')}
+                    ${renderStat('매력', m.charm, 'var(--charm)')}
+                    <div style="font-size:11px; text-align:right; margin-top:5px; color:#888;">피로도: ${m.fatigue}%</div>
                 </div>
-                ${renderStat('보컬', m.vocal, 'var(--vocal)')}
-                ${renderStat('댄스', m.dance, 'var(--dance)')}
-                ${renderStat('비주얼', m.visual, 'var(--visual)')}
-                ${renderStat('예능', m.variety, 'var(--variety)')}
-                ${renderStat('매력', m.charm, 'var(--charm)')}
-                <div class="fatigue-info">피로도: ${m.fatigue}%</div>
-                <div class="fatigue-bar"><div style="width:${m.fatigue}%; height:100%; background:${m.fatigue > 70 ? '#ff6b6b' : '#40c057'}"></div></div>
-            </div>
-        `).join('');
+            `).join('');
+        }
     }
 
     function renderStat(label, value, color) {
-        const percent = (value / 20) * 100;
-        return `
-            <div class="stat-row">
-                <div class="stat-label">${label}</div>
-                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${percent}%; background:${color}"></div></div>
-                <div class="stat-value">${value}</div>
-            </div>
-        `;
+        return `<div class="stat-row"><div class="stat-label">${label}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(value/20)*100}%; background:${color}"></div></div></div>`;
     }
 
     function trainAction() {
         const name = document.getElementById('sel-member').value;
         const statKey = document.getElementById('sel-stat').value;
         const m = gameState.members.find(item => item.name === name);
-        if(m.acted) { alert("오늘은 이미 일정을 마쳤습니다."); return; }
-        const gain = Math.floor(Math.random() * 2) + 1;
-        m[statKey] = Math.min(20, m[statKey] + gain);
-        m.fatigue += 20;
-        m.acted = true;
-        addLog(`[지시] ${name}의 ${statKey} 훈련 완료. (+${gain})`);
+        if(m.acted) { alert("이미 일과를 마쳤습니다."); return; }
+        m[statKey] = Math.min(20, m[statKey] + 1);
+        m.fatigue += 20; m.acted = true;
         updateDisplay();
-        alert(`${name} 훈련 완료!`);
+        alert(`${name}의 트레이닝이 완료되었습니다.`);
     }
 
     function nextDay() {
         gameState.day++;
         gameState.finance -= 500000;
         gameState.members.forEach(m => { m.fatigue = Math.max(0, m.fatigue - 20); m.acted = false; });
+        
+        // 뉴스 변경
+        document.getElementById('daily-news').innerHTML = `<strong>[오늘의 헤드라인]</strong><br>${newsList[Math.floor(Math.random()*newsList.length)]}`;
+        
+        // 커뮤니티 로그 추가
+        addCommLog(commMsgs[Math.floor(Math.random()*commMsgs.length)]);
+
+        // 30% 확률로 돌발 상황 발생
+        if(Math.random() < 0.4) {
+            const ev = events[Math.floor(Math.random()*events.length)];
+            triggerEvent(ev);
+        }
+
         updateDisplay();
-        addLog(`--- ${gameState.day}일차 시작 ---`);
-        showModal("☀️ 새로운 아침", `${gameState.day}일차가 되었습니다. 멤버들의 피로도가 회복되었습니다.`);
+        openPage('home');
     }
 
-    function showModal(title, body) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-body').innerHTML = body;
-        document.getElementById('commonModal').style.display = 'block';
+    function triggerEvent(ev) {
+        document.getElementById('event-title').innerText = ev.title;
+        document.getElementById('event-desc').innerText = ev.desc;
+        const container = document.getElementById('event-choices');
+        container.innerHTML = '';
+        ev.choices.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = "primary-btn choice-btn";
+            btn.innerText = c.text;
+            btn.onclick = () => { c.effect(); closeModal(); updateDisplay(); };
+            container.appendChild(btn);
+        });
+        document.getElementById('eventModal').style.display = 'block';
     }
-    function closeModal() { document.getElementById('commonModal').style.display = 'none'; }
-    function addLog(msg) {
-        const log = document.getElementById('main-log');
-        log.innerHTML += `<br>> ${msg}`;
-        log.scrollTop = log.scrollHeight;
+
+    function addCommLog(msg) {
+        const log = document.getElementById('comm-log');
+        const div = document.createElement('div');
+        div.className = 'comm-msg';
+        div.innerText = msg;
+        log.prepend(div);
     }
+
+    function closeModal() { document.getElementById('eventModal').style.display = 'none'; }
     updateDisplay();
 </script>
 </body>
