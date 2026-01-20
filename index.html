@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v8.6</title>
+    <title>하데스 키우기 v8.7</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -106,7 +106,7 @@
 
 <script>
     let gameState = {
-        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 12405,
+        day: 1, startDate: new Date('2025-09-05'), finance: 200,000,000, fandom: 12405,
         youtube: 8200, sns: 15300,
         members: [
             {name: '키마', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
@@ -243,17 +243,21 @@
         let day = gameState.day;
         let eventId = null;
 
-        if (day >= 25 && day <= 35 && day % 3 === 0) {
+        // 신규의상, 공모전, 전광판 (30일 전후: 27~33일 사이 랜덤)
+        if (day >= 27 && day <= 33 && Math.random() < 0.3) {
             const pool = ['costume', 'contest', 'ad'];
             eventId = pool[Math.floor(Math.random()*pool.length)];
         } 
-        else if (day >= 85 && day <= 95 && day % 3 === 0) {
+        // 공식굿즈, 팝업스토어 (90일 전후: 87~93일 사이 랜덤)
+        else if (day >= 87 && day <= 93 && Math.random() < 0.4) {
             const pool = ['goods', 'popup'];
             eventId = pool[Math.floor(Math.random()*pool.length)];
         }
-        else if (day >= 175 && day <= 185 && day % 5 === 0) {
+        // 팬미팅 (180일 전후: 177~183일 사이 랜덤)
+        else if (day >= 177 && day <= 183 && Math.random() < 0.5) {
             eventId = 'meeting';
         }
+        // 나머지 일반 이벤트 (일주일 단위)
         else if (day % 7 === 0) {
             const commonPool = virtualEvents.filter(e => !['costume', 'contest', 'ad', 'goods', 'popup', 'meeting'].includes(e.id));
             if(commonPool.length > 0) eventId = commonPool[Math.floor(Math.random()*commonPool.length)].id;
