@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v11.0 (Custom Events Applied)</title>
+    <title>하데스 키우기 v11.2 (Sequential Popup Fixed)</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -36,8 +36,8 @@
         .choice-btn { width: 100%; padding: 12px; background: #f1f3f5; color: #333; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 8px; text-align: left; font-size: 14px; }
         .choice-btn:hover { background: #e9ecef; }
         .next-day-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid var(--border); text-align: center; z-index: 100; }
-        .modal-overlay { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
-        .modal-content { background:white; margin:10% auto; padding:30px; width:450px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+        .modal-overlay { display: none; position: fixed; z-index: 9000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .modal-content { background:white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding:30px; width:450px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
@@ -106,16 +106,13 @@
             {name: '솜주먹', birth: '11-11', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 10, manualAct: null},
             {name: '연초록', birth: '03-26', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 10, manualAct: null},
         ],
-        community: [], weeklyLog: [], popupQueue: []
+        community: [], popupQueue: []
     };
 
-    const ebemMsgs = ["하데스 어제 뱅송 폼 미쳤더라", "아바타 이번에 업뎃함?", "동기화 밀리는거 나만 느낌?", "연초록 이번 빨간약 찌라시 뭐임?", "하데스 멤버들 본체 궁금해 죽겠네", "오늘 솜주먹 트래킹 개잘됨", "띵귤 목소리 믹싱 바꿨나?", "챈나 모델링 텍스처 개고퀄임", "에뱀 하데스 언급량 보소 ㅋㅋ", "키마 노래뱅 다시보기 내놔라", "버튜버 1군 가즈아", "하데스 이번주 휴방 실화냐", "공식 굿즈 장패드 사고싶다", "비주얼 미화 실화냐?", "트래커 튀는거 개웃김 ㅋㅋ", "하데스 낙수효과 ㄷㄷ", "이번 일러레 누구임? 금손이네", "하데스 대표 일 잘하는듯", "버츄얼 아이돌 원탑 가자", "오늘도 하데스에 머가리 깨짐", "연초록 캐릭터 귀랑 꼬리 대박", "솜주먹 예능 스피치 학원 다님?", "챈나 라이투디 부드러운거 보소", "띵귤 이번 커버곡 레전드", "하데스 뱅송 도네 화력 보소", "안의 사람 누구든 상관없다", "하데스 모델링 뜯어보고 싶네", "오늘 리깅 대박임", "하데스 팬덤 싸움남?", "버튜버 시장 정복 가자"];
-    const cafeMsgs = ["케로 1기 가입인사 드립니다!", "서포트 도시락 전달 완료됐나요?", "오늘 뱅송 후기.. 갓벽했다", "하데스 굿즈 공구해요", "카페 활동 등급업 부탁드려요", "멤버들 목 관리 잘했으면 ㅠㅠ", "하데스 응원법 외워오세요", "팬아트 그려봤습니다!", "오늘 하데스 실북 1위 축하!", "팬미팅 VR로 하나요?", "하데스 달력 도착 인증", "사랑해 하데스 영원하자", "띵귤 생일 광고 위치 어디임?", "키마 목소리 들으러 또 옴", "연초록 팬카페 채팅방 대박", "솜주먹 응원봉 예쁘다", "챈나 웃음소리 벨소리 하고 싶음", "하데스 대표님 감사합니다", "공식 카페 화력 장난아니네", "이게 바로 하데스다", "오늘 뱅송에서 내 도네 읽어줌!", "하데스 멤버들 푹 쉬길", "팬카페 정모 하실 분?", "하데스 세계관 정리본", "굿즈 품절 실화인가요", "하데스랑 소통해서 행복함", "버츄얼 아이돌 끝판왕", "팬카페 이벤트 참여 완료", "멤버들 사랑해!", "하데스 1주년 기다려짐"];
-    const snsComments = ["오늘 모델링 텍스처 레전드", "라이투디 리깅 누가함? 개부드러움", "캐릭터 미모에 눈멀듯", "동기화율 400% ㄷㄷ", "아바타 셀카 필터 씌운거임? 개예쁘네", "오늘 뱅송 기대할게요!", "본체님 열일하네 진짜", "모델링에서 빛이 난다", "이 비주얼로 데뷔해줘서 압도적 감사", "동기화 밀려도 귀여움 ㅋㅋ", "하데스 멤버들 텍스처 실화?", "버츄얼 아이돌 맞냐? 미모 무엇", "트래킹 튀는것도 컨텐츠다", "리깅 장인 누구임? 절하고 싶다", "오늘도 내 심장을 저격하는 모델링", "하데스 팬이라 행복해요", "셀카 각도 천재네", "이번 업뎃된 의상 찰떡임", "캐릭터에 영혼을 바쳤다", "동기화 오류도 사랑스러움"];
-    const snsPostThemes = ["오늘 아바타 셀카 업데이트!", "녹음실에서 한 컷! 기대해 주세요🎤", "안무 연습 끝!", "오늘 야식은 0칼로리 간식.. 맛있겠죠?🍕", "쇼츠 촬영 중!", "동기화 테스트 중 한 컷!", "새로운 의상 피팅해봤어요!", "팬아트 보는 중! 너무 감동이야..🎨", "실시간 스트리밍 시작 10분 전!", "멤버들이랑 다같이 수다 타임!✨", "아침 운동 완료!", "어제 방송 다시보기 하는 중..😭", "구독자 10만 가자!❤️", "비주얼 케어 받는 날!✨", "커버곡 녹음 중인데 너무 어려워요ㅠㅠ🎶", "카페에서 잠시 휴식..☕", "굿즈 샘플 도착!🎁", "대기실에서 멍 때리기..💭", "버츄얼 세상은 오늘도 평화롭습니다🌈", "깜짝 뱅송 예고!🌙"];
+    const ebemMsgs = ["하데스 어제 뱅송 폼 미쳤더라", "아바타 이번에 업뎃함?", "동기화 밀리는거 나만 느낌?", "연초록 이번 빨간약 찌라시 뭐임?", "하데스 멤버들 본체 궁금해 죽겠네"];
+    const cafeMsgs = ["케로 1기 가입인사 드립니다!", "서포트 도시락 전달 완료됐나요?", "오늘 뱅송 후기.. 갓벽했다"];
     const ytComments = Array.from({length: 30}, (_, i) => `너튜브 팬 반응 #${i+1}: 하데스 영상 퀄리티 대박! 조회수 떡상 가자!`);
 
-    // 대표님이 전달해주신 이벤트 데이터
     const virtualEvents = [
         { id: 'server', title: "💻 서버 렉 발생", desc: "방송 중 서버가 불안정합니다.", choices: [{ text: "서버 증설 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "방종 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "방치 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
         { id: 'costume', title: "👗 신규 의상", desc: "고퀄리티 아바타 의상을 제작할까요?", choices: [{ text: "프리미엄 (-1500만/팬덤+8000)", effect: () => { gameState.finance -= 15000000; updateFandom(8000); } }, { text: "보급형 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "보류 (없음)", effect: () => {} }] },
@@ -142,8 +139,12 @@
     window.addEventListener('keydown', e => { 
         if (e.code === 'Space') {
             const modal = document.getElementById('eventModal');
-            if (modal.style.display === 'block') return;
-            nextDay();
+            if (modal.style.display === 'block') {
+                const btn = modal.querySelector('.primary-btn');
+                if(btn) btn.click();
+            } else {
+                nextDay();
+            }
         }
     });
 
@@ -172,9 +173,6 @@
         document.getElementById('comm-container').innerHTML = gameState.community.map(c => `
             <div class="comm-post"><span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':'site-cafe')}">${c.site}</span><div style="font-size:13px; margin-top:4px;">${c.content}</div></div>
         `).reverse().join('');
-
-        const sel = document.getElementById('sel-member');
-        if(sel.options.length === 0) gameState.members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
     }
 
     function renderStat(l, v, c) {
@@ -182,6 +180,8 @@
     }
 
     function nextDay() {
+        if (document.getElementById('eventModal').style.display === 'block') return;
+
         let totalProfit = Math.floor(Math.random() * 600001) + 400000;
         const actionsPool = ['vocal', 'dance', 'visual', 'variety', 'charm', 'rest'];
 
@@ -194,26 +194,27 @@
             m.manualAct = null;
         });
 
-        if (Math.random() < 0.4) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
-        if (Math.random() < 0.4) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
-        
+        // SNS 업로드 (월-금)
         const weekDay = (gameState.day - 1) % 7;
         if (weekDay < 5) {
             const m = gameState.members[weekDay];
-            const theme = snsPostThemes[Math.floor(Math.random() * snsPostThemes.length)];
-            gameState.community.push({site:'SNS', content: `📱 @${m.name}: ${theme} (댓글: ${snsComments[Math.floor(Math.random()*snsComments.length)]})`});
+            gameState.community.push({site:'SNS', content: `📱 @${m.name}: 새로운 소식을 확인하세요!`});
         }
+        if (Math.random() < 0.4) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
+        if (Math.random() < 0.4) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
 
+        // 팝업 큐 적재 (중요!)
         let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
         let dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         gameState.members.forEach(m => { if (m.birth === dateStr) gameState.popupQueue.push({type: 'birthday', member: m}); });
 
-        gameState.finance += totalProfit; gameState.finance -= 500000;
+        if(gameState.day % 7 === 0 && gameState.day > 1) gameState.popupQueue.push({type: 'weekly'});
+        if(Math.random() < 0.25) gameState.popupQueue.push({type: 'virtual'});
+
+        gameState.finance += totalProfit; 
+        gameState.finance -= 500000; // 유지비
         updateFandom(Math.floor(totalProfit / 10000));
         
-        if(gameState.day % 7 === 0 && gameState.day > 1) gameState.popupQueue.push({type: 'weekly'});
-        if(Math.random() < 0.15) gameState.popupQueue.push({type: 'virtual'});
-
         gameState.day++;
         gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
         
@@ -222,11 +223,14 @@
         if(gameState.community.length > 8) gameState.community = gameState.community.slice(-8);
         
         updateDisplay();
-        processNextPopup();
+        processNextPopup(); // 팝업 시퀀스 시작
     }
 
     function processNextPopup() {
-        if(gameState.popupQueue.length === 0) return;
+        // 이미 팝업이 떠있으면 중단 (closeModal에서 재호출)
+        if (document.getElementById('eventModal').style.display === 'block') return;
+        if (gameState.popupQueue.length === 0) return;
+
         const item = gameState.popupQueue.shift();
         if(item.type === 'weekly') showWeeklyReportPopup();
         else if(item.type === 'birthday') showBirthdayPopup(item.member);
@@ -255,18 +259,24 @@
         const views = (Math.floor(Math.random() * 291) + 10) * 10000;
         const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
         document.getElementById('modal-title').innerText = "📈 주간 너튜브 결산";
-        document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#fff5f5; padding:15px; border-radius:10px;"><strong>이번 주 주인공: <span style="color:var(--point)">${star}</span></strong><br>조회수: ${views.toLocaleString()}회<hr><div style="font-size:11px; line-height:1.4;">- ${ytComments[Math.floor(Math.random()*30)]}<br>- ${ytComments[Math.floor(Math.random()*30)]}</div></div>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
+        document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#fff5f5; padding:15px; border-radius:10px;"><strong>이번 주 주인공: <span style="color:var(--point)">${star}</span></strong><br>조회수: ${views.toLocaleString()}회<br><br>${ytComments[Math.floor(Math.random()*30)]}</div>`;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
         modal.style.display = 'block';
     }
 
     function showBirthdayPopup(m) {
         const modal = document.getElementById('eventModal');
-        updateFandom(15000); ['vocal','dance','visual','variety','charm'].forEach(s => m[s] = Math.min(20, m[s]+1));
+        updateFandom(15000); 
         document.getElementById('modal-title').innerText = `🎂 HAPPY BIRTHDAY!`;
         document.getElementById('modal-body').innerHTML = `<h3>${m.name}의 생일입니다!</h3><p>팬덤 +15,000 / 전스탯 +1</p>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">축하해주기</button>`;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">축하해주기 (Space)</button>`;
         modal.style.display = 'block';
+    }
+
+    function closeModal() { 
+        document.getElementById('eventModal').style.display = 'none'; 
+        // 팝업이 닫힌 후 아주 짧은 지연시간 뒤에 다음 팝업이 있는지 체크 (차례대로 띄우기 위함)
+        setTimeout(processNextPopup, 150); 
     }
 
     function manualTrainAction() {
@@ -276,13 +286,16 @@
         m.manualAct = stat; alert(`${name} 지시 완료`); updateDisplay();
     }
 
-    function closeModal() { document.getElementById('eventModal').style.display = 'none'; processNextPopup(); }
     function openPage(pId, btn) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         document.getElementById(pId).classList.add('active'); if(btn) btn.classList.add('active');
         updateDisplay();
     }
+
+    // 초기 설정
+    const sel = document.getElementById('sel-member');
+    gameState.members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
     updateDisplay();
 </script>
 </body>
