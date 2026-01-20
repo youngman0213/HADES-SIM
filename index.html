@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v7.3</title>
+    <title>하데스 키우기 v7.9</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -48,20 +48,20 @@
         <div class="card">
             <div class="date-display">
                 <span class="day-count">운영 <span id="current-day">1</span>일차</span>
-                <span class="real-date" id="current-date">2026-01-20</span>
+                <span class="real-date" id="current-date">2025-09-05</span>
             </div>
             <h2>상태 콘솔</h2>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div><small>보유 자산</small><br><strong id="p-finance">200,000,000</strong></div>
-                <div><small>케로 팬덤</small><br><strong id="p-fandom">12,405</strong></div>
+                <div><small>케로 팬덤수</small><br><strong id="p-fandom">12,405</strong></div>
             </div>
         </div>
         <div class="card" id="profit-report" style="display:none; background: #f2fcf0; border-color: #40c057;">
-            <h2>🎈 일일 물풍선 수익 보고</h2>
+            <h2>🎈 일일 물풍선 수익 </h2>
             <div id="profit-content" style="font-size: 14px;"></div>
         </div>
         <div class="card">
-            <h2>🌐 커뮤니티 반응 (최신 3개)</h2>
+            <h2>🌐 커뮤니티 / 팬카페 반응 </h2>
             <div id="comm-container"></div>
         </div>
     </div>
@@ -72,11 +72,11 @@
 
     <div id="manual" class="page">
         <div class="card">
-            <h2>수동 트레이닝 지시</h2>
+            <h2>수동 트레이닝 </h2>
             <select id="sel-member" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;"></select>
             <select id="sel-stat" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;">
                 <option value="vocal">🎤 보컬 집중 훈련</option>
-                <option value="dance">💃 댄스 안무 연습</option>
+                <option value="dance">💃 안무 연습</option>
                 <option value="visual">✨ 비주얼 케어</option>
                 <option value="variety">🗣️ 예능 스피치</option>
                 <option value="charm">🎀 매력 강화</option>
@@ -88,7 +88,7 @@
 </div>
 
 <div class="next-day-bar">
-    <button class="primary-btn" style="background: #40c057; width: auto; padding: 12px 40px;" onclick="nextDay()">🌙 오늘 일과 마무리 (Space)</button>
+    <button class="primary-btn" style="background: #40c057; width: auto; padding: 12px 40px;" onclick="nextDay()">🌙 다음날로 (Space)</button>
 </div>
 
 <div id="eventModal" class="modal-overlay">
@@ -101,42 +101,41 @@
 
 <script>
     let gameState = {
-        day: 1, startDate: new Date('2026-01-20'), finance: 200000000, fandom: 12405,
+        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 12405,
         members: [
-            {name: '키마', vocal: 12, dance: 8, visual: 10, variety: 7, charm: 9, fatigue: 10, manualAct: null},
-            {name: '띵귤', vocal: 13, dance: 7, visual: 9, variety: 8, charm: 10, fatigue: 10, manualAct: null},
-            {name: '챈나', vocal: 8, dance: 9, visual: 11, variety: 12, charm: 13, fatigue: 10, manualAct: null},
-            {name: '솜주먹', vocal: 7, dance: 11, visual: 10, variety: 14, charm: 12, fatigue: 10, manualAct: null},
-            {name: '연초록', vocal: 12, dance: 9, visual: 12, variety: 6, charm: 11, fatigue: 10, manualAct: null}
+            {name: '키마', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
+            {name: '띵귤', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
+            {name: '챈나', vocal: 9, dance: 10, visual: 11, variety: 9, charm: 10, fatigue: 10, manualAct: null},
+            {name: '솜주먹', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 10, manualAct: null},
+            {name: '연초록', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 10, manualAct: null},
         ],
         community: [], weeklyLog: [], popupQueue: []
     };
 
-    const ebemMsgs = ["키마 고음 미쳤네 ㅋㅋ", "연초록 비주얼 실화냐?", "하데스 폼 미쳤다", "에뱀 념글 하데스가 먹었네", "오늘 방송 꿀잼이었음", "솜주먹 커엽노", "챈나 예능감 무엇?", "띵귤 목소리 보물이다", "근데 하데스 수익 어디로 가냐?", "요즘 버튜버 판 하데스가 점령함", "아니 훈련 실패 실화? ㅋㅋㅋ", "키마 노래 실력 억까하는 애들 뭐냐", "띵귤 매력에 정신 못차리겠다", "하데스 무지성 개추", "이번에 신규 아바타 뽑자", "오늘 방송 채팅창 관리 좀 해라", "에뱀 형님들 하데스 입덕했다", "연초록은 사람 홀리는 재주가 있음", "챈나 웃음소리 중독성 갑", "솜주먹 이름값 하네 ㅋㅋ", "하데스 코인 타길 잘했다", "버추얼 시장의 혁명이다", "솔직히 얘네가 1황임", "오늘도 물풍선 쐈다", "훈련 효율 실화냐 대표야 일해라"];
+    const ebemMsgs = ["키마 고음 미쳤네 ㅋㅋ", "연초록 비주얼 실화냐?", "하데스 폼 미쳤다", "에뱀 인기글 하데스가 먹었네", "오늘 방송 꿀잼이었음", "솜주먹 커엽노", "챈나 예능감 무엇?", "띵귤 목소리 보물이다", "근데 하데스 수익 어디로 가냐?", "요즘 버튜버 판 하데스가 점령함", "아니 훈련 실패 실화? ㅋㅋㅋ", "키마 노래 실력 억까하는 애들 뭐냐", "띵귤 매력에 정신 못차리겠다", "하데스 무지성 개추", "이번에 신규 아바타 뽑자", "오늘 방송 채팅창 관리 좀 해라", "에뱀 형님들 하데스 입덕했다", "연초록은 사람 홀리는 재주가 있음", "챈나 웃음소리 중독성 갑", "솜주먹 이름값 하네 ㅋㅋ", "하데스 코인 타길 잘했다", "버추얼 시장의 혁명이다", "솔직히 얘네가 1황임", "오늘도 물풍선 쐈다", "훈련 효율 실화냐 대표야 일해라"];
     const cafeMsgs = ["케로 1기 모여라!", "오늘도 멤버들 고생했어요", "대표님 고기 사주세요", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!", "키마 언니 노래 불러줘서 고마워요", "띵귤이 오늘 너무 예뻤다", "하데스 덕분에 하루가 행복해", "우리 멤버들 아프지 마요", "연초록 공주님 ㅠㅠ", "챈나 덕분에 오늘 배 찢어짐", "솜주먹이 우리 지켜주는 거야?", "카페 등급업 드디어 했다!", "하데스 영원하자", "오늘 방송 요약본 올라왔나요?", "멤버들 피로도가 걱정돼요 ㅠㅠ", "대표님 장비 좀 바꿔주세요", "하데스 굿즈 나오면 바로 삼", "매일 밤 하데스 방송만 기다려", "세상에서 제일 빛나는 하데스", "띵귤님 목소리 듣고 꿀잠 잠", "키마는 노래천재가 확실해", "하데스 팬미팅 언제 하나요?", "멤버들 밥 잘 챙겨 먹길"];
 
-    // 버추얼 특화 돌발 이벤트 20종
     const virtualEvents = [
-        { title: "💻 서버 렉 발생", desc: "방송 중 서버가 불안정합니다.", choices: [{ text: "서버 증설 (500만)", effect: () => { gameState.finance -= 5000000; gameState.fandom += 2000; } }, { text: "방종", effect: () => { gameState.fandom -= 1000; } }] },
-        { title: "👗 신규 의상", desc: "고퀄리티 아바타 의상을 제작할까요?", choices: [{ text: "제작 (1000만)", effect: () => { gameState.finance -= 10000000; gameState.members.forEach(m=>m.visual++); } }, { text: "보류", effect: () => {} }] },
-        { title: "🎤 저작권 경고", desc: "커버곡 영상에 노란 딱지가 붙었습니다.", choices: [{ text: "수익 배분 계약 (300만)", effect: () => { gameState.finance -= 3000000; gameState.fandom += 1500; } }, { text: "영상 삭제", effect: () => { gameState.fandom -= 500; } }] },
-        { title: "🎨 팬아트 공모전", desc: "공식 공모전을 통해 관심을 모읍니다.", choices: [{ text: "상금 (200만)", effect: () => { gameState.finance -= 2000000; gameState.fandom += 3000; } }, { text: "취소", effect: () => {} }] },
-        { title: "🕶️ 장비 고장", desc: "풀트래킹 장비가 오작동합니다.", choices: [{ text: "교체 (800만)", effect: () => { gameState.finance -= 8000000; gameState.members.forEach(m=>m.dance++); } }, { text: "수리", effect: () => { gameState.members.forEach(m=>m.fatigue+=10); } }] },
-        { title: "🌟 타 유튜버 합방", desc: "대기업 버튜버가 합방을 제의했습니다.", choices: [{ text: "수락 (매력+)", effect: () => { gameState.members.forEach(m=>m.charm++); gameState.fandom += 2500; } }, { text: "거절", effect: () => {} }] },
-        { title: "🍱 도시락 조공", desc: "팬들이 정성껏 도시락을 보냈습니다.", choices: [{ text: "감사 인사", effect: () => { gameState.members.forEach(m=>m.fatigue=Math.max(0, m.fatigue-30)); } }, { text: "팬덤 상승", effect: () => { gameState.fandom += 4000; } }] },
-        { title: "🤖 AI 보이스 논란", desc: "안티들이 AI 사용 의혹을 제기합니다.", choices: [{ text: "생목 인증 (피로도+)", effect: () => { gameState.members.forEach(m=>m.fatigue+=15); gameState.fandom += 1200; } }, { text: "무대응", effect: () => { gameState.fandom -= 1500; } }] },
-        { title: "🎮 게임 대회", desc: "버추얼 롤 대회에 초청받았습니다.", choices: [{ text: "참전 (예능+)", effect: () => { gameState.members.forEach(m=>m.variety++); gameState.fandom += 1800; } }, { text: "거절", effect: () => {} }] },
-        { title: "🎧 ASMR 기획", desc: "새벽 ASMR 방송을 준비할까요?", choices: [{ text: "장비 구매 (400만)", effect: () => { gameState.finance -= 4000000; gameState.fandom += 2800; } }, { text: "보류", effect: () => {} }] },
-        { title: "🧸 공식 굿즈", desc: "봉제 인형 굿즈 제작 의뢰가 왔습니다.", choices: [{ text: "선입금 진행 (500만)", effect: () => { gameState.finance -= 5000000; gameState.fandom += 5000; } }, { text: "거절", effect: () => {} }] },
-        { title: "📉 유튜브 알고리즘", desc: "알고리즘을 타기 위해 숏츠를 양산할까요?", choices: [{ text: "편집자 고용 (300만)", effect: () => { gameState.finance -= 3000000; gameState.fandom += 3500; } }, { text: "직접 편집 (피로도+)", effect: () => { gameState.members.forEach(m=>m.fatigue+=20); gameState.fandom += 2000; } }] },
-        { title: "🚫 채팅창 테러", desc: "생방송 중 악플러들이 난입했습니다.", choices: [{ text: "매니저 추가 고용 (100만)", effect: () => { gameState.finance -= 1000000; gameState.fandom += 1000; } }, { text: "멘탈 케어 집중", effect: () => { gameState.members.forEach(m=>m.fatigue+=10); } }] },
-        { title: "🌌 오프라인 전광판", desc: "지하철역에 하데스 광고를 걸까요?", choices: [{ text: "집행 (1200만)", effect: () => { gameState.finance -= 12000000; gameState.fandom += 8000; } }, { text: "보류", effect: () => {} }] },
-        { title: "🎤 보컬 믹싱 외주", desc: "커버곡의 퀄리티를 위해 믹싱을 맡깁니다.", choices: [{ text: "전문가 외주 (200만)", effect: () => { gameState.finance -= 2000000; gameState.members.forEach(m=>m.vocal++); } }, { text: "자체 믹싱", effect: () => { gameState.members.forEach(m=>m.fatigue+=5); } }] },
-        { title: "📺 공중파 다큐", desc: "버추얼 아이돌의 삶 다큐 촬영 제의!", choices: [{ text: "수락 (매력+)", effect: () => { gameState.members.forEach(m=>m.charm++); gameState.fandom += 4000; } }, { text: "사생활 보호", effect: () => {} }] },
-        { title: "🎭 멤버간 불화설", desc: "방송 중 표정 관리 안 된 장면이 퍼졌습니다.", choices: [{ text: "해명 방송 (피로도+)", effect: () => { gameState.members.forEach(m=>m.fatigue+=15); gameState.fandom += 1000; } }, { text: "친목 숏츠 업로드", effect: () => { gameState.fandom += 2000; } }] },
-        { title: "⚡ 전력 누전", desc: "스튜디오 정전으로 방송이 끊겼습니다.", choices: [{ text: "UPS 구매 (300만)", effect: () => { gameState.finance -= 3000000; } }, { text: "그냥 복구 대기", effect: () => { gameState.fandom -= 1000; } }] },
-        { title: "🎁 팬미팅 대관", desc: "소규모 버추얼 팬미팅을 계획합니다.", choices: [{ text: "대관 (700만)", effect: () => { gameState.finance -= 7000000; gameState.fandom += 6000; } }, { text: "취소", effect: () => {} }] },
-        { title: "🆕 신인 발굴", desc: "2기생 오디션 루머로 카페가 시끄럽습니다.", choices: [{ text: "1기 집중 선언", effect: () => { gameState.fandom += 3000; } }, { text: "무대응", effect: () => { gameState.fandom -= 500; } }] }
+        { title: "💻 서버 렉 발생", desc: "방송 중 서버가 불안정합니다.", choices: [{ text: "서버 증설 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; gameState.fandom += 2000; } }, { text: "방종 (팬덤-1000)", effect: () => { gameState.fandom -= 1000; } }] },
+        { title: "👗 신규 의상", desc: "고퀄리티 아바타 의상을 제작할까요?", choices: [{ text: "제작 (-1000만/비주얼+1)", effect: () => { gameState.finance -= 10000000; gameState.members.forEach(m=>m.visual = Math.min(20, m.visual+1)); } }, { text: "보류 (없음)", effect: () => {} }] },
+        { title: "🎤 저작권 경고", desc: "커버곡 영상에 노란 딱지가 붙었습니다.", choices: [{ text: "수익 계약 (-300만/팬덤+1500)", effect: () => { gameState.finance -= 3000000; gameState.fandom += 1500; } }, { text: "영상 삭제 (팬덤-500)", effect: () => { gameState.fandom -= 500; } }] },
+        { title: "🎨 팬아트 공모전", desc: "공식 공모전을 통해 관심을 모읍니다.", choices: [{ text: "상금 지급 (-200만/팬덤+3000)", effect: () => { gameState.finance -= 2000000; gameState.fandom += 3000; } }, { text: "취소 (없음)", effect: () => {} }] },
+        { title: "🕶️ 장비 고장", desc: "풀트래킹 장비가 오작동합니다.", choices: [{ text: "교체 (-800만/댄스+1)", effect: () => { gameState.finance -= 8000000; gameState.members.forEach(m=>m.dance = Math.min(20, m.dance+1)); } }, { text: "수리 (피로도+10)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+10)); } }] },
+        { title: "🌟 타 유튜버 합방", desc: "대기업 버튜버가 합방을 제의했습니다.", choices: [{ text: "수락 (매력+1/팬덤+2500)", effect: () => { gameState.members.forEach(m=>m.charm = Math.min(20, m.charm+1)); gameState.fandom += 2500; } }, { text: "거절 (없음)", effect: () => {} }] },
+        { title: "🖌️ 금손 작가의 팬아트", desc: "신의 손으로 불리는 작가가 하데스 팬아트를 게시해 화제입니다!", choices: [{ text: "공식 계정 공유 (팬덤+4000)", effect: () => { gameState.fandom += 4000; } }, { text: "작가에게 감사 멘션 (피로도-30)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.max(0, m.fatigue-30)); } }] },
+        { title: "🤖 AI 보이스 논란", desc: "안티들이 AI 사용 의혹을 제기합니다.", choices: [{ text: "생목 인증 (피로도+15/팬덤+1200)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+15)); gameState.fandom += 1200; } }, { text: "무대응 (팬덤-1500)", effect: () => { gameState.fandom -= 1500; } }] },
+        { title: "🎮 게임 대회", desc: "버추얼 롤 대회에 초청받았습니다.", choices: [{ text: "참전 (예능+1/팬덤+1800)", effect: () => { gameState.members.forEach(m=>m.variety = Math.min(20, m.variety+1)); gameState.fandom += 1800; } }, { text: "거절 (없음)", effect: () => {} }] },
+        { title: "🎧 ASMR 기획", desc: "새벽 ASMR 방송을 준비할까요?", choices: [{ text: "장비 구매 (-400만/팬덤+2800)", effect: () => { gameState.finance -= 4000000; gameState.fandom += 2800; } }, { text: "보류 (없음)", effect: () => {} }] },
+        { title: "🧸 공식 굿즈", desc: "봉제 인형 굿즈 제작 의뢰가 왔습니다.", choices: [{ text: "선입금 진행 (-500만/팬덤+5000)", effect: () => { gameState.finance -= 5000000; gameState.fandom += 5000; } }, { text: "거절 (없음)", effect: () => {} }] },
+        { title: "📉 유튜브 알고리즘", desc: "알고리즘을 타기 위해 숏츠를 양산할까요?", choices: [{ text: "편집자 고용 (-300만/팬덤+3500)", effect: () => { gameState.finance -= 3000000; gameState.fandom += 3500; } }, { text: "직접 편집 (피로도+20/팬덤+2000)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+20)); gameState.fandom += 2000; } }] },
+        { title: "🚫 채팅창 테러", desc: "생방송 중 악플러들이 난입했습니다.", choices: [{ text: "매니저 고용 (-100만/팬덤+1000)", effect: () => { gameState.finance -= 1000000; gameState.fandom += 1000; } }, { text: "멘탈 케어 (피로도+10)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+10)); } }] },
+        { title: "🌌 오프라인 전광판", desc: "지하철역에 하데스 광고를 걸까요?", choices: [{ text: "집행 (-1200만/팬덤+8000)", effect: () => { gameState.finance -= 12000000; gameState.fandom += 8000; } }, { text: "보류 (없음)", effect: () => {} }] },
+        { title: "🎤 보컬 믹싱 외주", desc: "커버곡의 퀄리티를 위해 믹싱을 맡깁니다.", choices: [{ text: "전문 외주 (-200만/보컬+1)", effect: () => { gameState.finance -= 2000000; gameState.members.forEach(m=>m.vocal = Math.min(20, m.vocal+1)); } }, { text: "자체 믹싱 (피로도+5)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+5)); } }] },
+        { title: "🌐 VR 플랫폼 메인 전시", desc: "유명 VR 플랫폼의 메인 로비에 하데스의 등신대가 세워집니다!", choices: [{ text: "광고비 지불 (-300만/팬덤+5000)", effect: () => { gameState.finance -= 3000000; gameState.fandom += 5000; } }, { text: "무료 노출만 (팬덤+1000)", effect: () => { gameState.fandom += 1000; } }] },
+        { title: "🎭 멤버간 불화설", desc: "방송 중 표정 관리 안 된 장면이 퍼졌습니다.", choices: [{ text: "해명 방송 (피로도+15/팬덤+1000)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+15)); gameState.fandom += 1000; } }, { text: "친목 숏츠 업로드 (팬덤+2000)", effect: () => { gameState.fandom += 2000; } }] },
+        { title: "⚡ 전력 누전", desc: "스튜디오 정전으로 방송이 끊겼습니다.", choices: [{ text: "UPS 구매 (-300만)", effect: () => { gameState.finance -= 3000000; } }, { text: "그냥 대기 (팬덤-1000)", effect: () => { gameState.fandom -= 1000; } }] },
+        { title: "🎁 팬미팅 대관", desc: "소규모 버추얼 팬미팅을 계획합니다.", choices: [{ text: "대관 (-700만/팬덤+6000)", effect: () => { gameState.finance -= 7000000; gameState.fandom += 6000; } }, { text: "취소 (없음)", effect: () => {} }] },
+        { title: "🆕 신인 발굴", desc: "2기생 오디션 루머로 카페가 시끄럽습니다.", choices: [{ text: "1기 집중 선언 (팬덤+3000)", effect: () => { gameState.fandom += 3000; } }, { text: "무대응 (팬덤-500)", effect: () => { gameState.fandom -= 500; } }] }
     ];
 
     window.addEventListener('keydown', e => { if (e.code === 'Space' && document.getElementById('eventModal').style.display !== 'block') nextDay(); });
@@ -203,10 +202,7 @@
                 let roll = Math.random() * 100;
                 let inc = 0;
                 let msg = "실패";
-                // v7.2 보수적 확률 유지 (대성공 1%, 성공 29%, 실패 70%)
-                if (roll < 1) { inc = 2; msg = "대성공(+2)"; }
-                else if (roll < 30) { inc = 1; msg = "성공(+1)"; }
-                
+                if (roll < 50) { inc = 1; msg = "성공(+1)"; }
                 m[action] = Math.min(20, m[action] + inc);
                 m.fatigue = Math.min(100, m.fatigue + 15);
                 dailyReport.push({name: m.name, stat: action, msg: msg});
@@ -254,10 +250,10 @@
         let totals = {};
         gameState.members.forEach(m => totals[m.name] = 0);
         gameState.weeklyLog.forEach(log => log.data.forEach(d => {
-            const inc = d.msg.includes('+2') ? 2 : (d.msg.includes('+1') ? 1 : 0);
+            const inc = d.msg.includes('+1') ? 1 : 0;
             totals[d.name] += inc;
         }));
-        body.innerHTML = Object.keys(totals).map(name => `<div class="weekly-line"><strong>${name}</strong>: <span style="color:#1971c2;">총 스탯 +${totals[name]} 상승</span></div>`).join('') + `<p style="font-size:11px; color:#888; margin-top:15px;">※ 훈련 실패 확률(70%)이 적용되었습니다.</p>`;
+        body.innerHTML = Object.keys(totals).map(name => `<div class="weekly-line"><strong>${name}</strong>: <span style="color:#1971c2;">총 스탯 +${totals[name]} 상승</span></div>`).join('') + `<p style="font-size:11px; color:#888; margin-top:15px;">※ 훈련 확률 50%가 적용되었습니다.</p>`;
         choices.innerHTML = `<button class="primary-btn" style="background:#339af0;" onclick="closeModal()">확인</button>`;
         document.getElementById('eventModal').style.display = 'block';
     }
@@ -273,7 +269,11 @@
         choices.innerHTML = '';
         ev.choices.forEach(c => {
             const b = document.createElement('button'); b.className = "primary-btn"; b.innerText = c.text;
-            b.onclick = () => { c.effect(); closeModal(); };
+            b.onclick = () => { 
+                c.effect(); 
+                updateDisplay();
+                closeModal(); 
+            };
             choices.appendChild(b);
         });
         document.getElementById('eventModal').style.display = 'block';
