@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v11.9</title>
+    <title>하데스 키우기 v12.2</title>
     <style>
-        :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; }
+        :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
         .nav-bar { display: flex; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .nav-btn { flex: 1; padding: 18px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 14px; }
@@ -27,6 +27,7 @@
         .site-cafe { background: #fff0f6; color: #d6336c; }
         .site-sns { background: #f0f1ff; color: var(--sns); }
         .site-yt { background: #ffe3e3; color: var(--yt); }
+        .site-yz { background: #000; color: #fff; }
         .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
         .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
         .stat-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 12px; }
@@ -58,7 +59,7 @@
             </div>
             <h2>상태</h2>
             <div class="stat-grid">
-                <div class="stat-item"><small>보유 자산</small><strong id="p-finance" class="money-text">100,000,000</strong></div>
+                <div class="stat-item"><small>보유 자산</small><strong id="p-finance" class="money-text">200,000,000</strong></div>
                 <div class="stat-item"><small>케로 팬덤수</small><strong id="p-fandom">12,405</strong></div>
                 <div class="stat-item"><small>너튜브 구독자</small><strong id="p-youtube">8,200</strong></div>
                 <div class="stat-item"><small>SNS 팔로워</small><strong id="p-sns">15,300</strong></div>
@@ -69,7 +70,7 @@
             <div id="profit-content" style="font-size: 14px;"></div>
         </div>
         <div class="card">
-            <h2>🌐 실시간 커뮤니티 / SNS (최근 3개)</h2>
+            <h2>🌐 실시간 커뮤니티 / YZ / SNS (최근 3개)</h2>
             <div id="comm-container"></div>
         </div>
     </div>
@@ -99,7 +100,7 @@
 
 <script>
     let gameState = {
-        day: 1, startDate: new Date('2025-09-05'), finance: 100000000, fandom: 12405, youtube: 8200, sns: 15300,
+        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 12405, youtube: 8200, sns: 15300,
         members: [
             {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
             {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
@@ -110,9 +111,17 @@
         community: [], popupQueue: [], weeklyStats: []
     };
 
-    const ebemMsgs = ["키마 고음 미쳤네 ㅋㅋ", "연초록 비주얼 실화냐?", "하데스 폼 미쳤다", "에뱀 인기글 하데스가 먹었네", "오늘 방송 꿀잼이었음", "솜주먹 커엽노", "챈나 예능감 무엇?", "띵귤 목소리 보물이다", "근데 하데스 수익 어디로 가냐?", "요즘 버튜버 판 하데스가 점령함", "아니 훈련 실패 실화? ㅋㅋㅋ", "키마 노래 실력 억까하는 애들 뭐냐", "띵귤 매력에 정신 못차리겠다", "하데스 무지성 개추", "이번에 신규 아바타 뽑자", "오늘 방송 채팅창 관리 좀 해라", "에뱀 형님들 하데스 입덕했다", "연초록은 사람 홀리는 재주가 있음", "챈나 웃음소리 중독성 갑", "솜주먹 이름값 하네 ㅋㅋ", "하데스 코인 타길 잘했다", "버추얼 시장의 혁명이다", "솔직히 얘네가 1황임", "오늘도 물풍선 쐈다", "훈련 효율 실화냐 대표야 일해라"];
-    const cafeMsgs = ["케로 1기 모여라!", "오늘도 멤버들 고생했어요", "대표님 고기 사주세요", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!", "키마 언니 노래 불러줘서 고마워요", "띵귤이 오늘 너무 예뻤다", "하데스 덕분에 하루가 행복해", "우리 멤버들 아프지 마요", "연초록 공주님 ㅠㅠ", "챈나 덕분에 오늘 배 찢어짐", "솜주먹이 우리 지켜주는 거야?", "카페 등급업 드디어 했다!", "하데스 영원하자", "오늘 방송 요약본 올라왔나요?", "멤버들 피로도가 걱정돼요 ㅠㅠ", "대표님 장비 좀 바꿔주세요", "하데스 굿즈 나오면 바로 삼", "매일 밤 하데스 방송만 기다려", "세상에서 제일 빛나는 하데스", "띵귤님 목소리 듣고 꿀잠 잠", "키마는 노래천재가 확실해", "하데스 팬미팅 언제 하나요?", "멤버들 밥 잘 챙겨 먹길"];
-    const ytComments = ["하데스 영상 대박!", "편집 실력 무엇?", "알고리즘아 일해라", "해외 팬 유입 소리 들린다", "100만 가자", "썸네일 홀림", "영상미 실화?", "성장 서사 웅장하다" ]; // 축약형
+    // 에뱀 (에펨코리아 스타일)
+    const ebemMsgs = [
+        "하데스 얘네는 진짜 판떼기 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 웬만한 공중파 아이돌보다 노래 잘하는데", "오늘 띵귤 방송에서 샷건 치는 거 보고 입덕했다 ㅋㅋㅋ", "솔직히 버추얼이라고 색안경 꼈는데 하데스는 인정함", "연초록 비주얼 실트 떴길래 봤는데 진짜 깎아 놓은 것 같네", "아니 챈나 예능감 뭐임? 합방에서 혼자 다 살리네 ㄹㅇ", "솜주먹은 이름부터가 웃기네 ㅋㅋㅋ 타격감 좋을 듯", "오늘 하데스 라이브 MR 제거 버전 올라왔는데 실력 진짜 좋음", "에뱀 형님들 하데스 굿즈 예구 성공한 사람 있음?", "버추얼 아이돌 시장도 이제 실력 없으면 못 살아남는구나", "하데스 이번 신곡 안무 트래킹 튀는 거 하나도 없네. 돈 꽤나 쓴 듯", "띵귤 본체 누구냐? 목소리가 들어본 적 없는 보물인데", "하데스 덕분에 요즘 버튜버 보는 재미로 산다 ㄹㅇ", "솔직히 하데스 2기생 나오면 1기생만큼 뽑을 수 있냐?", "키마은 그냥 음원 깡패임. 차트 인 하는 이유가 있다", "아까 방송에서 연초록 눈 감는 거 봤냐? 기술력 진짜 소름 돋네", "하데스 억까하는 놈들 특징: 방송 한 번도 안 봄", "챈나 드립 수준 보니까 조만간 공중파 예능 불려 나갈 듯", "솜주먹 귀여워서 도네 쐈는데 리액션 혜자라 만족함 ㅋㅋㅋ", "하데스 이번 주 활동 요약: 그냥 전설이었다"
+    ];
+
+    const cafeMsgs = ["케로 1기 모여라!", "오늘도 멤버들 고생했어요", "대표님 고기 사주세요", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!", "키마 언니 노래 불러줘서 고마워요"];
+
+    // YZ (X.com 스타일)
+    const yzMsgs = [
+        "오늘 띵귤 판떼기 동기화 왜 이럼? 기술력 미쳤네 ㄹㅇ #하데스 #띵귤", "키마 고음 발사할 때 트래킹 튀는 거 개웃기네 ㅋㅋㅋㅋ 귀여워", "하데스 이번 신곡 무한스밍 중. 버추얼이라고 무시하던 놈들 다 대가리 박아", "아니 챈나 방종 송출 사고 뭐냐고 ㅋㅋㅋ 안의 사람 본체 나온 줄 알고 심장 떨어짐", "연초록 비주얼 실화냐? 2D가 사람 홀리네... #Hades #연초록", "오늘 합방 라인업 미쳤음. 하데스 드디어 대기업 줄 타나?", "솜주먹 도네 리액션 혜자네 ㅋㅋㅋ 100만 원 쏠 뻔했다", "얘들아 오늘 하데스 실트 올리자. 리트윗 부탁!!", "하데스 공식 굿즈 나오면 바로 올인한다. 통장 장전 완료.", "띵귤님 목소리 긁는 거 보니까 오늘 빨간약 컨디션 최고인 듯", "버추얼 아이돌 1황은 하데스다. 반박 시 내 말이 맞음. #버튜버", "키마 언니 저음 구간에서 나만 소름 돋음? 음색 진짜 국보급이다", "연초록 아바타 바뀐 거 너무 예뻐서 숨 쉬는 거 까먹음;;", "챈나 오늘 드립 수준 보니까 조만간 유튜브 쇼츠 떡상 각이다", "하데스 멤버들 케미 터지는 거 보니까 나까지 행복해짐 ㅠㅠ", "오늘 방송 채팅창 클린해서 좋았다. 매니저 일 잘하네.", "솜주먹 샷건 치는 거 트래킹 끊기는 거 개커엽네 진짜 ㅋㅋㅋ", "하데스 세계관 정리본 본 사람? 설정 하나하나가 미쳤음;;", "솔직히 하데스 데뷔 때부터 지켜본 내가 승리자임. #Hades_Victory", "오늘 밤 9시 하데스 단체 방송 본방사수 안 하면 인생 손해임"
+    ];
 
     const virtualEvents = [
         { id: 'server', title: "💻 서버 렉 발생", desc: "방송 중 서버가 불안정합니다.", choices: [{ text: "서버 증설 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "방종 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "방치 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
@@ -173,7 +182,7 @@
         const latestComm = gameState.community.slice(-3);
         document.getElementById('comm-container').innerHTML = latestComm.map(c => `
             <div class="comm-post">
-                <span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':(c.site==='너튜브'?'site-yt':'site-cafe'))}">${c.site}</span>
+                <span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':(c.site==='너튜브'?'site-yt':(c.site==='YZ'?'site-yz':'site-cafe')))}">${c.site}</span>
                 <div style="font-size:13px; margin-top:4px;">${c.content}</div>
             </div>
         `).reverse().join('');
@@ -202,7 +211,6 @@
             m.manualAct = null;
         });
 
-        // 주간 결산
         if(gameState.day % 7 === 0 && gameState.day > 1) {
             const views = (Math.floor(Math.random() * 291) + 10) * 10000;
             const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
@@ -211,16 +219,10 @@
             gameState.weeklyStats = [];
         }
 
-        // 일일 커뮤니티
-        if (Math.random() < 0.5) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
-        if (Math.random() < 0.5) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
+        if (Math.random() < 0.45) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
+        if (Math.random() < 0.45) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
+        if (Math.random() < 0.45) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
 
-        // 생일 체크
-        let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
-        let dateStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        gameState.members.forEach(m => { if (m.birth === dateStr) gameState.popupQueue.push({type: 'birthday', member: m}); });
-
-        // [수정] 이벤트 발생 로직 (타임라인 반영)
         checkVirtualEvent();
 
         gameState.finance += totalProfit; 
@@ -236,20 +238,13 @@
         processNextPopup();
     }
 
-    // [추가] 타임라인 기반 이벤트 체크 로직
     function checkVirtualEvent() {
-        if (Math.random() > 0.15) return; // 기본 발생 확률
-
+        if (Math.random() > 0.15) return; 
         const day = gameState.day;
         let pool = [];
-
-        // 30일 내외: 신규의상(costume), 팬아트공모전(contest), 장비고장(gear), 금손작가(goldfan)
         if (day >= 25 && day <= 35) { pool.push('costume', 'contest', 'gear', 'goldfan'); }
-        // 90일 내외: 공식굿즈(goods), 오프라인전광판(ad), 쇼핑몰팝업(popup)
         else if (day >= 85 && day <= 95) { pool.push('goods', 'ad', 'popup'); }
-        // 180일 내외: 대규모팬미팅(meeting), 신인발굴(gen2)
         else if (day >= 175 && day <= 185) { pool.push('meeting', 'gen2'); }
-        // 나머지: 상시 랜덤 (서버렉, 저작권, 합방, AI논란, 게임대회, ASMR, 채팅테러, 믹싱, 불화설, 전력누전, 숏츠)
         else { pool.push('server', 'copyright', 'collab', 'ai', 'game', 'asmr', 'shorts', 'chat', 'mix', 'rumor', 'power'); }
 
         if (pool.length > 0) {
@@ -262,7 +257,6 @@
     function processNextPopup() {
         if (document.getElementById('eventModal').style.display === 'block') return;
         if (gameState.popupQueue.length === 0) return;
-
         const item = gameState.popupQueue.shift();
         if(item.type === 'training_report') showTrainingReport(item.data);
         else if(item.type === 'birthday') showBirthdayPopup(item.member);
