@@ -3,63 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아이돌 육성 시뮬레이션</title>
+    <title>HADES Console v4.2</title>
     <style>
-        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .game-container { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        .status-board { background: #fff0f6; border-radius: 15px; padding: 15px; margin: 20px 0; border: 2px solid #ffdeeb; }
-        .stat-item { display: flex; justify-content: space-between; margin: 5px 0; font-weight: bold; }
-        button { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: bold; }
-        .btn-vocal { background-color: #ff8787; color: white; }
-        .btn-dance { background-color: #74c0fc; color: white; }
-        button:hover { opacity: 0.8; transform: scale(0.98); }
-        #message { height: 20px; color: #666; font-size: 14px; margin-top: 10px; }
+        :root { --bg: #0d0d0d; --point: #00ffcc; --vocal: #ff4d94; --stream: #4dadff; --text: #e0e0e0; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .console { width: 100%; max-width: 700px; border: 1px solid var(--point); padding: 20px; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); }
+        h1, h2 { color: var(--point); text-transform: uppercase; border-bottom: 1px solid var(--point); padding-bottom: 5px; margin-top: 25px; }
+        
+        /* Status Board */
+        .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-box { background: rgba(0, 255, 204, 0.05); padding: 10px; border: 1px solid #333; text-align: center; }
+        .label { font-size: 11px; color: #888; display: block; }
+        .value { font-size: 16px; font-weight: bold; color: var(--point); }
+
+        /* Member Cards */
+        .member-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
+        .member-card { background: #1a1a1a; padding: 10px; border: 1px solid #444; text-align: center; font-size: 12px; }
+        .special-vocal { border-top: 3px solid var(--vocal); }
+        .special-stream { border-top: 3px solid var(--stream); }
+        .member-name { font-weight: bold; display: block; margin-bottom: 5px; }
+
+        /* Log Area */
+        .log-screen { background: #000; border: 1px inset #333; padding: 15px; height: 180px; overflow-y: auto; margin-bottom: 20px; font-size: 13px; line-height: 1.6; color: #00ff00; border-radius: 5px; }
+        .sys { color: #ffff00; }
+        .chat { color: #aaa; font-style: italic; }
+
+        /* Controls */
+        .control-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        select, button { background: #000; border: 1px solid var(--point); color: var(--point); padding: 10px; cursor: pointer; width: 100%; }
+        button:hover { background: var(--point); color: #000; }
+        .report-btn { grid-column: span 2; background: #222; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <h2>🌟 연습생 가이드</h2>
-    <div id="idol-name">이름: 미정 (연습생)</div>
+<div class="console">
+    <h1>HADES STATUS CONSOLE v4.2</h1>
     
-    <div class="status-board">
-        <div class="stat-item"><span>🎤 보컬</span> <span id="vocal">10</span></div>
-        <div class="stat-item"><span>💃 댄스</span> <span id="dance">10</span></div>
-        <div class="stat-item"><span>🔋 에너지</span> <span id="energy">100</span></div>
+    <div class="status-grid">
+        <div class="stat-box"><span class="label">미래시 오차</span><span class="value" id="p-error">0.02%</span></div>
+        <div class="stat-box"><span class="label">운영 자산</span><span class="value" id="p-finance">45.0M</span></div>
+        <div class="stat-box"><span class="label">팬덤(KERO)</span><span class="value" id="p-fandom">12,405</span></div>
+        <div class="stat-box"><span class="label">평균 피로도</span><span class="value" id="p-fatigue">15%</span></div>
     </div>
 
-    <button class="btn-vocal" onclick="train('vocal')">보컬 레슨 받기 (-10🔋)</button>
-    <button class="btn-dance" onclick="train('dance')">댄스 연습 하기 (-10🔋)</button>
-    <button style="background: #63e6be;" onclick="rest()">휴식하기 (+30🔋)</button>
+    <h2>MEMBERS (Unit: HADES)</h2>
+    <div class="member-grid" id="member-list">
+        </div>
 
-    <div id="message">환영합니다! 연습을 시작하세요.</div>
+    <h2>1. 오늘의 돌발 상황</h2>
+    <div id="event-text" style="color: #ffca28; font-size: 14px; margin-bottom: 10px;">[이슈] 에뱀코리아에 하데스 기술력 찬양글이 올라왔습니다.</div>
+    <div class="control-zone" style="grid-template-columns: 1fr 1fr 1fr;">
+        <button onclick="eventRes('A')">A) 공식 감사글</button>
+        <button onclick="eventRes('B')">B) 츤데레 반응</button>
+        <button onclick="eventRes('C')">C) 무대응(미래시)</button>
+    </div>
+
+    <h2>2. 매니지먼트 지시 (Management)</h2>
+    <div class="control-zone">
+        <div>
+            <span class="label">트레이닝 대상</span>
+            <select id="train-target">
+                <option value="키마">키마 (보컬)</option>
+                <option value="띵귤">띵귤 (보컬)</option>
+                <option value="챈나">챈나 (방송)</option>
+                <option value="솜주먹">솜주먹 (방송)</option>
+                <option value="연초록">연초록 (보컬)</option>
+            </select>
+        </div>
+        <div>
+            <span class="label">콘텐츠 선택</span>
+            <select id="content-type">
+                <option value="personal">개인 뱅송 (코어↑)</option>
+                <option value="mocap">모캡 합방 (대중성↑)</option>
+                <option value="outer">외부 스케줄 (인지도↑)</option>
+            </select>
+        </div>
+        <button onclick="runTraining()">트레이닝 실행</button>
+        <button onclick="runContents()">콘텐츠 송출</button>
+        <button class="report-btn" onclick="showWeeklyReport()">[일요일] 주간 성장 리포트 출력</button>
+    </div>
+
+    <h2>3. 데일리 로그 & 커뮤니티</h2>
+    <div class="log-screen" id="log-display">
+        [SYSTEM] v4.2 데이터 동기화 완료...<br>
+        [SYSTEM] 대표 봉준님, 관리자 민지님 환영합니다.
+    </div>
 </div>
 
 <script>
-    let stats = { vocal: 10, dance: 10, energy: 100 };
+    const members = {
+        "키마": { type: "보컬", vocal: 50, stream: 30, fatigue: 10, trained: false },
+        "띵귤": { type: "보컬", vocal: 55, stream: 25, fatigue: 10, trained: false },
+        "챈나": { type: "방송", vocal: 30, stream: 55, fatigue: 10, trained: false },
+        "솜주먹": { type: "방송", vocal: 25, stream: 60, fatigue: 10, trained: false },
+        "연초록": { type: "보컬", vocal: 52, stream: 28, fatigue: 10, trained: false }
+    };
 
-    function updateDisplay() {
-        document.getElementById('vocal').innerText = stats.vocal;
-        document.getElementById('dance').innerText = stats.dance;
-        document.getElementById('energy').innerText = stats.energy;
-    }
+    let global = { error: 0.02, finance: 45000000, fandom: 12405, fatigue: 15 };
 
-    function train(type) {
-        if (stats.energy >= 10) {
-            stats[type] += Math.floor(Math.random() * 5) + 1; // 1~5 랜덤 상승
-            stats.energy -= 10;
-            document.getElementById('message').innerText = `${type === 'vocal' ? '보컬' : '댄스'} 실력이 향상되었습니다!`;
-        } else {
-            document.getElementById('message').innerText = "에너지가 부족합니다! 휴식이 필요해요.";
+    function initMembers() {
+        const list = document.getElementById('member-list');
+        list.innerHTML = '';
+        for (let name in members) {
+            const m = members[name];
+            const div = document.createElement('div');
+            div.className = `member-card ${m.type === '보컬' ? 'special-vocal' : 'special-stream'}`;
+            div.innerHTML = `<span class="member-name">${name}</span>
+                             V:${m.vocal} | S:${m.stream}<br>
+                             <span style="color:${m.trained?'#666':'#0f0'}">${m.trained?'완료':'대기'}</span>`;
+            list.appendChild(div);
         }
-        updateDisplay();
     }
 
-    function rest() {
-        stats.energy = Math.min(100, stats.energy + 30);
-        document.getElementById('message').innerText = "꿀맛 같은 휴식을 취했습니다.";
-        updateDisplay();
+    function addLog(msg, type='') {
+        const log = document.getElementById('log-display');
+        log.innerHTML += `<div class="${type}">> ${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
     }
+
+    function runTraining() {
+        const target = document.getElementById('train-target').value;
+        const m = members[target];
+        
+        if(m.trained) {
+            addLog(`${target} 멤버는 이번 주 트레이닝을 이미 마쳤습니다.`, 'sys');
+            return;
+        }
+
+        m.trained = true;
+        m.fatigue += 20;
+        if(m.type === '보컬') m.vocal += 5; else m.stream += 5;
+        
+        addLog(`${target} 멤버 집중 트레이닝 완료. (피로도↑)`, 'sys');
+        addLog(`케로1: 역시 우리 ${target} 실력 느는 거 봐 ㄷㄷ`, 'chat');
+        initMembers();
+    }
+
+    function runContents() {
+        const type = document.getElementById('content-type').value;
+        if(type === 'personal') {
+            global.fandom += 200;
+            addLog("개인 뱅송 진행. 코어 팬덤이 결집합니다.");
+        } else if(type === 'mocap') {
+            global.finance -= 500000;
+            global.fandom += 800;
+            addLog("모캡 합방 진행. 대관료 50만 원 지출.", "sys");
+        } else {
+            global.fandom += 2000;
+            global.fatigue += 15;
+            addLog("외부 스케줄 강행! 인지도가 대폭 상승합니다.");
+        }
+        updateGlobal();
+    }
+
+    function updateGlobal() {
+        document.getElementById('p-error').innerText = global.error + "%";
+        document.getElementById('p-finance').innerText = (global.finance/1000000).toFixed(1) + "M";
+        document.getElementById('p-fandom').innerText = global.fandom.toLocaleString();
+        document.getElementById('p-fatigue').innerText = global.fatigue + "%";
+    }
+
+    function showWeeklyReport() {
+        addLog("--- 주간 하데스 성장 리포트 ---", "sys");
+        for(let n in members) {
+            addLog(`${n}: 보컬 ${members[n].vocal}, 방송 ${members[n].stream}`);
+            members[n].trained = false; // 주간 리셋
+        }
+        initMembers();
+    }
+
+    function eventRes(c) {
+        addLog(`선택지 ${c} 이행. 미래시 오차 수정 중...`);
+        global.error -= 0.001;
+        updateGlobal();
+    }
+
+    initMembers();
+    updateGlobal();
 </script>
 
 </body>
