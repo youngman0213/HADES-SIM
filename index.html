@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>하데스 키우기 v10.0 (Polished Edition)</title>
+    <title>하데스 키우기 v11.0 (Custom Events Applied)</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
@@ -30,9 +30,11 @@
         .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
         .stat-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 12px; }
         .stat-label { width: 45px; color: #777; }
-        .stat-bar-bg { flex: 1; height: height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 0 8px; }
+        .stat-bar-bg { flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 0 8px; }
         .stat-bar-fill { height: 100%; border-radius: 3px; transition: 0.5s; }
         .primary-btn { width: 100%; padding: 15px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        .choice-btn { width: 100%; padding: 12px; background: #f1f3f5; color: #333; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 8px; text-align: left; font-size: 14px; }
+        .choice-btn:hover { background: #e9ecef; }
         .next-day-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid var(--border); text-align: center; z-index: 100; }
         .modal-overlay { display: none; position: fixed; z-index: 2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
         .modal-content { background:white; margin:10% auto; padding:30px; width:450px; border-radius:20px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
@@ -107,48 +109,46 @@
         community: [], weeklyLog: [], popupQueue: []
     };
 
-    // 거친 표현 삭제 및 순화된 에뱀 반응 (30개)
-    const ebemMsgs = [
-        "하데스 어제 뱅송 폼 미쳤더라", "아바타 이번에 업뎃함?", "동기화 밀리는거 나만 느낌?", "연초록 이번 빨간약 찌라시 뭐임?", 
-        "하데스 멤버들 본체 궁금해 죽겠네", "오늘 솜주먹 트래킹 개잘됨", "띵귤 목소리 믹싱 바꿨나?", "챈나 모델링 텍스처 개고퀄임",
-        "에뱀 하데스 언급량 보소 ㅋㅋ", "키마 노래뱅 다시보기 내놔라", "버튜버 1군 가즈아", "하데스 이번주 휴방 실화냐",
-        "공식 굿즈 장패드 사고싶다", "비주얼 미화 실화냐? 가슴이 웅장해진다", "트래커 튀는거 개웃김 ㅋㅋ", "하데스 낙수효과 ㄷㄷ",
-        "이번 일러레 누구임? 금손이네", "하데스 대표 일 잘하는듯", "버츄얼 아이돌 원탑 가자", "오늘도 하데스에 머가리 깨짐",
-        "연초록 캐릭터 귀랑 꼬리 대박", "솜주먹 예능 스피치 학원 다님?", "챈나 라이투디 부드러운거 보소", "띵귤 이번 커버곡 레전드",
-        "하데스 뱅송 도네 화력 보소", "안의 사람 누구든 상관없다", "하데스 모델링 뜯어보고 싶네", "오늘 리깅 대박임", "하데스 팬덤 싸움남?", "버튜버 시장 정복 가자"
-    ];
-
-    const cafeMsgs = [
-        "케로 1기 가입인사 드립니다!", "서포트 도시락 전달 완료됐나요?", "오늘 뱅송 후기.. 갓벽했다", "하데스 굿즈 공구해요",
-        "카페 활동 등급업 부탁드려요", "멤버들 목 관리 잘했으면 ㅠㅠ", "하데스 응원법 외워오세요", "팬아트 그려봤습니다!",
-        "오늘 하데스 실북 1위 축하!", "팬미팅 VR로 하나요?", "하데스 달력 도착 인증", "사랑해 하데스 영원하자",
-        "띵귤 생일 광고 위치 어디임?", "키마 목소리 들으러 또 옴", "연초록 팬카페 채팅방 대박", "솜주먹 응원봉 예쁘다",
-        "챈나 웃음소리 벨소리 하고 싶음", "하데스 대표님 감사합니다", "공식 카페 화력 장난아니네", "이게 바로 하데스다",
-        "오늘 뱅송에서 내 도네 읽어줌!", "하데스 멤버들 푹 쉬길", "팬카페 정모 하실 분?", "하데스 세계관 정리본",
-        "굿즈 품절 실화인가요", "하데스랑 소통해서 행복함", "버츄얼 아이돌 끝판왕", "팬카페 이벤트 참여 완료", "멤버들 사랑해!", "하데스 1주년 기다려짐"
-    ];
-
-    // 순화된 SNS 반응 (20개)
-    const snsComments = [
-        "오늘 모델링 텍스처 레전드", "라이투디 리깅 누가함? 개부드러움", "캐릭터 미모에 눈멀듯", "동기화율 400% ㄷㄷ",
-        "아바타 셀카 필터 씌운거임? 개예쁘네", "오늘 뱅송 기대할게요!", "본체님 열일하네 진짜", "모델링에서 빛이 난다",
-        "이 비주얼로 데뷔해줘서 압도적 감사", "동기화 밀려도 귀여움 ㅋㅋ", "하데스 멤버들 텍스처 실화?", "버츄얼 아이돌 맞냐? 미모 무엇",
-        "트래킹 튀는것도 컨텐츠다", "리깅 장인 누구임? 절하고 싶다", "오늘도 내 심장을 저격하는 모델링", "하데스 팬이라 행복해요",
-        "셀카 각도 천재네", "이번 업뎃된 의상 찰떡임", "캐릭터에 영혼을 바쳤다", "동기화 오류도 사랑스러움"
-    ];
-
+    const ebemMsgs = ["하데스 어제 뱅송 폼 미쳤더라", "아바타 이번에 업뎃함?", "동기화 밀리는거 나만 느낌?", "연초록 이번 빨간약 찌라시 뭐임?", "하데스 멤버들 본체 궁금해 죽겠네", "오늘 솜주먹 트래킹 개잘됨", "띵귤 목소리 믹싱 바꿨나?", "챈나 모델링 텍스처 개고퀄임", "에뱀 하데스 언급량 보소 ㅋㅋ", "키마 노래뱅 다시보기 내놔라", "버튜버 1군 가즈아", "하데스 이번주 휴방 실화냐", "공식 굿즈 장패드 사고싶다", "비주얼 미화 실화냐?", "트래커 튀는거 개웃김 ㅋㅋ", "하데스 낙수효과 ㄷㄷ", "이번 일러레 누구임? 금손이네", "하데스 대표 일 잘하는듯", "버츄얼 아이돌 원탑 가자", "오늘도 하데스에 머가리 깨짐", "연초록 캐릭터 귀랑 꼬리 대박", "솜주먹 예능 스피치 학원 다님?", "챈나 라이투디 부드러운거 보소", "띵귤 이번 커버곡 레전드", "하데스 뱅송 도네 화력 보소", "안의 사람 누구든 상관없다", "하데스 모델링 뜯어보고 싶네", "오늘 리깅 대박임", "하데스 팬덤 싸움남?", "버튜버 시장 정복 가자"];
+    const cafeMsgs = ["케로 1기 가입인사 드립니다!", "서포트 도시락 전달 완료됐나요?", "오늘 뱅송 후기.. 갓벽했다", "하데스 굿즈 공구해요", "카페 활동 등급업 부탁드려요", "멤버들 목 관리 잘했으면 ㅠㅠ", "하데스 응원법 외워오세요", "팬아트 그려봤습니다!", "오늘 하데스 실북 1위 축하!", "팬미팅 VR로 하나요?", "하데스 달력 도착 인증", "사랑해 하데스 영원하자", "띵귤 생일 광고 위치 어디임?", "키마 목소리 들으러 또 옴", "연초록 팬카페 채팅방 대박", "솜주먹 응원봉 예쁘다", "챈나 웃음소리 벨소리 하고 싶음", "하데스 대표님 감사합니다", "공식 카페 화력 장난아니네", "이게 바로 하데스다", "오늘 뱅송에서 내 도네 읽어줌!", "하데스 멤버들 푹 쉬길", "팬카페 정모 하실 분?", "하데스 세계관 정리본", "굿즈 품절 실화인가요", "하데스랑 소통해서 행복함", "버츄얼 아이돌 끝판왕", "팬카페 이벤트 참여 완료", "멤버들 사랑해!", "하데스 1주년 기다려짐"];
+    const snsComments = ["오늘 모델링 텍스처 레전드", "라이투디 리깅 누가함? 개부드러움", "캐릭터 미모에 눈멀듯", "동기화율 400% ㄷㄷ", "아바타 셀카 필터 씌운거임? 개예쁘네", "오늘 뱅송 기대할게요!", "본체님 열일하네 진짜", "모델링에서 빛이 난다", "이 비주얼로 데뷔해줘서 압도적 감사", "동기화 밀려도 귀여움 ㅋㅋ", "하데스 멤버들 텍스처 실화?", "버츄얼 아이돌 맞냐? 미모 무엇", "트래킹 튀는것도 컨텐츠다", "리깅 장인 누구임? 절하고 싶다", "오늘도 내 심장을 저격하는 모델링", "하데스 팬이라 행복해요", "셀카 각도 천재네", "이번 업뎃된 의상 찰떡임", "캐릭터에 영혼을 바쳤다", "동기화 오류도 사랑스러움"];
+    const snsPostThemes = ["오늘 아바타 셀카 업데이트!", "녹음실에서 한 컷! 기대해 주세요🎤", "안무 연습 끝!", "오늘 야식은 0칼로리 간식.. 맛있겠죠?🍕", "쇼츠 촬영 중!", "동기화 테스트 중 한 컷!", "새로운 의상 피팅해봤어요!", "팬아트 보는 중! 너무 감동이야..🎨", "실시간 스트리밍 시작 10분 전!", "멤버들이랑 다같이 수다 타임!✨", "아침 운동 완료!", "어제 방송 다시보기 하는 중..😭", "구독자 10만 가자!❤️", "비주얼 케어 받는 날!✨", "커버곡 녹음 중인데 너무 어려워요ㅠㅠ🎶", "카페에서 잠시 휴식..☕", "굿즈 샘플 도착!🎁", "대기실에서 멍 때리기..💭", "버츄얼 세상은 오늘도 평화롭습니다🌈", "깜짝 뱅송 예고!🌙"];
     const ytComments = Array.from({length: 30}, (_, i) => `너튜브 팬 반응 #${i+1}: 하데스 영상 퀄리티 대박! 조회수 떡상 가자!`);
+
+    // 대표님이 전달해주신 이벤트 데이터
+    const virtualEvents = [
+        { id: 'server', title: "💻 서버 렉 발생", desc: "방송 중 서버가 불안정합니다.", choices: [{ text: "서버 증설 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "방종 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "방치 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
+        { id: 'costume', title: "👗 신규 의상", desc: "고퀄리티 아바타 의상을 제작할까요?", choices: [{ text: "프리미엄 (-1500만/팬덤+8000)", effect: () => { gameState.finance -= 15000000; updateFandom(8000); } }, { text: "보급형 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "보류 (없음)", effect: () => {} }] },
+        { id: 'copyright', title: "🎤 저작권 경고", desc: "커버곡 영상에 노란 딱지가 붙었습니다.", choices: [{ text: "계약 체결 (-300만/팬덤+1500)", effect: () => { gameState.finance -= 3000000; updateFandom(1500); } }, { text: "영상 삭제 (팬덤-500)", effect: () => { updateFandom(-500); } }, { text: "무대응 (팬덤-1200)", effect: () => { updateFandom(-1200); } }] },
+        { id: 'contest', title: "🎨 팬아트 공모전", desc: "공식 공모전을 통해 관심을 모읍니다.", choices: [{ text: "대규모 (-1000만/팬덤+10000)", effect: () => { gameState.finance -= 10000000; updateFandom(10000); } }, { text: "소규모 (-200만/팬덤+3000)", effect: () => { gameState.finance -= 2000000; updateFandom(3000); } }, { text: "취소 (없음)", effect: () => {} }] },
+        { id: 'gear', title: "🕶️ 장비 고장", desc: "풀트래킹 장비가 오작동합니다.", choices: [{ text: "최고급 교체 (-1000만/팬덤+3000)", effect: () => { gameState.finance -= 10000000; updateFandom(3000); } }, { text: "부분 수리 (-300만)", effect: () => { gameState.finance -= 3000000; } }, { text: "방치 (피로도+20)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+20)); } }] },
+        { id: 'collab', title: "🌟 타 유튜버 합방", desc: "대기업 버튜버가 합방을 제의했습니다.", choices: [{ text: "유료 광고 동반 (-500만/팬덤+6000)", effect: () => { gameState.finance -= 5000000; updateFandom(6000); } }, { text: "일반 참여 (팬덤+2500)", effect: () => { updateFandom(2500); } }, { text: "거절 (없음)", effect: () => {} }] },
+        { id: 'goldfan', title: "🖌️ 금손 작가의 팬아트", desc: "유명 작가가 하데스 팬아트를 게시했습니다!", choices: [{ text: "메인 게시 (-100만/팬덤+5000)", effect: () => { gameState.finance -= 1000000; updateFandom(5000); } }, { text: "단순 공유 (팬덤+2000)", effect: () => { updateFandom(2000); } }, { text: "무시 (없음)", effect: () => {} }] },
+        { id: 'ai', title: "🤖 AI 보이스 논란", desc: "안티들이 AI 사용 의혹을 제기합니다.", choices: [{ text: "전문 해명 방송 (-200만/팬덤+3000)", effect: () => { gameState.finance -= 2000000; updateFandom(3000); } }, { text: "짧은 공지 (팬덤+500)", effect: () => { updateFandom(500); } }, { text: "무대응 (팬덤-1500)", effect: () => { updateFandom(-1500); } }] },
+        { id: 'game', title: "🎮 게임 대회", desc: "버추얼 롤 대회에 초청받았습니다.", choices: [{ text: "팀 스폰서십 (-700만/팬덤+8000)", effect: () => { gameState.finance -= 7000000; updateFandom(8000); } }, { text: "개인 참가 (팬덤+1800)", effect: () => { updateFandom(1800); } }, { text: "불참 (없음)", effect: () => {} }] },
+        { id: 'asmr', title: "🎧 ASMR 기획", desc: "새벽 ASMR 방송을 준비할까요?", choices: [{ text: "장비 풀세트 (-800만/팬덤+6000)", effect: () => { gameState.finance -= 8000000; updateFandom(6000); } }, { text: "기존 장비 (팬덤+1000)", effect: () => { updateFandom(1000); } }, { text: "취소 (없음)", effect: () => {} }] },
+        { id: 'goods', title: "🧸 공식 굿즈", desc: "봉제 인형 굿즈 제작 의뢰가 왔습니다.", choices: [{ text: "한정판 제작 (-1000만/팬덤+12000)", effect: () => { gameState.finance -= 10000000; updateFandom(12000); } }, { text: "일반판 제작 (-500만/팬덤+5000)", effect: () => { gameState.finance -= 5000000; updateFandom(5000); } }, { text: "거절 (없음)", effect: () => {} }] },
+        { id: 'shorts', title: "📉 유튜브 알고리즘", desc: "알고리즘을 위해 숏츠를 양산할까요?", choices: [{ text: "전문 업체 (-400만/팬덤+5000)", effect: () => { gameState.finance -= 4000000; updateFandom(5000); } }, { text: "직접 편집 (팬덤+2000/피로도+20)", effect: () => { updateFandom(2000); gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+20)); } }, { text: "중단 (없음)", effect: () => {} }] },
+        { id: 'chat', title: "🚫 채팅창 테러", desc: "생방송 중 악플러들이 난입했습니다.", choices: [{ text: "보안 시스템 (-300만/팬덤+2000)", effect: () => { gameState.finance -= 3000000; updateFandom(2000); } }, { text: "임시 차단 (팬덤+500)", effect: () => { updateFandom(500); } }, { text: "방관 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
+        { id: 'ad', title: "🌌 오프라인 전광판", desc: "지하철역 광고를 진행할까요?", choices: [{ text: "대형 전광판 (-2000만/팬덤+15000)", effect: () => { gameState.finance -= 20000000; updateFandom(15000); } }, { text: "소형 전광판 (-800만/팬덤+5000)", effect: () => { gameState.finance -= 8000000; updateFandom(5000); } }, { text: "보류 (없음)", effect: () => {} }] },
+        { id: 'mix', title: "🎤 보컬 믹싱 외주", desc: "커버곡 퀄리티를 위해 믹싱을 맡깁니다.", choices: [{ text: "유명 스튜디오 (-400만/팬덤+3000)", effect: () => { gameState.finance -= 4000000; updateFandom(3000); } }, { text: "개인 프리랜서 (-100만/팬덤+1000)", effect: () => { gameState.finance -= 1000000; updateFandom(1000); } }, { text: "자체 작업 (피로도+10)", effect: () => { gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+10)); } }] },
+        { id: 'popup', title: "🛍️ 쇼핑몰 팝업스토어", desc: "대형 쇼핑몰 팝업 제의가 들어왔습니다!", choices: [{ text: "단독 개최 (-2500만/팬덤+20000)", effect: () => { gameState.finance -= 25000000; updateFandom(20000); } }, { text: "소규모 부스 (-800만/팬덤+6000)", effect: () => { gameState.finance -= 8000000; updateFandom(6000); } }, { text: "거절 (없음)", effect: () => {} }] },
+        { id: 'rumor', title: "🎭 멤버간 불화설", desc: "방송 중 표정 관리 안 된 장면이 퍼졌습니다.", choices: [{ text: "합동 토크쇼 (-200만/팬덤+4000)", effect: () => { gameState.finance -= 2000000; updateFandom(4000); } }, { text: "짧은 쇼츠 (팬덤+1500)", effect: () => { updateFandom(1500); } }, { text: "침묵 (팬덤-1000)", effect: () => { updateFandom(-1000); } }] },
+        { id: 'power', title: "⚡ 전력 누전", desc: "스튜디오 정전으로 방송이 끊겼습니다.", choices: [{ text: "최고급 UPS (-500만)", effect: () => { gameState.finance -= 5000000; } }, { text: "일반 수리 (-100만)", effect: () => { gameState.finance -= 1000000; } }, { text: "대기 (팬덤-1000)", effect: () => { updateFandom(-1000); } }] },
+        { id: 'meeting', title: "🎁 대규모 팬미팅", desc: "첫 오프라인 팬미팅을 계획합니다.", choices: [{ text: "대관 컨벤션 (-3500만/팬덤+35000)", effect: () => { gameState.finance -= 35000000; updateFandom(35000); } }, { text: "중형 홀 (-1500만/팬덤+12000)", effect: () => { gameState.finance -= 15000000; updateFandom(12000); } }, { text: "온라인 대체 (팬덤+3000)", effect: () => { updateFandom(3000); } }] },
+        { id: 'gen2', title: "🆕 신인 발굴", desc: "2기생 오디션 루머가 돌고 있습니다.", choices: [{ text: "확장 투자 (-1000만/팬덤+5000)", effect: () => { gameState.finance -= 10000000; updateFandom(5000); } }, { text: "1기 집중 선언 (팬덤+3000)", effect: () => { updateFandom(3000); } }, { text: "무대응 (팬덤-500)", effect: () => { updateFandom(-500); } }] }
+    ];
 
     window.addEventListener('keydown', e => { 
         if (e.code === 'Space') {
             const modal = document.getElementById('eventModal');
-            if (modal.style.display === 'block') closeModal();
-            else nextDay();
+            if (modal.style.display === 'block') return;
+            nextDay();
         }
     });
 
     function updateFandom(val) {
-        gameState.fandom += val;
+        gameState.fandom = Math.max(0, gameState.fandom + val);
         gameState.youtube += Math.floor(val * 0.7);
         gameState.sns += Math.floor(val * 1.2);
     }
@@ -183,14 +183,13 @@
 
     function nextDay() {
         let totalProfit = Math.floor(Math.random() * 600001) + 400000;
-        let dailyReport = [];
         const actionsPool = ['vocal', 'dance', 'visual', 'variety', 'charm', 'rest'];
 
         gameState.members.forEach(m => {
             let action = m.manualAct || actionsPool[Math.floor(Math.random() * actionsPool.length)];
             if (action === 'rest') { m.fatigue = Math.max(0, m.fatigue - 25); m.manualAct = null; return; }
             if (m.fatigue >= 100) { m.manualAct = null; return; }
-            if (m[action] < 20 && Math.random() < 0.3) { m[action]++; m.fatigue = Math.min(100, m.fatigue + 15); dailyReport.push({name: m.name, stat: action}); }
+            if (m[action] < 20 && Math.random() < 0.3) { m[action]++; m.fatigue = Math.min(100, m.fatigue + 15); }
             else { m.fatigue = Math.min(100, m.fatigue + 10); }
             m.manualAct = null;
         });
@@ -201,7 +200,8 @@
         const weekDay = (gameState.day - 1) % 7;
         if (weekDay < 5) {
             const m = gameState.members[weekDay];
-            gameState.community.push({site:'SNS', content: `📱 @${m.name}: 아바타 셀카 업데이트! (댓글: ${snsComments[Math.floor(Math.random()*snsComments.length)]})`});
+            const theme = snsPostThemes[Math.floor(Math.random() * snsPostThemes.length)];
+            gameState.community.push({site:'SNS', content: `📱 @${m.name}: ${theme} (댓글: ${snsComments[Math.floor(Math.random()*snsComments.length)]})`});
         }
 
         let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
@@ -210,22 +210,44 @@
 
         gameState.finance += totalProfit; gameState.finance -= 500000;
         updateFandom(Math.floor(totalProfit / 10000));
+        
+        if(gameState.day % 7 === 0 && gameState.day > 1) gameState.popupQueue.push({type: 'weekly'});
+        if(Math.random() < 0.15) gameState.popupQueue.push({type: 'virtual'});
+
         gameState.day++;
         gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
         
         document.getElementById('profit-report').style.display = 'block';
         document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
-        if(gameState.community.length > 5) gameState.community = gameState.community.slice(-5);
+        if(gameState.community.length > 8) gameState.community = gameState.community.slice(-8);
+        
         updateDisplay();
-        if(gameState.day % 7 === 1 && gameState.day > 1) gameState.popupQueue.push('weekly');
         processNextPopup();
     }
 
     function processNextPopup() {
-        if(gameState.popupQueue.length === 0) { openPage('home'); return; }
+        if(gameState.popupQueue.length === 0) return;
         const item = gameState.popupQueue.shift();
-        if(item === 'weekly') showWeeklyReportPopup();
+        if(item.type === 'weekly') showWeeklyReportPopup();
         else if(item.type === 'birthday') showBirthdayPopup(item.member);
+        else if(item.type === 'virtual') showVirtualEventPopup();
+    }
+
+    function showVirtualEventPopup() {
+        const ev = virtualEvents[Math.floor(Math.random()*virtualEvents.length)];
+        const modal = document.getElementById('eventModal');
+        document.getElementById('modal-title').innerText = ev.title;
+        document.getElementById('modal-body').innerText = ev.desc;
+        document.getElementById('modal-choices').innerHTML = ev.choices.map((c, idx) => `
+            <button class="choice-btn" onclick="executeVirtualChoice('${ev.id}', ${idx})">${c.text}</button>
+        `).join('');
+        modal.style.display = 'block';
+    }
+
+    function executeVirtualChoice(evId, chIdx) {
+        const ev = virtualEvents.find(e => e.id === evId);
+        ev.choices[chIdx].effect();
+        closeModal();
     }
 
     function showWeeklyReportPopup() {
@@ -234,7 +256,7 @@
         const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
         document.getElementById('modal-title').innerText = "📈 주간 너튜브 결산";
         document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#fff5f5; padding:15px; border-radius:10px;"><strong>이번 주 주인공: <span style="color:var(--point)">${star}</span></strong><br>조회수: ${views.toLocaleString()}회<hr><div style="font-size:11px; line-height:1.4;">- ${ytComments[Math.floor(Math.random()*30)]}<br>- ${ytComments[Math.floor(Math.random()*30)]}</div></div>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
         modal.style.display = 'block';
     }
 
@@ -243,7 +265,7 @@
         updateFandom(15000); ['vocal','dance','visual','variety','charm'].forEach(s => m[s] = Math.min(20, m[s]+1));
         document.getElementById('modal-title').innerText = `🎂 HAPPY BIRTHDAY!`;
         document.getElementById('modal-body').innerHTML = `<h3>${m.name}의 생일입니다!</h3><p>팬덤 +15,000 / 전스탯 +1</p>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">축하해주기 (Space)</button>`;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">축하해주기</button>`;
         modal.style.display = 'block';
     }
 
