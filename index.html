@@ -3,46 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v17.5 Final</title>
+    <title>하데스 키우기 v16.3</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
         #start-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; color: white; text-align: center; }
         .start-logo { font-size: 3rem; font-weight: 900; color: var(--point); margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,77,148,0.5); }
-        .start-btn { padding: 18px 60px; background: var(--point); color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(255,77,148,0.3); }
-        .nav-bar { display: none; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        .nav-btn { flex: 1; padding: 15px 5px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 14px; }
-        .nav-btn.active { color: var(--point); border-bottom: 3px solid var(--point); }
+        .start-sub { font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px; }
+        .start-btn { padding: 18px 60px; background: var(--point); color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(255,77,148,0.3); transition: 0.3s; }
+        .nav-bar { display: none; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .nav-btn { flex: 1; padding: 15px 5px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .nav-btn.active { color: var(--point); border-bottom: 3px solid var(--point); background: #fffafc; }
         .container { display: none; max-width: 900px; margin: 0 auto; padding: 15px 15px 100px 15px; }
         .page { display: none; }
         .page.active { display: block; }
         .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
         .date-display { position: relative; text-align: right; margin-bottom: 10px; }
-        .day-count { font-weight: bold; color: var(--point); font-size: 18px; }
+        @media (min-width: 600px) { .date-display { position: absolute; top: 15px; right: 25px; } }
+        .day-count { font-weight: bold; color: var(--point); font-size: 18px; display: block; }
+        .real-date { font-size: 12px; color: #888; }
+        h2 { color: #222; font-size: 1.1rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; margin-bottom: 15px; }
+        .money-text { color: var(--money); font-weight: bold; }
         .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .stat-item { background: #f8f9fa; padding: 10px; border-radius: 10px; }
+        .stat-item small { color: #777; font-size: 11px; }
         .stat-item strong { font-size: 15px; display: block; margin-top: 2px; }
-        .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 10px; position: relative; }
-        .condition-badge { position: absolute; top: 15px; right: 15px; font-size: 18px; }
+        .comm-post { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .comm-site { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+        .site-ebem { background: #e7f5ff; color: #1971c2; }
+        .site-cafe { background: #fff0f6; color: #d6336c; }
+        .site-sns { background: #f0f1ff; color: var(--sns); }
+        .site-yt { background: #ffe3e3; color: var(--yt); }
+        .site-yz { background: #000; color: #fff; }
+        #comm-container { max-height: 240px; overflow-y: auto; padding-right: 5px; }
+        #comm-container::-webkit-scrollbar { width: 4px; }
+        #comm-container::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+        .member-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 650px) { .member-grid { grid-template-columns: repeat(2, 1fr); } }
+        .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
         .stat-row { display: flex; align-items: center; margin-bottom: 6px; font-size: 12px; }
         .stat-label { width: 40px; color: #777; font-size: 11px; }
         .stat-bar-bg { flex: 1; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 0 8px; }
         .stat-bar-fill { height: 100%; border-radius: 4px; transition: 0.5s; }
-        .primary-btn { width: 100%; padding: 14px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 5px; }
+        .next-day-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px; border-top: 1px solid var(--border); text-align: center; z-index: 100; box-sizing: border-box; }
+        .primary-btn { width: 100%; padding: 14px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
         .primary-btn:disabled { background: #adb5bd; cursor: not-allowed; }
-        .choice-btn { width: 100%; padding: 14px; background: #f1f3f5; color: #333; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 8px; text-align: left; }
+        .choice-btn { width: 100%; padding: 14px; background: #f1f3f5; color: #333; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 8px; text-align: left; font-size: 14px; }
         .modal-overlay { display: none; position: fixed; z-index: 9000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter: blur(3px); }
         .modal-content { background:white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding:25px; width: 85%; max-width:400px; border-radius:20px; text-align:center; box-sizing: border-box; }
-        #comm-container { max-height: 200px; overflow-y: auto; text-align: left; }
-        .comm-post { border-bottom: 1px solid #eee; padding: 8px 0; font-size: 12px; }
-        .next-day-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px; border-top: 1px solid var(--border); text-align: center; z-index: 100; }
+        .half-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .save-load-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .save-btn { background: #495057; color: white; padding: 10px; border-radius: 8px; border: none; font-size: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="start-page">
     <div class="start-logo">HADES</div>
-    <div class="start-sub">Management v17.5</div>
+    <div class="start-sub">Virtual Idol Management Simulation</div>
     <button class="start-btn" onclick="startGame()">게임 시작</button>
 </div>
 
@@ -57,46 +75,52 @@
         <div class="card">
             <div class="date-display">
                 <span class="day-count">운영 <span id="current-day">1</span>일차</span>
-                <span id="current-date" style="font-size:12px; color:#888;">2025-09-05</span>
+                <span class="real-date" id="current-date">2025-09-05</span>
             </div>
             <h2>상태</h2>
             <div class="stat-grid">
-                <div class="stat-item"><small>보유 자산</small><strong class="money-text">200,000,000원</strong></div>
+                <div class="stat-item"><small>보유 자산</small><strong id="p-finance" class="money-text">200,000,000원</strong></div>
                 <div class="stat-item"><small>팬카페 회원</small><strong id="p-fandom">110,000명</strong></div>
                 <div class="stat-item"><small>너튜브 구독</small><strong id="p-youtube">20,000명</strong></div>
                 <div class="stat-item"><small>SNS 팔로워</small><strong id="p-sns">1,000명</strong></div>
             </div>
         </div>
 
-        <div class="card" id="profit-report" style="display:none; background:#f2fcf0;">
-            <h2>🎈 일일 리포트</h2>
-            <div id="profit-content" style="font-size: 13px;"></div>
-        </div>
-
-        <div class="card">
-            <h2>✍️ 커뮤니티 작성</h2>
-            <select id="post-site" style="width:100%; padding:8px; margin-bottom:5px; border-radius:5px; border:1px solid #ddd;">
-                <option value="팬카페">팬카페</option>
-                <option value="에뱀">에벰</option>
-                <option value="YZ">YZ</option>
-            </select>
-            <input type="text" id="post-input" placeholder="글 내용을 입력하세요..." style="width:100%; padding:10px; border-radius:5px; border:1px solid #ddd; box-sizing:border-box;">
-            <button id="post-submit-btn" class="primary-btn" style="background:#fab005;" onclick="submitPost()">작성 완료</button>
+        <div class="half-grid">
+            <div class="card" id="profit-report" style="display:none; background: #f2fcf0; border-color: #40c057;">
+                <h2>🎈 일일 리포트</h2>
+                <div id="profit-content" style="font-size: 14px;"></div>
+            </div>
+            <div class="card" id="post-section" style="display:block; background: #fff9db; border-color: #fab005;">
+                <h2>✍️ 커뮤니티 글작성</h2>
+                <select id="post-site" style="width:100%; padding:5px; margin-bottom:5px; border-radius:5px; border:1px solid #ddd; font-size:12px;">
+                    <option value="팬카페">팬카페</option>
+                    <option value="에뱀">에벰</option>
+                    <option value="YZ">YZ</option>
+                </select>
+                <input type="text" id="post-input" placeholder="글 내용을 입력하세요..." style="width:100%; padding:8px; border-radius:5px; border:1px solid #ddd; font-size:12px; box-sizing:border-box;">
+                <button id="post-submit-btn" class="primary-btn" style="padding:5px; font-size:12px; margin-top:5px; background:#fab005;" onclick="submitPost()">작성 완료</button>
+            </div>
         </div>
 
         <div class="card">
             <h2>🌐 실시간 반응</h2>
             <div id="comm-container"></div>
         </div>
+
+        <div class="save-load-btns">
+            <button class="save-btn" onclick="saveGame()">💾 데이터 저장</button>
+            <button class="save-btn" style="background:#212529;" onclick="loadGame()">📂 데이터 불러오기</button>
+        </div>
     </div>
 
     <div id="members" class="page">
-        <div id="member-grid-container"></div>
+        <div class="member-grid" id="member-grid-container"></div>
     </div>
 
     <div id="manual" class="page">
         <div class="card">
-            <h2>🎯 수동 지시</h2>
+            <h2>수동 지시</h2>
             <select id="sel-member" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;"></select>
             <select id="sel-stat" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
                 <option value="vocal">🎤 보컬 집중 훈련</option>
@@ -104,19 +128,10 @@
                 <option value="visual">✨ 비주얼 케어</option>
                 <option value="variety">🗣️ 예능 스피치</option>
                 <option value="charm">🎀 매력 강화</option>
-                <option value="interview">💬 개인 면담 (피로도↓/매력↑)</option>
+                <option value="stream">📡 실시간 스트리밍</option>
                 <option value="rest">💤 꿀같은 휴식</option>
             </select>
-            <button class="primary-btn" onclick="manualAction()">지시 완료</button>
-        </div>
-
-        <div class="card">
-            <h2>💿 앨범 발매</h2>
-            <select id="sel-song" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-                <option value="MEGA PIECE HARMONY">MEGA PIECE HARMONY</option>
-                <option value="두 번째 지구">두 번째 지구</option>
-            </select>
-            <button class="primary-btn" style="background:var(--vocal);" onclick="releaseAlbum()">앨범 발매하기</button>
+            <button class="primary-btn" onclick="manualTrainAction()">지시 완료</button>
         </div>
     </div>
 </div>
@@ -128,29 +143,12 @@
 <div id="eventModal" class="modal-overlay">
     <div class="modal-content">
         <h2 id="modal-title"></h2>
-        <div id="modal-body" style="margin: 15px 0; font-size: 14px; line-height:1.6;"></div>
+        <div id="modal-body" style="margin: 15px 0; font-size: 14px;"></div>
         <div id="modal-choices"></div>
     </div>
 </div>
 
 <script>
-    // [데이터 복구] 기존 메시지 리스트
-    const ebemMsgs = ["하데스 얘네는 진짜 모델링 퀄리티가 볼 때마다 감탄 나오네.", "키마 오늘 고음 뚫리는 거 보니까 목 상태 최상인 듯?", "띵귤 방송 감각은 진짜 타고났다. 오디오 안 비는 거 봐라 ㅋㅋㅋ", "연초록 아바타 텍스처 수정한 거임? 광택이 좀 달라진 거 같은데.", "솔직히 이 정도 퀄리티면 메이저랑 비벼도 안 꿀림.", "아니 챈나 춤선 억까하던 놈들 다 어디 갔냐? 리깅 자연스러운 거 봐라.", "솜주먹 예능감 미쳤네. 오늘 클립 각 하나 나왔다.", "근데 하데스 애들 연습량 진짜 장난 아닌 듯. 성장 속도가 보임.", "방금 리액션 타이밍 지렸다. 이게 버추얼의 맛이지.", "이번 신곡 안무 동선 복잡한데 트래킹 하나도 안 튀네. 장비 뭐 쓰냐?", "하데스 유입인데 입덕 가이드 어디서 봄?", "오늘 방송 보고 구독 눌렀다. 노래 주머니 든든하네.", "얘네는 멤버들끼리 티키타카가 잘 돼서 보기 편함.", "연초록 비주얼 실화냐? 썸네일 보고 홀린 듯 들어옴.", "솔직히 3D 라이브 할 때마다 기술력 발전하는 거 체감됨.", "키마 목소리는 진짜 독보적이다. 커버곡 하나 더 뽑아주라.", "오늘 띵귤 드립 때문에 광대 아파서 방송 못 보겠음 ㅋㅋㅋ", "하데스 정도면 버추얼 씬에서 탑티어 인정이지.", "애들 피로해 보이는데 휴식 좀 시켜야 할 듯. 얼굴색이 안 좋다.", "얘네는 진짜 '진심'인 게 느껴져서 응원하게 됨."];
-    const cafeMsgs = ["하데스 멤버들 오늘도 고생 많았어요! 푹 쉬어요~", "케로 1기 여기 여기 모여라! 우리 하데스 지켜!", "키마님 목소리는 제 지친 일상의 유일한 비타민이에요.", "오늘 띵귤님 덕분에 배꼽 빠지게 웃었네요. 항상 고마워요!", "우리 챈나님 미모가 매일 경신되는데... 제 심장 책임지세요!", "연초록님의 따뜻한 위로 방송 덕분에 오늘 힐링하고 갑니다.", "솜주먹님 매력에 한 번 빠지면 출구가 없다는 게 학계의 정설!", "하데스 공식 굿즈 기다리고 있어요. 통장은 준비됐습니다!", "오늘 무대 보는데 눈물 날 뻔했어요. 우리 애들 다 컸네...", "항상 노력하는 모습이 너무 예쁜 하데스, 오래오래 가자!", "팬아트 그려봤는데 예쁘게 봐주시면 좋겠어요~", "우리 하데스 슈스길만 걷자! 언제나 응원할게.", "멤버들 건강이 최우선인 거 알죠? 아프지 마요 ㅠㅠ", "오늘 방송도 레전드! 하데스 덕분에 내일 출근도 버팁니다.", "세상에서 제일 빛나는 5명의 별, 하데스 사랑해!", "챈나님 댄스 브레이크 부분 무한 반복 중입니다. 너무 멋져요!", "초보 팬인데 하데스 덕질 포인트 알려주실 천사 분 계신가요?", "노래면 노래, 춤이면 춤, 못하는 게 없는 하데스 최고!", "하데스 만나고 제 삶이 행복해졌어요. 고마워요 멤버들!", "오늘 밤은 하데스 노래 들으면서 좋은 꿈 꿀게요~"];
-    const yzMsgs = ["오늘 띵귤 폼 미쳤다 진짜... #하데스 #HADES #띵귤", "키마 고음 부분에서 소름 돋음. 이게 메인보컬이지. #KIMA", "하데스 신규 의상 실화야? 너무 예뻐서 기절함 ㅠㅠ #Hades_NewOutfit", "연초록 비주얼 공격 실화냐... 화면 가득 찬 미모에 정신 못 차림.", "하데스 멤버들 케미 진짜 좋아함. 이 조합 찬성이요. #하데스_합방", "실시간 트렌드에 하데스 떴다! 가보자고! #하데스_실트", "솜주먹 예능감에 오늘 하루 스트레스 다 날림 ㅋㅋㅋ #SOM", "챈나 춤선은 진짜 독보적이야. 3D 리깅이 춤선을 못 담네.", "하데스 노래 한 번만 들어보세요. 귀가 녹습니다. #버튜버추천", "나만 하데스 아는 줄 알았는데 구독자 느는 거 보니 뿌듯해.", "하데스 팝업스토어 열리면 밤샘 대기할 자신 있음. #HADES_POPUP", "오늘 리액션 짤 생성 완료. 너무 귀엽잖아... #하데스_클립", "버추얼 아이돌의 정점은 역시 하데스지. #VirtualIdol", "애들 목소리 합 진짜 좋다. 단체곡 나오면 무한 스밍 각.", "하데스 덕질하면서 인생의 진리를 깨달음. 귀여운 게 최고다.", "초록이 웃는 거 보니까 오늘 할 일 다 했다. #연초록", "하데스 팬덤 화력 무엇... 실시간 반응 속도 실화인가?", "오늘 방송 하이라이트: 솜주먹의 뜬금포 드립 ㅋㅋㅋ #웃음벨", "하데스 애들 쉬는 날엔 뭐 할까? 휴식 브이로그 보고 싶다.", "내일도 하데스 방송 있다! 인생 살 맛 나네. #하데스_내일도"];
-
-    let gameState = {
-        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
-        members: [
-            {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, cond: 'neutral', manualAct: null},
-            {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, cond: 'neutral', manualAct: null},
-            {name: '챈나', birth: '02-26', vocal: 9, dance: 10, visual: 11, variety: 9, charm: 10, fatigue: 0, cond: 'neutral', manualAct: null},
-            {name: '솜주먹', birth: '11-11', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 0, cond: 'neutral', manualAct: null},
-            {name: '연초록', birth: '03-26', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 0, cond: 'neutral', manualAct: null},
-        ],
-        community: [], popupQueue: [], weeklyStats: [], pendingPost: null, hasPostedThisWeek: false
-    };
-
     function startGame() {
         document.getElementById('start-page').style.display = 'none';
         document.getElementById('main-nav').style.display = 'flex';
@@ -158,6 +156,56 @@
         document.getElementById('main-footer').style.display = 'block';
         updateDisplay();
     }
+
+    let gameState = {
+        day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
+        members: [
+            {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, manualAct: null},
+            {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, manualAct: null},
+            {name: '챈나', birth: '02-26', vocal: 9, dance: 10, visual: 11, variety: 9, charm: 10, fatigue: 0, manualAct: null},
+            {name: '솜주먹', birth: '11-11', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 0, manualAct: null},
+            {name: '연초록', birth: '03-26', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 0, manualAct: null},
+        ],
+        community: [], popupQueue: [], weeklyStats: [], pendingPost: null,
+        hasPostedThisWeek: false
+    };
+
+    function saveGame() { localStorage.setItem('hades_save_v16_3', JSON.stringify(gameState)); alert("저장되었습니다."); }
+    function loadGame() { 
+        const saved = localStorage.getItem('hades_save_v16_3'); 
+        if (!saved) return alert("데이터 없음"); 
+        gameState = JSON.parse(saved); gameState.startDate = new Date(gameState.startDate); 
+        updateDisplay(); alert("불러오기 완료"); 
+    }
+
+    const ebemMsgs = ["하데스 얘네는 진짜 모델링 퀄리티가 볼 때마다 감탄 나오네.", "키마 오늘 고음 뚫리는 거 보니까 목 상태 최상인 듯?", "띵귤 방송 감각은 진짜 타고났다. 오디오 안 비는 거 봐라 ㅋㅋㅋ", "연초록 아바타 텍스처 수정한 거임? 광택이 좀 달라진 거 같은데.", "솔직히 이 정도 퀄리티면 메이저랑 비벼도 안 꿀림.", "아니 챈나 춤선 억까하던 놈들 다 어디 갔냐? 리깅 자연스러운 거 봐라.", "솜주먹 예능감 미쳤네. 오늘 클립 각 하나 나왔다.", "근데 하데스 애들 연습량 진짜 장난 아닌 듯. 성장 속도가 보임.", "방금 리액션 타이밍 지렸다. 이게 버추얼의 맛이지.", "이번 신곡 안무 동선 복잡한데 트래킹 하나도 안 튀네. 장비 뭐 쓰냐?", "하데스 유입인데 입덕 가이드 어디서 봄?", "오늘 방송 보고 구독 눌렀다. 노래 주머니 든든하네.", "얘네는 멤버들끼리 티키타카가 잘 돼서 보기 편함.", "연초록 비주얼 실화냐? 썸네일 보고 홀린 듯 들어옴.", "솔직히 3D 라이브 할 때마다 기술력 발전하는 거 체감됨.", "키마 목소리는 진짜 독보적이다. 커버곡 하나 더 뽑아주라.", "오늘 띵귤 드립 때문에 광대 아파서 방송 못 보겠음 ㅋㅋㅋ", "하데스 정도면 버추얼 씬에서 탑티어 인정이지.", "애들 피로해 보이는데 휴식 좀 시켜야 할 듯. 얼굴색이 안 좋다.", "얘네는 진짜 '진심'인 게 느껴져서 응원하게 됨."];
+    const cafeMsgs = ["하데스 멤버들 오늘도 고생 많았어요! 푹 쉬어요~", "케로 1기 여기 여기 모여라! 우리 하데스 지켜!", "키마님 목소리는 제 지친 일상의 유일한 비타민이에요.", "오늘 띵귤님 덕분에 배꼽 빠지게 웃었네요. 항상 고마워요!", "우리 챈나님 미모가 매일 경신되는데... 제 심장 책임지세요!", "연초록님의 따뜻한 위로 방송 덕분에 오늘 힐링하고 갑니다.", "솜주먹님 매력에 한 번 빠지면 출구가 없다는 게 학계의 정설!", "하데스 공식 굿즈 기다리고 있어요. 통장은 준비됐습니다!", "오늘 무대 보는데 눈물 날 뻔했어요. 우리 애들 다 컸네...", "항상 노력하는 모습이 너무 예쁜 하데스, 오래오래 가자!", "팬아트 그려봤는데 예쁘게 봐주시면 좋겠어요~", "우리 하데스 슈스길만 걷자! 언제나 응원할게.", "멤버들 건강이 최우선인 거 알죠? 아프지 마요 ㅠㅠ", "오늘 방송도 레전드! 하데스 덕분에 내일 출근도 버팁니다.", "세상에서 제일 빛나는 5명의 별, 하데스 사랑해!", "챈나님 댄스 브레이크 부분 무한 반복 중입니다. 너무 멋져요!", "초보 팬인데 하데스 덕질 포인트 알려주실 천사 분 계신가요?", "노래면 노래, 춤이면 춤, 못하는 게 없는 하데스 최고!", "하데스 만나고 제 삶이 행복해졌어요. 고마워요 멤버들!", "오늘 밤은 하데스 노래 들으면서 좋은 꿈 꿀게요~"];
+    const yzMsgs = ["오늘 띵귤 폼 미쳤다 진짜... #하데스 #HADES #띵귤", "키마 고음 부분에서 소름 돋음. 이게 메인보컬이지. #KIMA", "하데스 신규 의상 실화야? 너무 예뻐서 기절함 ㅠㅠ #Hades_NewOutfit", "연초록 비주얼 공격 실화냐... 화면 가득 찬 미모에 정신 못 차림.", "하데스 멤버들 케미 진짜 좋아함. 이 조합 찬성이요. #하데스_합방", "실시간 트렌드에 하데스 떴다! 가보자고! #하데스_실트", "솜주먹 예능감에 오늘 하루 스트레스 다 날림 ㅋㅋㅋ #SOM", "챈나 춤선은 진짜 독보적이야. 3D 리깅이 춤선을 못 담네.", "하데스 노래 한 번만 들어보세요. 귀가 녹습니다. #버튜버추천", "나만 하데스 아는 줄 알았는데 구독자 느는 거 보니 뿌듯해.", "하데스 팝업스토어 열리면 밤샘 대기할 자신 있음. #HADES_POPUP", "오늘 리액션 짤 생성 완료. 너무 귀엽잖아... #하데스_클립", "버추얼 아이돌의 정점은 역시 하데스지. #VirtualIdol", "애들 목소리 합 진짜 좋다. 단체곡 나오면 무한 스밍 각.", "하데스 덕질하면서 인생의 진리를 깨달음. 귀여운 게 최고다.", "초록이 웃는 거 보니까 오늘 할 일 다 했다. #연초록", "하데스 팬덤 화력 무엇... 실시간 반응 속도 실화인가?", "오늘 방송 하이라이트: 솜주먹의 뜬금포 드립 ㅋㅋㅋ #웃음벨", "하데스 애들 쉬는 날엔 뭐 할까? 휴식 브이로그 보고 싶다.", "내일도 하데스 방송 있다! 인생 살 맛 나네. #하데스_내일도"];
+
+    const virtualEvents = [
+        { id: 'server', group: 'weekly', title: "💻 방송 렉 발생", desc: "방송 중 인터넷이 불안정합니다.", choices: [{ text: "바로 교체하자 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "일단 방종하자 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "무대응 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
+        { id: 'copyright', group: 'weekly', title: "🎤 저작권 경고", desc: "커버곡 영상에 노란 딱지가 붙었습니다.", choices: [{ text: "해결 (-300만/팬덤+1500)", effect: () => { gameState.finance -= 3000000; updateFandom(1500); } }, { text: "삭제 (팬덤-500)", effect: () => { updateFandom(-500); } }, { text: "무대응 (팬덤-1200)", effect: () => { updateFandom(-1200); } }] },
+        { id: 'contest', group: 'weekly', title: "🎨 팬아트 공모전", desc: "공식 공모전을 진행할까요?", choices: [{ text: "대규모 (-1000만/팬덤+10000)", effect: () => { gameState.finance -= 10000000; updateFandom(10000); } }, { text: "소규모 (-200만/팬덤+3000)", effect: () => { gameState.finance -= 2000000; updateFandom(3000); } }, { text: "취소", effect: () => {} }] },
+        { id: 'collab', group: 'weekly', title: "🌟 타 유튜버 합방", desc: "합방 제의가 들어왔습니다.", choices: [{ text: "유료 광고 (-500만/팬덤+6000)", effect: () => { gameState.finance -= 5000000; updateFandom(6000); } }, { text: "일반 참여 (팬덤+2500)", effect: () => { updateFandom(2500); } }, { text: "거절", effect: () => {} }] },
+        { id: 'game', group: 'weekly', title: "🎮 게임 대회", desc: "버추얼 대회에 초청받았습니다.", choices: [{ text: "스폰서십 (-700만/팬덤+8000)", effect: () => { gameState.finance -= 7000000; updateFandom(8000); } }, { text: "개인 참가 (팬덤+1800)", effect: () => { updateFandom(1800); } }, { text: "불참", effect: () => {} }] },
+        { id: 'asmr', group: 'weekly', title: "🎧 ASMR 기획", desc: "ASMR 먹방을 준비할까요?", choices: [{ text: "장비 풀세트 (-800만/팬덤+6000)", effect: () => { gameState.finance -= 8000000; updateFandom(6000); } }, { text: "기존 장비 (팬덤+1000)", effect: () => { updateFandom(1000); } }, { text: "취소", effect: () => {} }] },
+        { id: 'shorts', group: 'weekly', title: "📉 유튜브 알고리즘", desc: "숏츠를 양산할까요?", choices: [{ text: "전문 업체 (-400만/팬덤+5000)", effect: () => { gameState.finance -= 4000000; updateFandom(5000); } }, { text: "직접 편집 (팬덤+2000/피로+20)", effect: () => { updateFandom(2000); gameState.members.forEach(m=>m.fatigue = Math.min(100, m.fatigue+20)); } }, { text: "중단", effect: () => {} }] },
+        { id: 'meeting', group: 'weekly', title: "🎁 대규모 팬미팅", desc: "첫 오프라인 팬미팅 계획!", choices: [{ text: "대관 (-3500만/팬덤+35000)", effect: () => { gameState.finance -= 35000000; updateFandom(35000); } }, { text: "중형 홀 (-1500만/팬덤+12000)", effect: () => { gameState.finance -= 15000000; updateFandom(12000); } }, { text: "온라인 (팬덤+3000)", effect: () => { updateFandom(3000); } }] },
+        { id: 'ai', group: '30day', title: "🤖 AI 보이스 논란", desc: "AI 사용 의혹이 제기됩니다.", choices: [{ text: "해명 방송 (-200만/팬덤+3000)", effect: () => { gameState.finance -= 2000000; updateFandom(3000); } }, { text: "공지 (팬덤+500)", effect: () => { updateFandom(500); } }, { text: "무대응 (팬덤-1500)", effect: () => { updateFandom(-1500); } }] },
+        { id: 'costume', group: '30day', title: "👗 신규 의상", desc: "고퀄리티 의상을 제작할까요?", choices: [{ text: "프리미엄 (-500만/팬덤+8000)", effect: () => { gameState.finance -= 5000000; updateFandom(8000); } }, { text: "보급형 (-100만/팬덤+2000)", effect: () => { gameState.finance -= 1000000; updateFandom(2000); } }, { text: "보류", effect: () => {} }] },
+        { id: 'goods', group: '60day', title: "🧸 공식 굿즈", desc: "한정판 굿즈를 제작할까요?", choices: [{ text: "한정판 (-1000만/팬덤+12000)", effect: () => { gameState.finance -= 10000000; updateFandom(12000); } }, { text: "일반판 (-500만/팬덤+5000)", effect: () => { gameState.finance -= 5000000; updateFandom(5000); } }, { text: "거절", effect: () => {} }] }
+    ];
+
+    window.addEventListener('keydown', e => { 
+        if (document.activeElement.id === 'post-input') return;
+        if (e.code === 'Space') {
+            const modal = document.getElementById('eventModal');
+            if (modal.style.display === 'block') {
+                const btn = modal.querySelector('.primary-btn, .choice-btn');
+                if(btn) btn.click();
+            } else { if(document.getElementById('start-page').style.display === 'none') nextDay(); }
+        }
+    });
 
     function updateFandom(val) {
         gameState.fandom = Math.max(0, gameState.fandom + val);
@@ -169,169 +217,181 @@
         document.getElementById('current-day').innerText = gameState.day;
         let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
         document.getElementById('current-date').innerText = d.toISOString().split('T')[0];
+        document.getElementById('p-finance').innerText = gameState.finance.toLocaleString() + '원';
         document.getElementById('p-fandom').innerText = gameState.fandom.toLocaleString() + '명';
         document.getElementById('p-youtube').innerText = gameState.youtube.toLocaleString() + '명';
         document.getElementById('p-sns').innerText = gameState.sns.toLocaleString() + '명';
         
         const postBtn = document.getElementById('post-submit-btn');
-        postBtn.disabled = gameState.hasPostedThisWeek;
-        postBtn.innerText = gameState.hasPostedThisWeek ? "이번 주 작성 완료" : "작성 완료";
+        if (gameState.hasPostedThisWeek) { postBtn.disabled = true; postBtn.innerText = "이번 주 작성 완료"; }
+        else { postBtn.disabled = false; postBtn.innerText = "작성 완료"; }
 
-        const condIcons = {good: '🔥', neutral: '➡️', bad: '📉'};
         document.getElementById('member-grid-container').innerHTML = gameState.members.map(m => `
             <div class="member-card" style="${m.fatigue >= 100 ? 'border-color:var(--danger); background:#fff5f5;' : ''}">
-                <div class="condition-badge">${condIcons[m.cond]}</div>
-                <strong>${m.name}</strong> <small style="color:#999;">🎂 ${m.birth}</small>
-                ${renderStat('보컬',m.vocal,'var(--vocal)')}${renderStat('댄스',m.dance,'var(--dance)')}${renderStat('비주얼',m.visual,'var(--visual)')}${renderStat('매력',m.charm,'var(--charm)')}
-                <div style="font-size:11px; text-align:right; color:${m.fatigue >= 100 ? 'var(--danger)' : '#888'};">피로도: ${m.fatigue}%</div>
+                <div style="display:flex; justify-content:space-between;"><strong>${m.name}</strong><span style="font-size:10px; color:#999;">🎂 ${m.birth}</span></div>
+                ${renderStat('보컬',m.vocal,'var(--vocal)')}${renderStat('댄스',m.dance,'var(--dance)')}${renderStat('비주얼',m.visual,'var(--visual)')}${renderStat('예능',m.variety, 'var(--variety)')}${renderStat('매력',m.charm,'var(--charm)')}
+                <div style="font-size:11px; text-align:right; color:${m.fatigue >= 100 ? 'var(--danger)' : '#888'}; font-weight:bold;">피로도: ${m.fatigue}%</div>
             </div>
         `).join('');
         
-        document.getElementById('comm-container').innerHTML = gameState.community.slice(-30).reverse().map(c => `
-            <div class="comm-post"><b>[${c.site}]</b> ${c.content}</div>
-        `).join('');
+        document.getElementById('comm-container').innerHTML = gameState.community.map(c => `
+            <div class="comm-post"><span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':(c.site==='너튜브'?'site-yt':(c.site==='YZ'?'site-yz':'site-cafe')))}">${c.site}</span><div style="font-size:13px; margin-top:4px;">${c.content}</div></div>
+        `).reverse().join('');
     }
-
-    function renderStat(l, v, c) { return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/20)*100}%; background:${c}"></div></div><div style="font-size:10px;">${v}</div></div>`; }
 
     function submitPost() {
         if (gameState.hasPostedThisWeek) return;
         const text = document.getElementById('post-input').value; if (!text) return;
+        
         const site = document.getElementById('post-site').value;
-        const bonus = Math.floor(Math.random() * 800) + 200;
-        gameState.pendingPost = { site, content: `<b>${text}</b> <span style="color:var(--success);">+${bonus}</span>`, bonus };
-        gameState.hasPostedThisWeek = true;
-        document.getElementById('post-input').value = "";
+        const reactionCount = Math.floor(Math.random() * 301); 
+        let bonus = Math.floor((reactionCount / 300) * 800) + 100; 
+        
+        let label = (site === '에뱀') ? "추천👍" : (site === 'YZ' ? "LIKE ♡" : "좋아요♥");
+
+        // 팝업 없이 예약만 함
+        gameState.pendingPost = { 
+            site: site, 
+            content: `<b>[작성글] ${text} (${label} ${reactionCount}) <span style="color:var(--success);">+${bonus.toLocaleString()}명</span></b>`, 
+            bonus: bonus 
+        };
+        
+        gameState.hasPostedThisWeek = true; 
+        document.getElementById('post-input').value = ""; 
         updateDisplay();
     }
 
-    function manualAction() {
-        const idx = document.getElementById('sel-member').value;
-        const act = document.getElementById('sel-stat').value;
-        gameState.members[idx].manualAct = act;
-        alert(`${gameState.members[idx].name}에게 지시를 내렸습니다.`);
-    }
-
-    function releaseAlbum() {
-        const songName = document.getElementById('sel-song').value;
-        const totalStat = gameState.members.reduce((a,b) => a + b.vocal + b.dance + b.charm + b.visual, 0);
-        const rank = Math.max(1, 101 - Math.floor(totalStat / 2.5));
-        const profit = (101 - rank) * 1500000 + 5000000;
-        const fanGain = (101 - rank) * 3000;
-
-        gameState.finance += profit;
-        updateFandom(fanGain);
-        gameState.popupQueue.push({
-            type: 'event',
-            event: { title: "💿 앨범 발매 결과", desc: `신곡 <b>[${songName}]</b> 차트 <b>${rank}위</b> 진입!<br>수익: ${profit.toLocaleString()}원<br>팬덤: +${fanGain.toLocaleString()}명`, choices: [{text: "확인", effect:()=>{}}] }
-        });
-        processNextPopup();
-    }
+    function renderStat(l, v, c) { return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/20)*100}%; background:${v>=20?'#333':c}"></div></div><div style="font-size:10px;">${v}</div></div>`; }
 
     function nextDay() {
         if (document.getElementById('eventModal').style.display === 'block') return;
-        
-        let totalProfit = Math.floor(Math.random() * 800000) + 400000;
-        gameState.finance += totalProfit;
-        gameState.finance -= 500000; // 유지비 고정
+        let totalProfit = Math.floor(Math.random() * 800001) + 400000;
+        let youtubeBonus = 0;
+        let isHit = false;
 
-        // 훈련 및 컨디션 로직
+        if (totalProfit >= 1000000) {
+            isHit = true;
+            youtubeBonus = Math.floor(Math.random() * 7001) + 3000;
+            gameState.youtube += youtubeBonus;
+        }
+
+        const actionsPool = ['vocal', 'dance', 'visual', 'variety', 'charm', 'rest'];
+        if (gameState.day % 7 === 1 && gameState.day > 1) gameState.hasPostedThisWeek = false;
+
         gameState.members.forEach(m => {
-            const r = Math.random();
-            m.cond = r > 0.8 ? 'good' : (r > 0.2 ? 'neutral' : 'bad');
-            
-            let act = m.manualAct || ['vocal','dance','visual','variety','charm','rest'][Math.floor(Math.random()*6)];
-            if(act === 'rest') m.fatigue = Math.max(0, m.fatigue - 40);
-            else if(act === 'interview') {
-                m.fatigue = Math.max(0, m.fatigue - 20);
-                if(Math.random() < 0.4) { m.charm = Math.min(20, m.charm+1); gameState.weeklyStats.push({name: m.name, stat: '매력', to: m.charm}); }
-            } else {
-                let prob = m.cond === 'good' ? 0.6 : (m.cond === 'bad' ? 0.1 : 0.3);
-                if(Math.random() < prob && m[act] < 20) {
-                    let prev = m[act]; m[act]++;
-                    gameState.weeklyStats.push({name: m.name, stat: act, from: prev, to: m[act]});
-                }
-                m.fatigue = Math.min(100, m.fatigue + (m.cond === 'bad' ? 25 : 15));
+            let action = m.manualAct || actionsPool[Math.floor(Math.random() * actionsPool.length)];
+            if (action === 'rest') m.fatigue = Math.max(0, m.fatigue - 40);
+            else if (m.fatigue < 100) {
+                let prev = m[action];
+                if (m[action] < 20 && Math.random() < 0.4) { 
+                    m[action]++; 
+                    gameState.weeklyStats.push({name: m.name, stat: action, from: prev, to: m[action]}); 
+                    m.fatigue = Math.min(100, m.fatigue + 20); 
+                } else m.fatigue = Math.min(100, m.fatigue + 15);
             }
             m.manualAct = null;
         });
 
-        // 커뮤니티 자동 생성
         if (Math.random() < 0.3) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
         if (Math.random() < 0.3) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
         if (Math.random() < 0.3) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
-
-        if(gameState.pendingPost) {
-            gameState.community.push(gameState.pendingPost);
-            updateFandom(gameState.pendingPost.bonus);
-            gameState.pendingPost = null;
+        
+        // 예약된 커뮤니티 글을 다음 날 실시간 반응에 추가
+        if (gameState.pendingPost) { 
+            gameState.community.push({site: gameState.pendingPost.site, content: gameState.pendingPost.content}); 
+            updateFandom(gameState.pendingPost.bonus); 
+            gameState.pendingPost = null; 
         }
 
-        // 주간 결산 및 리셋
+        if (gameState.community.length > 50) gameState.community.shift();
+
+        checkBirthday();
+        checkVirtualEvent();
+
         if(gameState.day % 7 === 0) {
-            gameState.hasPostedThisWeek = false;
-            if(gameState.weeklyStats.length > 0) {
-                gameState.popupQueue.push({type: 'report', event: {title: "🗓️ 주간 성장 보고", desc: gameState.weeklyStats.map(s=>`${s.name}: ${s.stat} 상승!`).join('<br>'), choices:[{text:"확인"}]}});
-                gameState.weeklyStats = [];
-            }
+            gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]});
+            gameState.weeklyStats = [];
         }
-
-        // 시상식 & 생일 체크
-        checkSpecialEvents();
-
+        
+        gameState.finance += totalProfit; 
+        gameState.finance -= 500000; 
+        updateFandom(Math.floor(totalProfit / 10000));
+        
         document.getElementById('profit-report').style.display = 'block';
-        document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span> (유지비 -500,000원)`;
-
-        gameState.day++;
-        updateDisplay();
-        processNextPopup();
+        let reportHtml = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
+        if (isHit) {
+            reportHtml += `<br><span style="color:red; font-weight:bold;">🔥 조회수 100만 돌파!</span><br>구독자 <span style="color:red;">+${youtubeBonus.toLocaleString()}명</span> 증가`;
+            gameState.community.push({site:'너튜브', content: `<b>[인급동] 하데스 이번 영상 조회수 100만 찍었네 ㄷㄷ</b>`});
+        }
+        document.getElementById('profit-content').innerHTML = reportHtml;
+        
+        gameState.day++; updateDisplay(); processNextPopup();
     }
 
-    function checkSpecialEvents() {
-        // 생일 체크
+    function checkBirthday() {
         let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
         let todayStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         gameState.members.forEach(m => {
             if(m.birth === todayStr) {
-                gameState.popupQueue.push({type:'event', event: {title:`🎂 ${m.name} 생일!`, desc:`오늘은 ${m.name}의 생일입니다. 파티를 열어 팬덤이 크게 증가합니다!`, effect:()=>updateFandom(15000), choices:[{text:"축하해!"}]}});
+                gameState.popupQueue.push({
+                    type: 'birthday', 
+                    event: { id:'bday_'+m.name, title: `🎂 ${m.name} 생일 축하!`, desc: `오늘은 ${m.name}의 생일입니다!`, choices: [{ text: "생일 파티 진행 (팬덤+10000)", effect: () => { updateFandom(10000); } }] }
+                });
             }
         });
+    }
 
-        // 100일 시상식
-        if(gameState.day % 100 === 0) {
-            gameState.popupQueue.push({type:'event', event: {title:"🏆 하데스 시상식", desc:"100일 기념 시상식에서 상을 휩쓸었습니다!<br>팬덤 +50000, 전원 매력 +1", effect:()=>{updateFandom(50000); gameState.members.forEach(m=>m.charm=Math.min(20, m.charm+1));}, choices:[{text:"감동이다!"}]}});
-        }
-
-        // 돌발 이벤트 (주간 단위)
-        if(gameState.day % 7 === 1 && gameState.day > 1) {
-            let ev = virtualEvents[Math.floor(Math.random()*virtualEvents.length)];
-            gameState.popupQueue.push({type:'event', event: ev});
-        }
+    function checkVirtualEvent() {
+        const d = gameState.day;
+        let pool = [];
+        if (d % 60 === 1 && d > 1) pool = virtualEvents.filter(e => e.group === '60day');
+        else if (d % 30 === 1 && d > 1) pool = virtualEvents.filter(e => e.group === '30day');
+        else if (d % 7 === 1 && d > 1) pool = virtualEvents.filter(e => e.group === 'weekly');
+        if(pool.length) gameState.popupQueue.push({type: 'virtual', event: pool[Math.floor(Math.random()*pool.length)]});
     }
 
     function processNextPopup() {
         if (document.getElementById('eventModal').style.display === 'block' || gameState.popupQueue.length === 0) return;
         const item = gameState.popupQueue.shift();
-        renderEventPopup(item.event);
+        if(item.type === 'training_report') showTrainingReport(item.data);
+        else renderEventPopup(item.event, item.type === 'birthday');
     }
 
-    function renderEventPopup(ev) {
-        document.getElementById('modal-title').innerHTML = ev.title;
-        document.getElementById('modal-body').innerHTML = ev.desc;
-        document.getElementById('modal-choices').innerHTML = ev.choices.map((c, i) => 
-            `<button class="primary-btn" onclick="executeChoice(${i})">${c.text}</button>`).join('');
-        window.currentEvent = ev;
+    function renderEventPopup(ev, isBday) {
+        document.getElementById('modal-title').innerText = ev.title;
+        document.getElementById('modal-body').innerText = ev.desc;
+        let choicesHtml = isBday ? 
+            `<button class="primary-btn" onclick="executeBirthdayEvent('${ev.id}')">${ev.choices[0].text}</button>` :
+            ev.choices.map((c, idx) => `<button class="choice-btn" onclick="executeVirtualChoice('${ev.id}', ${idx})">${c.text}</button>`).join('');
+        document.getElementById('modal-choices').innerHTML = choicesHtml;
         document.getElementById('eventModal').style.display = 'block';
     }
 
-    function executeChoice(idx) {
-        const choice = window.currentEvent.choices[idx];
-        if(choice.effect) choice.effect();
-        else if(window.currentEvent.effect) window.currentEvent.effect();
+    function executeBirthdayEvent(id) { updateFandom(10000); closeModal(); }
+    function executeVirtualChoice(evId, chIdx) {
+        const ev = virtualEvents.find(e => e.id === evId);
+        if(ev && ev.choices[chIdx]) ev.choices[chIdx].effect();
         closeModal();
     }
 
-    function closeModal() { document.getElementById('eventModal').style.display = 'none'; setTimeout(processNextPopup, 200); }
+    function showTrainingReport(logs) {
+        document.getElementById('modal-title').innerText = "🗓️ 주간 트레이닝 결산";
+        let listHtml = "변화 없음";
+        if (logs.length > 0) {
+            const summary = {};
+            logs.forEach(l => {
+                if (!summary[l.name]) summary[l.name] = [];
+                let sName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
+                summary[l.name].push(`${sName} (${l.from}→${l.to})`);
+            });
+            listHtml = Object.entries(summary).map(([n, s]) => `<div style="margin-bottom:8px;"><b>${n}</b>: ${s.join(', ')} <span style="color:var(--success);">▲</span></div>`).join('');
+        }
+        document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#f8f9fa; padding:15px; border-radius:10px;">${listHtml}</div>`;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
+        document.getElementById('eventModal').style.display = 'block';
+    }
+
+    function closeModal() { document.getElementById('eventModal').style.display = 'none'; setTimeout(processNextPopup, 150); }
 
     function openPage(pId, btn) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -339,11 +399,17 @@
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         if(pId === 'manual') {
-            document.getElementById('sel-member').innerHTML = gameState.members.map((m,i)=>`<option value="${i}">${m.name} (피로:${m.fatigue}%)</option>`).join('');
+            const sel = document.getElementById('sel-member');
+            sel.innerHTML = gameState.members.map((m,i)=>`<option value="${i}">${m.name} (피로:${m.fatigue}%)</option>`).join('');
         }
     }
 
-    window.addEventListener('keydown', e => { if(e.code === 'Space' && document.activeElement.id !== 'post-input') nextDay(); });
+    function manualTrainAction() {
+        const idx = document.getElementById('sel-member').value;
+        const stat = document.getElementById('sel-stat').value;
+        gameState.members[idx].manualAct = stat;
+        alert(`${gameState.members[idx].name}에게 지시를 내렸습니다. 내일 반영됩니다.`);
+    }
 </script>
 </body>
 </html>
