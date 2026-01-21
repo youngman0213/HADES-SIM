@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v14.2</title>
+    <title>하데스 키우기 v14.4</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         
@@ -51,7 +51,6 @@
         .stat-item small { color: #777; font-size: 11px; }
         .stat-item strong { font-size: 15px; display: block; margin-top: 2px; }
 
-        /* 직접 작성 영역 스타일 */
         .write-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 13px; box-sizing: border-box; }
         .comm-write-area { display: flex; gap: 5px; }
         .comm-btn { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; background: #fff; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.2s; }
@@ -122,7 +121,7 @@
             <div class="card">
                 <h2>✍️ 커뮤니티 글 작성 (주 1회)</h2>
                 <input type="text" id="comm-input" class="write-input" placeholder="글 제목을 입력하세요...">
-                <div id="comm-write-status" style="font-size: 11px; color: #888; margin-bottom: 8px;">작성할 커뮤니티를 선택하세요.</div>
+                <div id="comm-write-status" style="font-size: 11px; color: #888; margin-bottom: 8px;">제목 입력 후 커뮤니티를 선택하세요.</div>
                 <div class="comm-write-area">
                     <button class="comm-btn" id="btn-write-cafe" onclick="writeCommunity('팬카페')">팬카페</button>
                     <button class="comm-btn" id="btn-write-ebem" onclick="writeCommunity('에벰')">에벰</button>
@@ -166,7 +165,7 @@
 <div id="eventModal" class="modal-overlay">
     <div class="modal-content">
         <h2 id="modal-title"></h2>
-        <div id="modal-body" style="margin: 15px 0; font-size: 14px;"></div>
+        <div id="modal-body" style="margin: 15px 0; font-size: 14px; text-align: left;"></div>
         <div id="modal-choices"></div>
     </div>
 </div>
@@ -193,16 +192,24 @@
         community: [], popupQueue: [], weeklyStats: []
     };
 
-    const ebemMsgs = ["하데스 얘네는 진짜 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 노래 개잘함", "오늘 띵귤 방송 레전드 찍었네 ㅋㅋㅋ"];
-    const cafeMsgs = ["숨스숨스", "오늘도 멤버들 고생했어요", "하데스 입덕 완료!"];
-    const yzMsgs = ["오늘 띵귤 왜 이럼? 기술력 미쳤네 ㄹㅇ", "키마 고음 발사할 때 귀여워 ㅋㅋㅋㅋ", "하데스 이번 신곡 무한스밍 중"];
+    const ebemMsgs = ["하데스 퀄리티 대박", "키마 고음 실력 무엇", "오늘 방송 진짜 폼 미쳤다"];
+    const cafeMsgs = ["하데스 평생 가자", "케로 1기 최고", "오늘도 고생했어"];
+    const yzMsgs = ["하데스 폼 미쳤다", "띵귤 매력 실화냐", "신곡 무한 스피밍 중"];
 
     const virtualEvents = [
-        { id: 'server', title: "💻 방송 렉 발생", desc: "방송 중 인터넷이 불안정합니다.", choices: [{ text: "바로 교체하자 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "일단 방종하자 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "오늘은 그냥 진행해 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
-        { id: 'costume', title: "👗 신규 의상", desc: "고퀄리티 아바타 의상을 제작할까요?", choices: [{ text: "프리미엄 (-500만/팬덤+8000)", effect: () => { gameState.finance -= 5000000; updateFandom(8000); } }, { text: "보급형 (-100만/팬덤+2000)", effect: () => { gameState.finance -= 1000000; updateFandom(2000); } }, { text: "제작 안함", effect: () => {} }] },
-        { id: 'copyright', title: "🎤 저작권 경고", desc: "커버곡 영상에 노란 딱지가 붙었습니다.", choices: [{ text: "저작권 해결 (-300만/팬덤+1500)", effect: () => { gameState.finance -= 3000000; updateFandom(1500); } }, { text: "영상 삭제 (팬덤-500)", effect: () => { updateFandom(-500); } }, { text: "무대응 (팬덤-1200)", effect: () => { updateFandom(-1200); } }] }
-        // ... (기타 이벤트 로직은 내부적으로 모두 유지됨)
+        { id: 'server', title: "💻 방송 렉 발생", desc: "방송 중 인터넷이 불안정합니다.", choices: [{ text: "바로 교체하자 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "일단 방종하자 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "오늘은 그냥 진행해 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] }
     ];
+
+    window.addEventListener('keydown', e => { 
+        if (e.code === 'Space') {
+            if (document.activeElement.tagName === 'INPUT') return;
+            const modal = document.getElementById('eventModal');
+            if (modal.style.display === 'block') {
+                const btn = modal.querySelector('.primary-btn');
+                if(btn) btn.click();
+            } else { if(document.getElementById('start-page').style.display === 'none') nextDay(); }
+        }
+    });
 
     function updateFandom(val) {
         gameState.fandom = Math.max(0, gameState.fandom + val);
@@ -213,41 +220,26 @@
     function writeCommunity(site) {
         const input = document.getElementById('comm-input');
         if (!input.value.trim()) { alert("글 제목을 입력해주세요."); return; }
-        
         const currentWeek = Math.floor((gameState.day - 1) / 7);
-        if (gameState.lastWriteWeek === currentWeek) {
-            alert("이번 주에는 이미 글을 작성했습니다.");
-            return;
-        }
-        
-        gameState.pendingPost = site;
-        gameState.pendingTitle = input.value;
-        gameState.lastWriteWeek = currentWeek;
-        
-        alert(`[${site}]에 "${input.value}" 글을 게시했습니다. 내일 결과를 확인하세요.`);
-        input.value = "";
-        updateDisplay();
+        if (gameState.lastWriteWeek === currentWeek) { alert("이미 작성했습니다."); return; }
+        gameState.pendingPost = site; gameState.pendingTitle = input.value; gameState.lastWriteWeek = currentWeek;
+        alert(`게시 완료. 내일 결과를 확인하세요.`); input.value = ""; updateDisplay();
     }
 
     function processCommunityResult() {
         if (!gameState.pendingPost) return;
-        const site = gameState.pendingPost;
-        const title = gameState.pendingTitle;
-        const up = Math.floor(Math.random() * 301);
-        const down = Math.floor(Math.random() * 101);
+        const site = gameState.pendingPost; const title = gameState.pendingTitle;
+        const up = Math.floor(Math.random() * 301); const down = Math.floor(Math.random() * 101);
         let resultMsg = "";
-        
         if (up > down) {
             const gain = Math.floor(Math.random() * 501);
             gameState.fandom += gain; gameState.youtube += gain; gameState.sns += gain;
-            resultMsg = `<b>[${site} 작성글: ${title}] 추천 ${up} / 비추 ${down} 달성! 모든 팔로워가 각각 ${gain}명 상승했습니다!</b>`;
+            resultMsg = `<b>[${site} 작성글: ${title}] 추천 ${up} / 비추 ${down} 달성! 모든 수치가 ${gain}명 상승했습니다!</b>`;
         } else {
-            resultMsg = `<b>[${site} 작성글: ${title}] 추천 ${up} / 비추 ${down}... 반응이 좋지 않아 변화가 없습니다.</b>`;
+            resultMsg = `<b>[${site} 작성글: ${title}] 추천 ${up} / 비추 ${down}... 반응이 좋지 않습니다.</b>`;
         }
-        
         gameState.community.push({ site: site, content: resultMsg });
-        gameState.pendingPost = null;
-        gameState.pendingTitle = "";
+        gameState.pendingPost = null; gameState.pendingTitle = "";
     }
 
     function updateDisplay() {
@@ -260,18 +252,16 @@
         document.getElementById('p-sns').innerText = gameState.sns.toLocaleString() + '명';
 
         const currentWeek = Math.floor((gameState.day - 1) / 7);
+        const input = document.getElementById('comm-input');
         const btns = ["btn-write-cafe", "btn-write-ebem", "btn-write-yz"];
-        const statusText = document.getElementById('comm-write-status');
-        const inputField = document.getElementById('comm-input');
-
         if (gameState.lastWriteWeek === currentWeek) {
             btns.forEach(id => document.getElementById(id).disabled = true);
-            inputField.disabled = true;
-            statusText.innerText = "이번 주 작성을 완료했습니다.";
+            input.disabled = true;
+            document.getElementById('comm-write-status').innerText = "이번 주 작성을 완료했습니다.";
         } else {
             btns.forEach(id => document.getElementById(id).disabled = false);
-            inputField.disabled = false;
-            statusText.innerText = "제목 입력 후 커뮤니티를 선택하세요.";
+            input.disabled = false;
+            document.getElementById('comm-write-status').innerText = "제목 입력 후 커뮤니티를 선택하세요.";
         }
         
         document.getElementById('member-grid-container').innerHTML = gameState.members.map(m => `
@@ -282,7 +272,8 @@
             </div>
         `).join('');
 
-        const latestComm = gameState.community.slice(-7);
+        // 실시간 반응 상위 3개만 노출
+        const latestComm = gameState.community.slice(-3);
         document.getElementById('comm-container').innerHTML = latestComm.map(c => `
             <div class="comm-post">
                 <span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에벰'?'site-ebem':(c.site==='너튜브'?'site-yt':(c.site==='YZ'?'site-yz':'site-cafe')))}">${c.site}</span>
@@ -304,11 +295,8 @@
             let action = m.manualAct || actionsPool[Math.floor(Math.random() * actionsPool.length)];
             if (action === 'rest') { m.fatigue = Math.max(0, m.fatigue - 25); } 
             else if (m.fatigue < 100) {
-                if (m[action] < 20 && Math.random() < 0.4) { 
-                    m[action]++; 
-                    gameState.weeklyStats.push({name: m.name, stat: action});
-                    m.fatigue = Math.min(100, m.fatigue + 15); 
-                } else { m.fatigue = Math.min(100, m.fatigue + 10); }
+                if (m[action] < 20 && Math.random() < 0.4) { m[action]++; gameState.weeklyStats.push({name: m.name, stat: action}); m.fatigue = Math.min(100, m.fatigue + 15); } 
+                else { m.fatigue = Math.min(100, m.fatigue + 10); }
             }
             m.manualAct = null;
         });
@@ -316,9 +304,9 @@
             gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]});
             gameState.weeklyStats = [];
         }
-        if (Math.random() < 0.45) gameState.community.push({site:'에벰', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
-        if (Math.random() < 0.45) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
-        if (Math.random() < 0.45) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
+        if (Math.random() < 0.4) gameState.community.push({site:'에벰', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
+        if (Math.random() < 0.4) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
+        if (Math.random() < 0.4) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
         
         checkVirtualEvent();
         gameState.finance += totalProfit; gameState.finance -= 500000; updateFandom(Math.floor(totalProfit / 10000));
@@ -353,11 +341,24 @@
         modal.style.display = 'block';
     }
 
+    // 주간 결산 팝업 복구 (상세 정보 표시)
     function showTrainingReport(logs) {
         const modal = document.getElementById('eventModal');
-        document.getElementById('modal-title').innerText = "🗓️ 주간 결산";
-        document.getElementById('modal-body').innerText = logs.length > 0 ? "스탯이 상승했습니다!" : "변동 없음";
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
+        document.getElementById('modal-title').innerText = "🗓️ 주간 트레이닝 결산";
+        const summary = {};
+        logs.forEach(l => {
+            if (!summary[l.name]) summary[l.name] = [];
+            const statName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
+            summary[l.name].push(statName);
+        });
+        let listHtml = Object.entries(summary).map(([name, stats]) => {
+            const counts = {};
+            stats.forEach(s => counts[s] = (counts[s] || 0) + 1);
+            const statString = Object.entries(counts).map(([s, c]) => `${s} <span style="color:var(--success); font-weight:bold;">+${c}</span>`).join(', ');
+            return `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;"><span style="color:var(--point); font-weight:bold;">${name}</span><br>${statString}</div>`;
+        }).join('');
+        document.getElementById('modal-body').innerHTML = listHtml || "한 주 동안 스탯 변화가 없었습니다.";
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
         modal.style.display = 'block';
     }
 
@@ -385,16 +386,6 @@
 
     const sel = document.getElementById('sel-member');
     gameState.members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
-    
-    window.addEventListener('keydown', e => { 
-        if (e.code === 'Space') {
-            const modal = document.getElementById('eventModal');
-            if (modal.style.display === 'block') {
-                const btn = modal.querySelector('.primary-btn');
-                if(btn) btn.click();
-            } else { if(document.getElementById('start-page').style.display === 'none') nextDay(); }
-        }
-    });
 </script>
 </body>
 </html>
