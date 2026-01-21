@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v14.7</title>
+    <title>하데스 키우기 v14.8</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
@@ -236,7 +236,13 @@
         if (!text) return alert("내용을 입력하세요!");
         const up = Math.floor(Math.random() * 301);
         const down = Math.floor(Math.random() * 101);
-        gameState.pendingPost = { site: site, content: `<b>[작성글] ${text} (추천 ${up} / 비추 ${down})</b>`, up: up, down: down };
+        // 결과 표기 시 늘어난 팬 수 미리 계산
+        let bonus = Math.floor((up / 300) * 500);
+        gameState.pendingPost = { 
+            site: site, 
+            content: `<b>[작성글] ${text} (추천 ${up} / 비추 ${down}) <span style="color:var(--success);">+${bonus.toLocaleString()}명</span></b>`, 
+            bonus: bonus 
+        };
         alert("글 작성이 완료되었습니다. 내일 반응이 올라옵니다.");
         document.getElementById('post-input').value = "";
     }
@@ -267,7 +273,7 @@
 
         if (gameState.pendingPost) {
             gameState.community.push({site: gameState.pendingPost.site, content: gameState.pendingPost.content});
-            if (gameState.pendingPost.up > 0) { let bonus = Math.floor((gameState.pendingPost.up / 300) * 500); updateFandom(bonus); }
+            updateFandom(gameState.pendingPost.bonus);
             gameState.pendingPost = null;
         }
 
@@ -288,25 +294,12 @@
     }
 
     function checkVirtualEvent() {
-        // 일주일에 한 번만 체크 (매주 1일차에만 실행)
         if (gameState.day % 7 !== 1) return;
-
         const day = gameState.day;
         let pool = [];
-
-        // 1. 60일 주기 (공식굿즈, 전광판, 팝업)
-        if (day % 60 === 1) {
-            pool = ['goods', 'ad', 'popup'];
-        } 
-        // 2. 30일 주기 (보이스, 신규의상, 팬아트, 장비고장)
-        else if (day % 30 === 1) {
-            pool = ['ai', 'costume', 'goldfan', 'gear'];
-        } 
-        // 3. 나머지 주간 (일반 이벤트)
-        else {
-            pool = ['server', 'copyright', 'collab', 'game', 'asmr', 'shorts', 'chat', 'mix', 'rumor', 'power', 'meeting', 'gen2'];
-        }
-
+        if (day % 60 === 1) { pool = ['goods', 'ad', 'popup']; } 
+        else if (day % 30 === 1) { pool = ['ai', 'costume', 'goldfan', 'gear']; } 
+        else { pool = ['server', 'copyright', 'collab', 'game', 'asmr', 'shorts', 'chat', 'mix', 'rumor', 'power', 'meeting', 'gen2']; }
         if (pool.length > 0) {
             const selectedId = pool[Math.floor(Math.random() * pool.length)];
             const ev = virtualEvents.find(e => e.id === selectedId);
