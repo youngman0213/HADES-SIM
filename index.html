@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v15.8</title>
+    <title>하데스 키우기 v16.1</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
@@ -54,8 +54,6 @@
         .half-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .save-load-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .save-btn { background: #495057; color: white; padding: 10px; border-radius: 8px; border: none; font-size: 12px; cursor: pointer; }
-        .hit-badge { background: #ff0000; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -172,9 +170,9 @@
         hasPostedThisWeek: false
     };
 
-    function saveGame() { localStorage.setItem('hades_save_v15_8', JSON.stringify(gameState)); alert("저장되었습니다."); }
+    function saveGame() { localStorage.setItem('hades_save_v16_1', JSON.stringify(gameState)); alert("저장되었습니다."); }
     function loadGame() { 
-        const saved = localStorage.getItem('hades_save_v15_8'); 
+        const saved = localStorage.getItem('hades_save_v16_1'); 
         if (!saved) return alert("데이터 없음"); 
         gameState = JSON.parse(saved); gameState.startDate = new Date(gameState.startDate); 
         updateDisplay(); alert("불러오기 완료"); 
@@ -258,29 +256,42 @@
         `).reverse().join('');
     }
 
+    // [요청하신 커뮤니티 상승폭 연동 로직]
     function submitPost() {
         if (gameState.hasPostedThisWeek) return alert("주 1회만 가능");
         const text = document.getElementById('post-input').value; if (!text) return;
-        const up = Math.floor(Math.random() * 301); let bonus = Math.floor((up / 300) * 500);
-        gameState.pendingPost = { site: document.getElementById('post-site').value, content: `<b>[작성글] ${text} (추천 ${up}) <span style="color:var(--success);">+${bonus.toLocaleString()}명</span></b>`, bonus: bonus };
-        gameState.hasPostedThisWeek = true; alert("작성 완료"); document.getElementById('post-input').value = ""; updateDisplay();
+        
+        const site = document.getElementById('post-site').value;
+        const reactionCount = Math.floor(Math.random() * 301); 
+        let bonus = Math.floor((reactionCount / 300) * 800) + 100; 
+        
+        let label = "좋아요";
+        if (site === '에뱀') label = "추천";
+        else if (site === 'YZ') label = "LIKE";
+
+        gameState.pendingPost = { 
+            site: site, 
+            content: `<b>[작성글] ${text} (${label} ${reactionCount}) <span style="color:var(--success);">+${bonus.toLocaleString()}명</span></b>`, 
+            bonus: bonus 
+        };
+        
+        gameState.hasPostedThisWeek = true; 
+        alert(`${label} ${reactionCount}개를 받았습니다!`); 
+        document.getElementById('post-input').value = ""; 
+        updateDisplay();
     }
 
     function renderStat(l, v, c) { return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/20)*100}%; background:${v>=20?'#333':c}"></div></div><div style="font-size:10px;">${v}</div></div>`; }
 
     function nextDay() {
         if (document.getElementById('eventModal').style.display === 'block') return;
-        
-        // 수익 결정 (최대 120만까지 나오도록 폭 상향)
         let totalProfit = Math.floor(Math.random() * 800001) + 400000;
         let youtubeBonus = 0;
         let isHit = false;
 
-        // [조회수 100만 로직 추가] 
-        // 수익이 1,000,000원 이상일 때 조회수 100만 대박 판정
         if (totalProfit >= 1000000) {
             isHit = true;
-            youtubeBonus = Math.floor(Math.random() * 7001) + 3000; // 3000 ~ 10000명 사이
+            youtubeBonus = Math.floor(Math.random() * 7001) + 3000;
             gameState.youtube += youtubeBonus;
         }
 
@@ -314,13 +325,16 @@
             gameState.weeklyStats = [];
         }
 
-        if (gameState.pendingPost) { gameState.community.push({site: gameState.pendingPost.site, content: gameState.pendingPost.content}); updateFandom(gameState.pendingPost.bonus); gameState.pendingPost = null; }
+        if (gameState.pendingPost) { 
+            gameState.community.push({site: gameState.pendingPost.site, content: gameState.pendingPost.content}); 
+            updateFandom(gameState.pendingPost.bonus); 
+            gameState.pendingPost = null; 
+        }
         
         gameState.finance += totalProfit; 
-        gameState.finance -= 500000; // 유지비
+        gameState.finance -= 500000; 
         updateFandom(Math.floor(totalProfit / 10000));
         
-        // 수익 리포트 출력
         document.getElementById('profit-report').style.display = 'block';
         let reportHtml = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
         if (isHit) {
@@ -339,7 +353,7 @@
             if(m.birth === todayStr) {
                 gameState.popupQueue.push({
                     type: 'birthday', 
-                    event: { id:'bday_'+m.name, title: `🎂 ${m.name} 생일 축하!`, desc: `오늘은 ${m.name}의 생일입니다! 특별 생일 방송을 진행합니다.`, choices: [{ text: "생일 파티 진행 (팬덤+10000)", effect: () => { updateFandom(10000); } }] }
+                    event: { id:'bday_'+m.name, title: `🎂 ${m.name} 생일 축하!`, desc: `오늘은 ${m.name}의 생일입니다!`, choices: [{ text: "생일 파티 진행 (팬덤+10000)", effect: () => { updateFandom(10000); } }] }
                 });
             }
         });
@@ -347,18 +361,12 @@
 
     function checkVirtualEvent() {
         const d = gameState.day;
-        if (d % 60 === 1 && d > 1) {
-            const pool = virtualEvents.filter(e => e.group === '60day');
-            if(pool.length) gameState.popupQueue.push({type: 'virtual', event: pool[Math.floor(Math.random()*pool.length)]});
-        }
-        else if (d % 30 === 1 && d > 1) {
-            const pool = virtualEvents.filter(e => e.group === '30day');
-            if(pool.length) gameState.popupQueue.push({type: 'virtual', event: pool[Math.floor(Math.random()*pool.length)]});
-        }
-        else if (d % 7 === 1 && d > 1) {
-            const pool = virtualEvents.filter(e => e.group === 'weekly');
-            if(pool.length) gameState.popupQueue.push({type: 'virtual', event: pool[Math.floor(Math.random()*pool.length)]});
-        }
+        let pool = [];
+        if (d % 60 === 1 && d > 1) pool = virtualEvents.filter(e => e.group === '60day');
+        else if (d % 30 === 1 && d > 1) pool = virtualEvents.filter(e => e.group === '30day');
+        else if (d % 7 === 1 && d > 1) pool = virtualEvents.filter(e => e.group === 'weekly');
+        
+        if(pool.length) gameState.popupQueue.push({type: 'virtual', event: pool[Math.floor(Math.random()*pool.length)]});
     }
 
     function processNextPopup() {
@@ -371,12 +379,9 @@
     function renderEventPopup(ev, isBday) {
         document.getElementById('modal-title').innerText = ev.title;
         document.getElementById('modal-body').innerText = ev.desc;
-        let choicesHtml = '';
-        if (isBday) {
-            choicesHtml = `<button class="primary-btn" onclick="executeBirthdayEvent('${ev.id}')">${ev.choices[0].text}</button>`;
-        } else {
-            choicesHtml = ev.choices.map((c, idx) => `<button class="choice-btn" onclick="executeVirtualChoice('${ev.id}', ${idx})">${c.text}</button>`).join('');
-        }
+        let choicesHtml = isBday ? 
+            `<button class="primary-btn" onclick="executeBirthdayEvent('${ev.id}')">${ev.choices[0].text}</button>` :
+            ev.choices.map((c, idx) => `<button class="choice-btn" onclick="executeVirtualChoice('${ev.id}', ${idx})">${c.text}</button>`).join('');
         document.getElementById('modal-choices').innerHTML = choicesHtml;
         document.getElementById('eventModal').style.display = 'block';
     }
@@ -390,34 +395,26 @@
 
     function showTrainingReport(logs) {
         document.getElementById('modal-title').innerText = "🗓️ 주간 트레이닝 결산";
-        let listHtml = "변화 없음";
-        if (logs.length > 0) {
-            const summary = {};
-            logs.forEach(l => {
-                if (!summary[l.name]) summary[l.name] = [];
-                let sName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
-                summary[l.name].push(`${sName} (${l.from}→${l.to})`);
-            });
-            listHtml = Object.entries(summary).map(([n, s]) => `<div style="margin-bottom:8px;"><b>${n}</b>: ${s.join(', ')} <span style="color:var(--success);">▲</span></div>`).join('');
-        }
-        document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#f8f9fa; padding:15px; border-radius:10px;">${listHtml}</div>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
+        let listHtml = logs.length > 0 ? "성장 내역 있음" : "변화 없음";
+        document.getElementById('modal-body').innerHTML = listHtml;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
         document.getElementById('eventModal').style.display = 'block';
     }
 
     function closeModal() { document.getElementById('eventModal').style.display = 'none'; setTimeout(processNextPopup, 150); }
-    function manualTrainAction() {
-        const name = document.getElementById('sel-member').value; const stat = document.getElementById('sel-stat').value;
-        const m = gameState.members.find(i => i.name === name);
-        if (stat !== 'rest' && m.fatigue >= 100) return alert("번아웃!");
-        m.manualAct = stat; alert(`${name} 지시 완료`); updateDisplay();
-    }
+
     function openPage(pId, btn) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
         document.getElementById(pId).classList.add('active'); if(btn) btn.classList.add('active');
-        updateDisplay();
     }
+
+    function manualTrainAction() {
+        const name = document.getElementById('sel-member').value; const stat = document.getElementById('sel-stat').value;
+        const m = gameState.members.find(i => i.name === name);
+        m.manualAct = stat; alert(`${name} 지시 완료`);
+    }
+
     const sel = document.getElementById('sel-member');
     gameState.members.forEach(m => sel.innerHTML += `<option value="${m.name}">${m.name}</option>`);
 </script>
