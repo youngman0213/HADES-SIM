@@ -395,11 +395,21 @@
 
     function showTrainingReport(logs) {
         document.getElementById('modal-title').innerText = "🗓️ 주간 트레이닝 결산";
-        let listHtml = logs.length > 0 ? "성장 내역 있음" : "변화 없음";
-        document.getElementById('modal-body').innerHTML = listHtml;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
+        let listHtml = "변화 없음";
+        if (logs.length > 0) {
+            const summary = {};
+            logs.forEach(l => {
+                if (!summary[l.name]) summary[l.name] = [];
+                let sName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
+                summary[l.name].push(`${sName} (${l.from}→${l.to})`);
+            });
+            listHtml = Object.entries(summary).map(([n, s]) => `<div style="margin-bottom:8px;"><b>${n}</b>: ${s.join(', ')} <span style="color:var(--success);">▲</span></div>`).join('');
+        }
+        document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#f8f9fa; padding:15px; border-radius:10px;">${listHtml}</div>`;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
         document.getElementById('eventModal').style.display = 'block';
     }
+
 
     function closeModal() { document.getElementById('eventModal').style.display = 'none'; setTimeout(processNextPopup, 150); }
 
