@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v13.8</title>
+    <title>하데스 키우기 v14.0</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         
@@ -35,9 +35,7 @@
         .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
         
         .date-display { position: relative; text-align: right; margin-bottom: 10px; }
-        @media (min-width: 600px) {
-            .date-display { position: absolute; top: 15px; right: 25px; }
-        }
+        @media (min-width: 600px) { .date-display { position: absolute; top: 15px; right: 25px; } }
         
         .day-count { font-weight: bold; color: var(--point); font-size: 18px; display: block; }
         .real-date { font-size: 12px; color: #888; }
@@ -50,12 +48,11 @@
         .stat-item small { color: #777; font-size: 11px; }
         .stat-item strong { font-size: 15px; display: block; margin-top: 2px; }
 
-        /* 새로 추가된 커뮤니티 글 작성 스타일 */
-        .comm-write-zone { background: #fffafc; border: 1px dashed var(--point); padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        .comm-write-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-        .comm-small-btn { padding: 10px 5px; font-size: 12px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .comm-small-btn:disabled { background: #eee; color: #aaa; cursor: not-allowed; border-color: #eee; }
-        .comm-small-btn:not(:disabled):hover { border-color: var(--point); color: var(--point); }
+        /* 커뮤니티 작성 버튼 스타일 */
+        .comm-write-area { display: flex; gap: 10px; margin-top: 10px; }
+        .comm-btn { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s; }
+        .comm-btn:hover:not(:disabled) { background: #fff0f6; border-color: var(--point); color: var(--point); }
+        .comm-btn:disabled { background: #eee; color: #aaa; cursor: not-allowed; }
 
         .comm-post { border-bottom: 1px solid #eee; padding: 10px 0; }
         .comm-site { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
@@ -66,9 +63,7 @@
         .site-yz { background: #000; color: #fff; }
 
         .member-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 650px) {
-            .member-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (min-width: 650px) { .member-grid { grid-template-columns: repeat(2, 1fr); } }
 
         .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
         .stat-row { display: flex; align-items: center; margin-bottom: 6px; font-size: 12px; }
@@ -77,7 +72,6 @@
         .stat-bar-fill { height: 100%; border-radius: 4px; transition: 0.5s; }
 
         .next-day-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px; border-top: 1px solid var(--border); text-align: center; z-index: 100; box-sizing: border-box; }
-        
         .primary-btn { width: 100%; padding: 14px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
         .choice-btn { width: 100%; padding: 14px; background: #f1f3f5; color: #333; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 8px; text-align: left; font-size: 14px; }
 
@@ -114,18 +108,19 @@
                 <div class="stat-item"><small>SNS 팔로워</small><strong id="p-sns">1,000명</strong></div>
             </div>
         </div>
+        
         <div class="card" id="profit-report" style="display:none; background: #f2fcf0; border-color: #40c057;">
             <h2>🎈 일일 물풍선 수익</h2>
             <div id="profit-content" style="font-size: 14px;"></div>
         </div>
 
-        <div class="comm-write-zone">
-            <h2 style="border:none; padding:0; font-size: 1rem; margin-bottom: 5px;">✍️ 커뮤니티 글 작성</h2>
-            <p id="comm-write-info" style="font-size: 11px; color: #888; margin: 0 0 10px 0;">주 1회만 작성 가능합니다.</p>
-            <div class="comm-write-btns">
-                <button class="comm-small-btn" onclick="writePost('공식카페')">🏠 카페</button>
-                <button class="comm-small-btn" onclick="writePost('에뱀')">📘 에뱀</button>
-                <button class="comm-small-btn" onclick="writePost('YZ')">🐦 YZ</button>
+        <div class="card">
+            <h2>✍️ 커뮤니티 글 작성 (주 1회)</h2>
+            <div id="comm-write-status" style="font-size: 12px; color: #888; margin-bottom: 8px;">이번 주에 작성 가능한 글이 있습니다.</div>
+            <div class="comm-write-area">
+                <button class="comm-btn" id="btn-write-cafe" onclick="writeCommunity('팬카페')">팬카페</button>
+                <button class="comm-btn" id="btn-write-ebem" onclick="writeCommunity('에벰')">에벰</button>
+                <button class="comm-btn" id="btn-write-yz" onclick="writeCommunity('YZ')">YZ</button>
             </div>
         </div>
 
@@ -180,7 +175,8 @@
 
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
-        lastWriteWeek: -1, // 주간 글쓰기 추적용 변수 추가
+        lastWriteWeek: -1, // 마지막 작성 주차 기록
+        pendingPost: null, // 다음날 처리할 글
         members: [
             {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
             {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
@@ -191,9 +187,9 @@
         community: [], popupQueue: [], weeklyStats: []
     };
 
-    const ebemMsgs = ["하데스 얘네는 진짜 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 웬만한 공중파 아이돌보다 노래 잘하는데", "오늘 띵귤 방송에서 샷건 치는 거 보고 입덕했다 ㅋㅋㅋ", "솔직히 버추얼이라고 색안경 꼈는데 하데스는 인정함", "연초록 아바타 떴길래 봤는데 진짜 깎아 놓은 것 같네", "아니 챈나 예능감 뭐임? 합방에서 혼자 다 살리네 ㄹㅇ", "솜주먹은 이름부터가 웃기네 ㅋㅋㅋ 타격감 좋을 듯", "오늘 하데스 라이브 MR 제거 버전 올라왔는데 실력 진짜 좋음", "에뱀 형님들 하데스 굿즈 예구 성공한 사람 있음?", "버추얼 아이돌 시장도 이제 실력 없으면 못 살아남는구나", "하데스 이번 신곡 안무 트래킹 튀는 거 하나도 없네. 돈 꽤나 쓴 듯", "띵귤이 누구임? 목소리가 들어본 적 없는 보물인데", "하데스 덕분에 요즘 버튜버 보는 재미로 산다 ㄹㅇ", "솔직히 하데스 2기생 나오면 1기생만큼 뽑을 수 있냐?", "키마은 그냥 노래 깡패임.", "아까 방송에서 연초록 눈 감는 거 봤냐? 기술력 진짜 소름 돋네", "하데스 억까하는 놈들 특징: 방송 한 번도 안 봄", "챈나 드립 수준 보니까 조만간 양지로 나갈 듯", "솜주먹 귀여워서 풍 쐈는데 리액션 혜자라 만족함 ㅋㅋㅋ", "하데스 이번 주 활동 요약: 그냥 전설이었다"];
+    const ebemMsgs = ["하데스 얘네는 진짜 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 웬만한 공중파 아이돌보다 노래 잘하는데", "오늘 띵귤 방송에서 샷건 치는 거 보고 입덕했다 ㅋㅋㅋ", "솔직히 버추얼이라고 색안경 꼈는데 하데스는 인정함", "연초록 아바타 떴길래 봤는데 진짜 깎아 놓은 것 같네", "아니 챈나 예능감 뭐임? 합방에서 혼자 다 살리네 ㄹㅇ", "솜주먹은 이름부터가 웃기네 ㅋㅋㅋ 타격감 좋을 듯", "오늘 하데스 라이브 MR 제거 버전 올라왔는데 실력 진짜 좋음", "에뱀 형님들 하데스 굿즈 예구 성공한 사람 있음?", "버추얼 아이돌 시장도 이제 실력 없으면 못 살아남는구나"];
     const cafeMsgs = ["숨스숨스", "쉬더라도 스트리밍은 하고있겠죠?", "케로 1기 모여라!", "오늘도 멤버들 고생했어요", "방송공지 언제 올라오지?", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!", "키마 언니 노래 불러줘서 고마워요"];
-    const yzMsgs = ["오늘 띵귤 왜 이럼? 기술력 미쳤네 ㄹㅇ #하데스 #띵귤", "키마 고음 발사할 때 트래킹 튀는 거 개웃기네 ㅋㅋㅋㅋ 귀여워", "하데스 이번 신곡 무한스밍 중. 버추얼이라고 무시하던 놈들 다 대가리 박아", "아니 챈나 송출 사고 뭐냐고 ㅋㅋㅋ 빨간약 나온 줄 알고 심장 떨어짐", "연초록 비주얼 실화냐? 3D가 사람 홀리네... #Hades #연초록", "오늘 합방 라인업 미쳤음. 하데스 드디어 대기업 줄 타나?", "솜주먹 풍 리액션 혜자네 ㅋㅋㅋ 100만 원 쏠 뻔했다", "얘들아 오늘 하데스 실트 올리자. 리트윗 부탁!!", "하데스 공식 굿즈 나오면 바로 올인한다. 통장 장전 완료.", "띵귤님 목소리 긁는 거 보니까 오늘 컨디션 최고인 듯", "버추얼 아이돌 1황은 하데스다. 반박 시 내 말이 맞음. #버튜버", "키마 언니 고음 구간에서 나만 소름 돋음? 음색 진짜 국보급이다", "연초록 아바타 바뀐 거 너무 예뻐서 숨 쉬는 거 까먹음;;", "챈나 오늘 드립 수준 보니까 조만간 유튜브 쇼츠 떡상 각이다", "하데스 멤버들 케미 터지는 거 보니까 나까지 행복해짐 ㅠㅠ", "오늘 방송 채팅창 클린해서 좋았다. 매니저 일 잘하네.", "솜주먹 샷건 치는 거 트래킹 끊기는 거 개커엽네 진짜 ㅋㅋㅋ", "하데스 세계관 정리본 본 사람? 설정 하나하나가 미쳤음;;", "솔직히 하데스 데뷔 때부터 지켜본 내가 승리자임. #Hades_Victory", "오늘 밤 9시 하데스 단체 방송 본방사수 안 하면 인생 손해임"];
+    const yzMsgs = ["오늘 띵귤 왜 이럼? 기술력 미쳤네 ㄹㅇ #하데스 #띵귤", "키마 고음 발사할 때 트래킹 튀는 거 개웃기네 ㅋㅋㅋㅋ 귀여워", "하데스 이번 신곡 무한스밍 중. 버추얼이라고 무시하던 놈들 다 대가리 박아", "아니 챈나 송출 사고 뭐냐고 ㅋㅋㅋ 빨간약 나온 줄 알고 심장 떨어짐", "연초록 비주얼 실화냐? 3D가 사람 홀리네... #Hades #연초록"];
 
     const virtualEvents = [
         { id: 'server', title: "💻 방송 렉 발생", desc: "방송 중 인터넷이 불안정합니다.", choices: [{ text: "바로 교체하자 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "일단 방종하자 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "오늘은 그냥 진행해 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
@@ -234,22 +230,39 @@
         gameState.sns += Math.floor(val * 1.2);
     }
 
-    // 커뮤니티 글 작성 함수 추가
-    function writePost(site) {
+    // 커뮤니티 작성 함수
+    function writeCommunity(site) {
         const currentWeek = Math.floor((gameState.day - 1) / 7);
-        if(gameState.lastWriteWeek === currentWeek) return;
-
-        let gain = Math.floor(Math.random() * 800) + 300;
-        updateFandom(gain);
+        if (gameState.lastWriteWeek === currentWeek) {
+            alert("이번 주에는 이미 글을 작성했습니다.");
+            return;
+        }
+        gameState.pendingPost = site;
         gameState.lastWriteWeek = currentWeek;
-
-        gameState.community.push({ 
-            site: site, 
-            content: `[사장님] 멤버들의 매력을 알리는 커뮤니티 글을 작성했습니다!` 
-        });
-        
-        alert(`${site}에 글을 작성했습니다! 팬덤이 ${gain}명 증가했습니다.`);
+        alert(`${site}에 글을 게시했습니다. 내일 결과를 확인할 수 있습니다.`);
         updateDisplay();
+    }
+
+    // 다음날 커뮤니티 결과 처리
+    function processCommunityResult() {
+        if (!gameState.pendingPost) return;
+        const site = gameState.pendingPost;
+        const up = Math.floor(Math.random() * 301); // 최대 300
+        const down = Math.floor(Math.random() * 101); // 최대 100
+        
+        let resultMsg = "";
+        if (up > down) {
+            const gain = Math.floor(Math.random() * 501); // 최대 500
+            gameState.fandom += gain;
+            gameState.youtube += gain;
+            gameState.sns += gain;
+            resultMsg = `<b>[${site} 작성글 결과] 추천 ${up} / 비추 ${down} 달성! 모든 플랫폼 팔로워가 각각 ${gain}명 상승했습니다!</b>`;
+        } else {
+            resultMsg = `<b>[${site} 작성글 결과] 추천 ${up} / 비추 ${down}... 반응이 좋지 않아 변화가 없습니다.</b>`;
+        }
+        
+        gameState.community.push({ site: site, content: resultMsg });
+        gameState.pendingPost = null;
     }
 
     function updateDisplay() {
@@ -261,19 +274,17 @@
         document.getElementById('p-youtube').innerText = gameState.youtube.toLocaleString() + '명';
         document.getElementById('p-sns').innerText = gameState.sns.toLocaleString() + '명';
 
-        // 주간 글쓰기 버튼 상태 업데이트 로직 추가
+        // 주간 작성 버튼 상태 업데이트
         const currentWeek = Math.floor((gameState.day - 1) / 7);
-        const btns = document.querySelectorAll('.comm-small-btn');
-        const info = document.getElementById('comm-write-info');
+        const btns = ["btn-write-cafe", "btn-write-ebem", "btn-write-yz"];
+        const statusText = document.getElementById('comm-write-status');
         
-        if(gameState.lastWriteWeek === currentWeek) {
-            btns.forEach(b => b.disabled = true);
-            info.innerText = "이번 주 글 작성을 완료했습니다. (다음 주 월요일 리셋)";
-            info.style.color = "var(--success)";
+        if (gameState.lastWriteWeek === currentWeek) {
+            btns.forEach(id => document.getElementById(id).disabled = true);
+            statusText.innerText = "이번 주 글 작성을 완료했습니다. 다음 주에 가능합니다.";
         } else {
-            btns.forEach(b => b.disabled = false);
-            info.innerText = "주 1회만 작성 가능합니다.";
-            info.style.color = "#888";
+            btns.forEach(id => document.getElementById(id).disabled = false);
+            statusText.innerText = "이번 주에 작성 가능한 글이 있습니다.";
         }
         
         document.getElementById('member-grid-container').innerHTML = gameState.members.map(m => `
@@ -284,10 +295,10 @@
             </div>
         `).join('');
 
-        const latestComm = gameState.community.slice(-3);
+        const latestComm = gameState.community.slice(-5);
         document.getElementById('comm-container').innerHTML = latestComm.map(c => `
             <div class="comm-post">
-                <span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':(c.site==='너튜브'?'site-yt':(c.site==='YZ'?'site-yz':'site-cafe')))}">${c.site}</span>
+                <span class="comm-site ${c.site==='SNS'?'site-sns':(c.site==='에벰'?'site-ebem':(c.site==='너튜브'?'site-yt':(c.site==='YZ'?'site-yz':'site-cafe')))}">${c.site}</span>
                 <div style="font-size:13px; margin-top:4px;">${c.content}</div>
             </div>
         `).reverse().join('');
@@ -299,6 +310,9 @@
 
     function nextDay() {
         if (document.getElementById('eventModal').style.display === 'block') return;
+        
+        processCommunityResult(); // 커뮤니티 결과 처리
+
         let totalProfit = Math.floor(Math.random() * 600001) + 400000;
         const actionsPool = ['vocal', 'dance', 'visual', 'variety', 'charm', 'rest'];
         gameState.members.forEach(m => {
@@ -320,7 +334,7 @@
             gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]});
             gameState.weeklyStats = [];
         }
-        if (Math.random() < 0.45) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
+        if (Math.random() < 0.45) gameState.community.push({site:'에벰', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
         if (Math.random() < 0.45) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
         if (Math.random() < 0.45) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
         checkVirtualEvent();
@@ -355,7 +369,6 @@
         if (gameState.popupQueue.length === 0) return;
         const item = gameState.popupQueue.shift();
         if(item.type === 'training_report') showTrainingReport(item.data);
-        else if(item.type === 'birthday') showBirthdayPopup(item.member);
         else if(item.type === 'virtual') renderEventPopup(item.event);
     }
 
@@ -397,15 +410,6 @@
         const ev = virtualEvents.find(e => e.id === evId);
         ev.choices[chIdx].effect();
         closeModal();
-    }
-
-    function showBirthdayPopup(m) {
-        const modal = document.getElementById('eventModal');
-        updateFandom(15000); 
-        document.getElementById('modal-title').innerText = `🎂 HAPPY BIRTHDAY!`;
-        document.getElementById('modal-body').innerHTML = `<h3>${m.name}의 생일입니다!</h3><p>팬덤 +15,000 / 전스탯 +1</p>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">축하해주기 (Space)</button>`;
-        modal.style.display = 'block';
     }
 
     function closeModal() { 
