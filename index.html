@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v15.0</title>
+    <title>하데스 키우기 v15.3</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
@@ -52,7 +52,6 @@
         .modal-overlay { display: none; position: fixed; z-index: 9000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter: blur(3px); }
         .modal-content { background:white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding:25px; width: 85%; max-width:400px; border-radius:20px; text-align:center; box-sizing: border-box; }
         .half-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .half-grid .card { margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -154,19 +153,27 @@
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
         members: [
-            {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
-            {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
-            {name: '챈나', birth: '02-26', vocal: 9, dance: 10, visual: 11, variety: 9, charm: 10, fatigue: 10, manualAct: null},
-            {name: '솜주먹', birth: '11-11', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 10, manualAct: null},
-            {name: '연초록', birth: '03-26', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 10, manualAct: null},
+            {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, manualAct: null},
+            {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, manualAct: null},
+            {name: '챈나', birth: '02-26', vocal: 9, dance: 10, visual: 11, variety: 9, charm: 10, fatigue: 0, manualAct: null},
+            {name: '솜주먹', birth: '11-11', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 0, manualAct: null},
+            {name: '연초록', birth: '03-26', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 0, manualAct: null},
         ],
         community: [], popupQueue: [], weeklyStats: [], pendingPost: null,
         hasPostedThisWeek: false
     };
 
-    const ebemMsgs = ["하데스 얘네는 진짜 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 웬만한 공중파 아이돌보다 노래 잘하는데", "오늘 띵귤 방송에서 샷건 치는 거 보고 입덕했다 ㅋㅋㅋ", "솔직히 버추얼이라고 색안경 꼈는데 하데스 인정함", "연초록 아바타 떴길래 봤는데 진짜 깎아 놓은 것 같네", "아니 챈나 예능감 뭐임? 합방에서 혼자 다 살리네 ㄹㅇ", "솜주먹은 이름부터가 웃기네 ㅋㅋㅋ 타격감 좋을 듯", "오늘 하데스 라이브 MR 제거 버전 올라왔는데 실력 진짜 좋음", "에뱀 형님들 하데스 굿즈 예구 성공한 사람 있음?", "버추얼 아이돌 시장도 이제 실력 없으면 못 살아남는구나", "하데스 이번 신곡 안무 트래킹 튀는 거 하나도 없네. 돈 꽤나 쓴 듯", "띵귤이 누구임? 목소리가 들어본 적 없는 보물인데", "하데스 덕분에 요즘 버튜버 보는 재미로 산다 ㄹㅇ", "솔직히 하데스 2기생 나오면 1기생만큼 뽑을 수 있냐?", "키마은 그냥 노래 깡패임.", "아까 방송에서 연초록 눈 감는 거 봤냐? 기술력 진짜 소름 돋네", "하데스 억까하는 놈들 특징: 방송 한 번도 안 봄", "챈나 드립 수준 보니까 조만간 양지로 나갈 듯", "솜주먹 귀여워서 풍 쐈는데 리액션 혜자라 만족함 ㅋㅋㅋ", "하데스 이번 주 활동 요약: 그냥 전설이었다"];
-    const cafeMsgs = ["숨스숨스", "쉬더라도 스트리밍은 하고있겠죠?", "케로 1기 모여라!", "오늘도 멤버들 고생했어요", "방송공지 언제 올라오지?", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!", "키마 언니 노래 불러줘서 고마워요"];
-    const yzMsgs = ["오늘 띵귤 왜 이럼? 기술력 미쳤네 ㄹㅇ #하데스 #띵귤", "키마 고음 발사할 때 트래킹 튀는 거 개웃기네 ㅋㅋㅋㅋ 귀여워", "하데스 이번 신곡 무한스밍 중. 버추얼이라고 무시하던 놈들 다 대가리 박아", "아니 챈나 송출 사고 뭐냐고 ㅋㅋㅋ 빨간약 나온 줄 알고 심장 떨어짐", "연초록 비주얼 실화냐? 3D가 사람 홀리네... #Hades #연초록", "오늘 합방 라인업 미쳤음. 하데스 드디어 대기업 줄 타나?", "솜주먹 풍 리액션 혜자네 ㅋㅋㅋ 100만 원 쏠 뻔했다", "얘들아 오늘 하데스 실트 올리자. 리트윗 부탁!!", "하데스 공식 굿즈 나오면 바로 올인한다. 통장 장전 완료.", "띵귤님 목소리 긁는 거 보니까 오늘 컨디션 최고인 듯", "버추얼 아이돌 1황은 하데스다. 반박 시 내 말이 맞음. #버튜버", "키마 언니 고음 구간에서 나만 소름 돋음? 음색 진짜 국보급이다", "연초록 아바타 바뀐 거 너무 예뻐서 숨 쉬는 거 까먹음;;", "챈나 오늘 드립 수준 보니까 조만간 유튜브 쇼츠 떡상 각이다", "하데스 멤버들 케미 터지는 거 보니까 나까지 행복해짐 ㅠㅠ", "오늘 방송 채팅창 클린해서 좋았다. 매니저 일 잘하네.", "솜주먹 샷건 치는 거 트래킹 끊기는 거 개커엽네 진짜 ㅋㅋㅋ", "하데스 세계관 정리본 본 사람? 설정 하나하나가 미쳤음;;", "솔직히 하데스 데뷔 때부터 지켜본 내가 승리자임. #Hades_Victory", "오늘 밤 9시 하데스 단체 방송 본방사수 안 하면 인생 손해임"];
+    const ebemMsgs = [
+        "하데스 얘네는 진짜 모델링 퀄리티가 볼 때마다 감탄 나오네.", "키마 오늘 고음 뚫리는 거 보니까 목 상태 최상인 듯?", "띵귤 방송 감각은 진짜 타고났다. 오디오 안 비는 거 봐라 ㅋㅋㅋ", "연초록 아바타 텍스처 수정한 거임? 광택이 좀 달라진 거 같은데.", "솔직히 이 정도 퀄리티면 메이저랑 비벼도 안 꿀림.", "아니 챈나 춤선 억까하던 놈들 다 어디 갔냐? 리깅 자연스러운 거 봐라.", "솜주먹 예능감 미쳤네. 오늘 클립 각 하나 나왔다.", "근데 하데스 애들 연습량 진짜 장난 아닌 듯. 스탯 오르는 속도가 보임.", "방금 리액션 타이밍 지렸다. 이게 버추얼의 맛이지.", "이번 신곡 안무 동선 복잡한데 트래킹 하나도 안 튀네. 장비 뭐 쓰냐?", "하데스 유입인데 입덕 가이드 어디서 봄?", "오늘 방송 보고 구독 눌렀다. 노래 주머니 든든하네.", "얘네는 멤버들끼리 티키타카가 잘 돼서 보기 편함.", "연초록 비주얼 실화냐? 썸네일 보고 홀린 듯 들어옴.", "솔직히 3D 라이브 할 때마다 기술력 발전하는 거 체감됨.", "키마 목소리는 진짜 독보적이다. 커버곡 하나 더 뽑아주라.", "오늘 띵귤 드립 때문에 광대 아파서 방송 못 보겠음 ㅋㅋㅋ", "하데스 정도면 버추얼 씬에서 탑티어 인정이지.", "애들 피로해 보이는데 휴식 좀 시켜야 할 듯. 얼굴색이 안 좋다.", "얘네는 진짜 '진심'인 게 느껴져서 응원하게 됨."
+    ];
+
+    const cafeMsgs = [
+        "하데스 멤버들 오늘도 고생 많았어요! 푹 쉬어요~", "케로 1기 여기 여기 모여라! 우리 하데스 지켜!", "키마님 목소리는 제 지친 일상의 유일한 비타민이에요.", "오늘 띵귤님 덕분에 배꼽 빠지게 웃었네요. 항상 고마워요!", "우리 챈나님 미모가 매일 경신되는데... 제 심장 책임지세요!", "연초록님의 따뜻한 위로 방송 덕분에 오늘 힐링하고 갑니다.", "솜주먹님 매력에 한 번 빠지면 출구가 없다는 게 학계의 정설!", "하데스 공식 굿즈 기다리고 있어요. 통장은 준비됐습니다!", "오늘 무대 보는데 눈물 날 뻔했어요. 우리 애들 다 컸네...", "항상 노력하는 모습이 너무 예쁜 하데스, 오래오래 가자!", "팬아트 그려봤는데 예쁘게 봐주시면 좋겠어요~", "우리 하데스 슈스길만 걷자! 언제나 응원할게.", "멤버들 건강이 최우선인 거 알죠? 아프지 마요 ㅠㅠ", "오늘 방송도 레전드! 하데스 덕분에 내일 출근도 버팁니다.", "세상에서 제일 빛나는 5명의 별, 하데스 사랑해!", "챈나님 댄스 브레이크 부분 무한 반복 중입니다. 너무 멋져요!", "초보 팬인데 하데스 덕질 포인트 알려주실 천사 분 계신가요?", "노래면 노래, 춤이면 춤, 못하는 게 없는 하데스 최고!", "하데스 만나고 제 삶이 행복해졌어요. 고마워요 멤버들!", "오늘 밤은 하데스 노래 들으면서 좋은 꿈 꿀게요~"
+    ];
+
+    const yzMsgs = [
+        "오늘 띵귤 폼 미쳤다 진짜... #하데스 #HADES #띵귤", "키마 고음 부분에서 소름 돋음. 이게 메인보컬이지. #KIMA", "하데스 신규 의상 실화야? 너무 예뻐서 기절함 ㅠㅠ #Hades_NewOutfit", "연초록 비주얼 공격 실화냐... 화면 가득 찬 미모에 정신 못 차림.", "하데스 멤버들 케미 진짜 좋아함. 이 조합 찬성이요. #하데스_합방", "실시간 트렌드에 하데스 떴다! 가보자고! #하데스_실트", "솜주먹 예능감에 오늘 하루 스트레스 다 날림 ㅋㅋㅋ #SOM", "챈나 춤선은 진짜 독보적이야. 3D 리깅이 춤선을 못 담네.", "하데스 노래 한 번만 들어보세요. 귀가 녹습니다. #버튜버추천", "나만 하데스 아는 줄 알았는데 구독자 느는 거 보니 뿌듯해.", "하데스 팝업스토어 열리면 밤샘 대기할 자신 있음. #HADES_POPUP", "오늘 리액션 짤 생성 완료. 너무 귀엽잖아... #하데스_클립", "버추얼 아이돌의 정점은 역시 하데스지. #VirtualIdol", "애들 목소리 합 진짜 좋다. 단체곡 나오면 무한 스밍 각.", "하데스 덕질하면서 인생의 진리를 깨달음. 귀여운 게 최고다.", "초록이 웃는 거 보니까 오늘 할 일 다 했다. #연초록", "하데스 팬덤 화력 무엇... 실시간 반응 속도 실화인가?", "오늘 방송 하이라이트: 솜주먹의 뜬금포 드립 ㅋㅋㅋ #웃음벨", "하데스 애들 쉬는 날엔 뭐 할까? 휴식 브이로그 보고 싶다.", "내일도 하데스 방송 있다! 인생 살 맛 나네. #하데스_내일도"
+    ];
 
     const virtualEvents = [
         // 그룹 1: 7일 주기 (나머지)
@@ -233,9 +240,10 @@
             <div class="member-card" style="${m.fatigue >= 100 ? 'border-color:var(--danger); background:#fff5f5;' : ''}">
                 <div style="display:flex; justify-content:space-between;"><strong>${m.name}</strong><span style="font-size:10px; color:#999;">🎂 ${m.birth}</span></div>
                 ${renderStat('보컬',m.vocal,'var(--vocal)')}${renderStat('댄스',m.dance,'var(--dance)')}${renderStat('비주얼',m.visual,'var(--visual)')}${renderStat('예능',m.variety, 'var(--variety)')}${renderStat('매력',m.charm,'var(--charm)')}
-                <div style="font-size:11px; text-align:right; color:${m.fatigue >= 100 ? 'var(--danger)' : '#888'};">피로도: ${m.fatigue}%</div>
+                <div style="font-size:11px; text-align:right; color:${m.fatigue >= 100 ? 'var(--danger)' : '#888'}; font-weight:bold;">피로도: ${m.fatigue}%</div>
             </div>
         `).join('');
+        
         const latestComm = gameState.community;
         document.getElementById('comm-container').innerHTML = latestComm.map(c => `
             <div class="comm-post">
@@ -247,15 +255,13 @@
 
     function submitPost() {
         if (gameState.hasPostedThisWeek) return alert("글 작성은 일주일에 한 번만 가능합니다!");
-        const site = document.getElementById('post-site').value;
         const text = document.getElementById('post-input').value;
         if (!text) return alert("내용을 입력하세요!");
         const up = Math.floor(Math.random() * 301);
-        const down = Math.floor(Math.random() * 101);
         let bonus = Math.floor((up / 300) * 500);
-        gameState.pendingPost = { site: site, content: `<b>[작성글] ${text} (추천 ${up} / 비추 ${down}) <span style="color:var(--success);">+${bonus.toLocaleString()}명</span></b>`, bonus: bonus };
+        gameState.pendingPost = { site: document.getElementById('post-site').value, content: `<b>[작성글] ${text} (추천 ${up}) <span style="color:var(--success);">+${bonus.toLocaleString()}명</span></b>`, bonus: bonus };
         gameState.hasPostedThisWeek = true;
-        alert("글 작성이 완료되었습니다. 내일 반응이 올라옵니다.");
+        alert("글 작성이 완료되었습니다.");
         document.getElementById('post-input').value = "";
         updateDisplay();
     }
@@ -273,18 +279,22 @@
 
         gameState.members.forEach(m => {
             let action = m.manualAct || actionsPool[Math.floor(Math.random() * actionsPool.length)];
-            if (action === 'rest') { m.fatigue = Math.max(0, m.fatigue - 25); } 
+            if (action === 'rest') { 
+                m.fatigue = Math.max(0, m.fatigue - 40); 
+            } 
             else if (m.fatigue < 100) {
-                if (m[action] < 20 && Math.random() < 0.4) { m[action]++; gameState.weeklyStats.push({name: m.name, stat: action}); m.fatigue = Math.min(100, m.fatigue + 15); } 
-                else { m.fatigue = Math.min(100, m.fatigue + 10); }
+                if (m[action] < 20 && Math.random() < 0.4) { 
+                    m[action]++; 
+                    gameState.weeklyStats.push({name: m.name, stat: action}); 
+                    m.fatigue = Math.min(100, m.fatigue + 20); 
+                } else { 
+                    m.fatigue = Math.min(100, m.fatigue + 15); 
+                }
             }
             m.manualAct = null;
         });
 
         if(gameState.day % 7 === 0 && gameState.day > 1) {
-            const views = (Math.floor(Math.random() * 291) + 10) * 10000;
-            const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
-            gameState.community.push({ site: '너튜브', content: `🎥 <b>주간 인기 급상승!</b> ${star} 조회수 ${views.toLocaleString()}회 달성!` });
             gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]});
             gameState.weeklyStats = [];
         }
@@ -295,16 +305,16 @@
             gameState.pendingPost = null;
         }
 
-        if (Math.random() < 0.45) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
-        if (Math.random() < 0.45) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
-        if (Math.random() < 0.45) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
+        if (Math.random() < 0.4) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
+        if (Math.random() < 0.4) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
+        if (Math.random() < 0.4) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
         
         checkVirtualEvent();
         gameState.finance += totalProfit; 
         gameState.finance -= 500000; 
         updateFandom(Math.floor(totalProfit / 10000));
         gameState.day++;
-        gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
+        
         document.getElementById('profit-report').style.display = 'block';
         document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
         updateDisplay();
@@ -314,15 +324,9 @@
     function checkVirtualEvent() {
         const day = gameState.day;
         let selectedGroup = null;
-
-        // 우선순위 판별
-        if (day % 60 === 1 && day > 1) {
-            selectedGroup = '60day';
-        } else if (day % 30 === 1 && day > 1) {
-            selectedGroup = '30day';
-        } else if (day % 7 === 1 && day > 1) {
-            selectedGroup = 'weekly';
-        }
+        if (day % 60 === 1 && day > 1) selectedGroup = '60day';
+        else if (day % 30 === 1 && day > 1) selectedGroup = '30day';
+        else if (day % 7 === 1 && day > 1) selectedGroup = 'weekly';
 
         if (selectedGroup) {
             const pool = virtualEvents.filter(e => e.group === selectedGroup);
@@ -334,8 +338,7 @@
     }
 
     function processNextPopup() {
-        if (document.getElementById('eventModal').style.display === 'block') return;
-        if (gameState.popupQueue.length === 0) return;
+        if (document.getElementById('eventModal').style.display === 'block' || gameState.popupQueue.length === 0) return;
         const item = gameState.popupQueue.shift();
         if(item.type === 'training_report') showTrainingReport(item.data);
         else if(item.type === 'virtual') renderEventPopup(item.event);
@@ -354,23 +357,18 @@
     function showTrainingReport(logs) {
         const modal = document.getElementById('eventModal');
         document.getElementById('modal-title').innerText = "🗓️ 주간 트레이닝 결산";
-        if (logs.length === 0) {
-            document.getElementById('modal-body').innerHTML = `<div style="text-align:center; padding:15px;">이번 주는 스탯 변화가 없었습니다.</div>`;
-        } else {
+        let listHtml = "이번 주는 큰 변화가 없었습니다.";
+        if (logs.length > 0) {
             const summary = {};
             logs.forEach(l => {
                 if (!summary[l.name]) summary[l.name] = [];
-                const statName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
-                summary[l.name].push(statName);
+                summary[l.name].push({vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat]);
             });
-            let listHtml = Object.entries(summary).map(([name, stats]) => {
-                const counts = {};
-                stats.forEach(s => counts[s] = (counts[s] || 0) + 1);
-                const statString = Object.entries(counts).map(([s, c]) => `${s} <span style="color:var(--success); font-weight:bold;">+${c}</span>`).join(', ');
-                return `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;"><span style="color:var(--point); font-weight:bold;">${name}</span><br>${statString}</div>`;
+            listHtml = Object.entries(summary).map(([name, stats]) => {
+                return `<div style="margin-bottom:8px;"><b>${name}</b>: ${stats.join(', ')} <span style="color:var(--success);">▲</span></div>`;
             }).join('');
-            document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#f8f9fa; padding:15px; border-radius:10px; font-size:14px; max-height:300px; overflow-y:auto;">${listHtml}</div>`;
         }
+        document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#f8f9fa; padding:15px; border-radius:10px;">${listHtml}</div>`;
         document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
         modal.style.display = 'block';
     }
@@ -386,7 +384,7 @@
     function manualTrainAction() {
         const name = document.getElementById('sel-member').value; const stat = document.getElementById('sel-stat').value;
         const m = gameState.members.find(i => i.name === name);
-        if (stat !== 'rest' && m.fatigue >= 100) return alert("피로도 초과!");
+        if (stat !== 'rest' && m.fatigue >= 100) return alert("번아웃 상태입니다! 휴식이 필요합니다.");
         m.manualAct = stat; alert(`${name} 지시 완료`); updateDisplay();
     }
 
