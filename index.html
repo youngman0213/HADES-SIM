@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v13.2</title>
+    <title>하데스 키우기 v13.4</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         
@@ -169,7 +169,9 @@
             {name: '솜주먹', birth: '11-11', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 10, manualAct: null},
             {name: '연초록', birth: '03-26', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 10, manualAct: null},
         ],
-        community: [], popupQueue: [], weeklyStats: []
+        community: [], popupQueue: [], weeklyStats: [],
+        pendingCommWrite: null, 
+        lastCommWriteWeek: 0 // 주간 중복 발생 방지
     };
 
     const ebemMsgs = ["하데스 얘네는 진짜 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 웬만한 공중파 아이돌보다 노래 잘하는데", "오늘 띵귤 방송에서 샷건 치는 거 보고 입덕했다 ㅋㅋㅋ", "솔직히 버추얼이라고 색안경 꼈는데 하데스는 인정함", "연초록 아바타 떴길래 봤는데 진짜 깎아 놓은 것 같네", "아니 챈나 예능감 뭐임? 합방에서 혼자 다 살리네 ㄹㅇ", "솜주먹은 이름부터가 웃기네 ㅋㅋㅋ 타격감 좋을 듯", "오늘 하데스 라이브 MR 제거 버전 올라왔는데 실력 진짜 좋음", "에뱀 형님들 하데스 굿즈 예구 성공한 사람 있음?", "버추얼 아이돌 시장도 이제 실력 없으면 못 살아남는구나", "하데스 이번 신곡 안무 트래킹 튀는 거 하나도 없네. 돈 꽤나 쓴 듯", "띵귤이 누구임? 목소리가 들어본 적 없는 보물인데", "하데스 덕분에 요즘 버튜버 보는 재미로 산다 ㄹㅇ", "솔직히 하데스 2기생 나오면 1기생만큼 뽑을 수 있냐?", "키마은 그냥 노래 깡패임.", "아까 방송에서 연초록 눈 감는 거 봤냐? 기술력 진짜 소름 돋네", "하데스 억까하는 놈들 특징: 방송 한 번도 안 봄", "챈나 드립 수준 보니까 조만간 양지로 나갈 듯", "솜주먹 귀여워서 풍 쐈는데 리액션 혜자라 만족함 ㅋㅋㅋ", "하데스 이번 주 활동 요약: 그냥 전설이었다"];
@@ -247,6 +249,11 @@
 
     function nextDay() {
         if (document.getElementById('eventModal').style.display === 'block') return;
+
+        if (gameState.pendingCommWrite) {
+            processCommResult();
+        }
+
         let totalProfit = Math.floor(Math.random() * 600001) + 400000;
         const actionsPool = ['vocal', 'dance', 'visual', 'variety', 'charm', 'rest'];
         gameState.members.forEach(m => {
@@ -261,6 +268,8 @@
             }
             m.manualAct = null;
         });
+
+        // 주간 결산 (7일마다)
         if(gameState.day % 7 === 0 && gameState.day > 1) {
             const views = (Math.floor(Math.random() * 291) + 10) * 10000;
             const star = gameState.members[Math.floor(Math.random()*gameState.members.length)].name;
@@ -268,9 +277,18 @@
             gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]});
             gameState.weeklyStats = [];
         }
+
+        // [랜덤 글쓰기 발생 로직]
+        const currentWeek = Math.floor(gameState.day / 7);
+        if (gameState.lastCommWriteWeek < currentWeek && Math.random() < 0.15) {
+            gameState.popupQueue.push({type: 'comm_write_request'});
+            gameState.lastCommWriteWeek = currentWeek; // 이번 주 발생 완료 처리
+        }
+
         if (Math.random() < 0.45) gameState.community.push({site:'에뱀', content: ebemMsgs[Math.floor(Math.random()*ebemMsgs.length)]});
         if (Math.random() < 0.45) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
         if (Math.random() < 0.45) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
+        
         checkVirtualEvent();
         gameState.finance += totalProfit; 
         gameState.finance -= 500000; 
@@ -281,6 +299,52 @@
         document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
         updateDisplay();
         processNextPopup();
+    }
+
+    function showCommWriteRequest() {
+        const modal = document.getElementById('eventModal');
+        document.getElementById('modal-title').innerText = "📝 주간 커뮤니티 글쓰기";
+        document.getElementById('modal-body').innerText = "홍보 글을 작성할 커뮤니티를 선택하세요. (일주일 중 랜덤 발생)";
+        document.getElementById('modal-choices').innerHTML = `
+            <button class="choice-btn" onclick="startCommWrite('팬카페')">🌸 팬카페에 글쓰기</button>
+            <button class="choice-btn" onclick="startCommWrite('에뱀')">📘 에뱀에 글쓰기</button>
+            <button class="choice-btn" onclick="startCommWrite('YZ')">🐦 YZ에 글쓰기</button>
+        `;
+        modal.style.display = 'block';
+    }
+
+    function startCommWrite(site) {
+        gameState.pendingCommWrite = { site: site };
+        alert(`${site}에 글을 작성했습니다. 결과는 내일 확인할 수 있습니다!`);
+        closeModal();
+    }
+
+    function processCommResult() {
+        const up = Math.floor(Math.random() * 301); 
+        const down = Math.floor(Math.random() * 101); 
+        let reward = 0;
+        if (up > down) { reward = Math.floor((up / 300) * 500); }
+        gameState.popupQueue.push({
+            type: 'comm_result',
+            data: { site: gameState.pendingCommWrite.site, up, down, reward }
+        });
+        if (reward > 0) updateFandom(reward);
+        gameState.pendingCommWrite = null;
+    }
+
+    function showCommResultPopup(res) {
+        const modal = document.getElementById('eventModal');
+        document.getElementById('modal-title').innerText = `📊 커뮤니티 반응 결과 (${res.site})`;
+        document.getElementById('modal-body').innerHTML = `
+            <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
+                <p>👍 추천: <span style="color:var(--success); font-weight:bold;">${res.up}</span></p>
+                <p>👎 비추: <span style="color:var(--danger); font-weight:bold;">${res.down}</span></p>
+                <hr>
+                <p style="font-size:16px;"><b>결과:</b> ${res.reward > 0 ? `관심도 폭발! 팬덤 <span style="color:var(--point);">+${res.reward}명</span> 상승` : '반응이 미적지근합니다.'}</p>
+            </div>
+        `;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
+        modal.style.display = 'block';
     }
 
     function checkVirtualEvent() {
@@ -305,6 +369,8 @@
         if(item.type === 'training_report') showTrainingReport(item.data);
         else if(item.type === 'birthday') showBirthdayPopup(item.member);
         else if(item.type === 'virtual') renderEventPopup(item.event);
+        else if(item.type === 'comm_write_request') showCommWriteRequest();
+        else if(item.type === 'comm_result') showCommResultPopup(item.data);
     }
 
     function renderEventPopup(ev) {
