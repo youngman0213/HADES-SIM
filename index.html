@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v14.0</title>
+    <title>하데스 키우기 v14.1</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         
@@ -34,6 +34,10 @@
 
         .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
         
+        /* 수익 & 작성 카테고리 좌우 배치 레이아웃 */
+        .flex-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
+        .flex-row > .card { flex: 1; min-width: 300px; margin-bottom: 0; }
+
         .date-display { position: relative; text-align: right; margin-bottom: 10px; }
         @media (min-width: 600px) { .date-display { position: absolute; top: 15px; right: 25px; } }
         
@@ -48,7 +52,6 @@
         .stat-item small { color: #777; font-size: 11px; }
         .stat-item strong { font-size: 15px; display: block; margin-top: 2px; }
 
-        /* 커뮤니티 작성 버튼 스타일 */
         .comm-write-area { display: flex; gap: 10px; margin-top: 10px; }
         .comm-btn { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s; }
         .comm-btn:hover:not(:disabled) { background: #fff0f6; border-color: var(--point); color: var(--point); }
@@ -109,18 +112,20 @@
             </div>
         </div>
         
-        <div class="card" id="profit-report" style="display:none; background: #f2fcf0; border-color: #40c057;">
-            <h2>🎈 일일 물풍선 수익</h2>
-            <div id="profit-content" style="font-size: 14px;"></div>
-        </div>
+        <div class="flex-row">
+            <div class="card" id="profit-report" style="background: #f2fcf0; border-color: #40c057;">
+                <h2>🎈 일일 물풍선 수익</h2>
+                <div id="profit-content" style="font-size: 14px;">운영을 시작하면 수익이 표시됩니다.</div>
+            </div>
 
-        <div class="card">
-            <h2>✍️ 커뮤니티 글 작성 (주 1회)</h2>
-            <div id="comm-write-status" style="font-size: 12px; color: #888; margin-bottom: 8px;">이번 주에 작성 가능한 글이 있습니다.</div>
-            <div class="comm-write-area">
-                <button class="comm-btn" id="btn-write-cafe" onclick="writeCommunity('팬카페')">팬카페</button>
-                <button class="comm-btn" id="btn-write-ebem" onclick="writeCommunity('에벰')">에벰</button>
-                <button class="comm-btn" id="btn-write-yz" onclick="writeCommunity('YZ')">YZ</button>
+            <div class="card">
+                <h2>✍️ 커뮤니티 글 작성 (주 1회)</h2>
+                <div id="comm-write-status" style="font-size: 12px; color: #888; margin-bottom: 8px;">이번 주에 작성 가능한 글이 있습니다.</div>
+                <div class="comm-write-area">
+                    <button class="comm-btn" id="btn-write-cafe" onclick="writeCommunity('팬카페')">팬카페</button>
+                    <button class="comm-btn" id="btn-write-ebem" onclick="writeCommunity('에벰')">에벰</button>
+                    <button class="comm-btn" id="btn-write-yz" onclick="writeCommunity('YZ')">YZ</button>
+                </div>
             </div>
         </div>
 
@@ -175,8 +180,7 @@
 
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
-        lastWriteWeek: -1, // 마지막 작성 주차 기록
-        pendingPost: null, // 다음날 처리할 글
+        lastWriteWeek: -1, pendingPost: null,
         members: [
             {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
             {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 10, manualAct: null},
@@ -187,9 +191,9 @@
         community: [], popupQueue: [], weeklyStats: []
     };
 
-    const ebemMsgs = ["하데스 얘네는 진짜 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 웬만한 공중파 아이돌보다 노래 잘하는데", "오늘 띵귤 방송에서 샷건 치는 거 보고 입덕했다 ㅋㅋㅋ", "솔직히 버추얼이라고 색안경 꼈는데 하데스는 인정함", "연초록 아바타 떴길래 봤는데 진짜 깎아 놓은 것 같네", "아니 챈나 예능감 뭐임? 합방에서 혼자 다 살리네 ㄹㅇ", "솜주먹은 이름부터가 웃기네 ㅋㅋㅋ 타격감 좋을 듯", "오늘 하데스 라이브 MR 제거 버전 올라왔는데 실력 진짜 좋음", "에뱀 형님들 하데스 굿즈 예구 성공한 사람 있음?", "버추얼 아이돌 시장도 이제 실력 없으면 못 살아남는구나"];
-    const cafeMsgs = ["숨스숨스", "쉬더라도 스트리밍은 하고있겠죠?", "케로 1기 모여라!", "오늘도 멤버들 고생했어요", "방송공지 언제 올라오지?", "하데스 입덕 완료", "팬카페 회원수 실시간 상승중", "사랑해요 하데스!", "키마 언니 노래 불러줘서 고마워요"];
-    const yzMsgs = ["오늘 띵귤 왜 이럼? 기술력 미쳤네 ㄹㅇ #하데스 #띵귤", "키마 고음 발사할 때 트래킹 튀는 거 개웃기네 ㅋㅋㅋㅋ 귀여워", "하데스 이번 신곡 무한스밍 중. 버추얼이라고 무시하던 놈들 다 대가리 박아", "아니 챈나 송출 사고 뭐냐고 ㅋㅋㅋ 빨간약 나온 줄 알고 심장 떨어짐", "연초록 비주얼 실화냐? 3D가 사람 홀리네... #Hades #연초록"];
+    const ebemMsgs = ["하데스 얘네는 진짜 퀄리티가 넘사벽이긴 하네", "키마 고음 실화냐? 웬만한 공중파 아이돌보다 노래 잘하는데", "오늘 띵귤 방송에서 샷건 치는 거 보고 입덕했다 ㅋㅋㅋ", "솔직히 버추얼이라고 색안경 꼈는데 하데스는 인정함", "연초록 아바타 떴길래 봤는데 진짜 깎아 놓은 것 같네"];
+    const cafeMsgs = ["숨스숨스", "쉬더라도 스트리밍은 하고있겠죠?", "케로 1기 모여라!", "오늘도 멤버들 고생했어요", "방송공지 언제 올라오지?"];
+    const yzMsgs = ["오늘 띵귤 왜 이럼? 기술력 미쳤네 ㄹㅇ #하데스 #띵귤", "키마 고음 발사할 때 트래킹 튀는 거 개웃기네 ㅋㅋㅋㅋ 귀여워", "하데스 이번 신곡 무한스밍 중. 버추얼이라고 무시하던 놈들 다 대가리 박아"];
 
     const virtualEvents = [
         { id: 'server', title: "💻 방송 렉 발생", desc: "방송 중 인터넷이 불안정합니다.", choices: [{ text: "바로 교체하자 (-500만/팬덤+2000)", effect: () => { gameState.finance -= 5000000; updateFandom(2000); } }, { text: "일단 방종하자 (팬덤-1000)", effect: () => { updateFandom(-1000); } }, { text: "오늘은 그냥 진행해 (팬덤-2000)", effect: () => { updateFandom(-2000); } }] },
@@ -230,7 +234,6 @@
         gameState.sns += Math.floor(val * 1.2);
     }
 
-    // 커뮤니티 작성 함수
     function writeCommunity(site) {
         const currentWeek = Math.floor((gameState.day - 1) / 7);
         if (gameState.lastWriteWeek === currentWeek) {
@@ -243,24 +246,19 @@
         updateDisplay();
     }
 
-    // 다음날 커뮤니티 결과 처리
     function processCommunityResult() {
         if (!gameState.pendingPost) return;
         const site = gameState.pendingPost;
-        const up = Math.floor(Math.random() * 301); // 최대 300
-        const down = Math.floor(Math.random() * 101); // 최대 100
-        
+        const up = Math.floor(Math.random() * 301);
+        const down = Math.floor(Math.random() * 101);
         let resultMsg = "";
         if (up > down) {
-            const gain = Math.floor(Math.random() * 501); // 최대 500
-            gameState.fandom += gain;
-            gameState.youtube += gain;
-            gameState.sns += gain;
-            resultMsg = `<b>[${site} 작성글 결과] 추천 ${up} / 비추 ${down} 달성! 모든 플랫폼 팔로워가 각각 ${gain}명 상승했습니다!</b>`;
+            const gain = Math.floor(Math.random() * 501);
+            gameState.fandom += gain; gameState.youtube += gain; gameState.sns += gain;
+            resultMsg = `<b>[${site} 작성글 결과] 추천 ${up} / 비추 ${down} 달성! 모든 팔로워가 각각 ${gain}명 상승했습니다!</b>`;
         } else {
             resultMsg = `<b>[${site} 작성글 결과] 추천 ${up} / 비추 ${down}... 반응이 좋지 않아 변화가 없습니다.</b>`;
         }
-        
         gameState.community.push({ site: site, content: resultMsg });
         gameState.pendingPost = null;
     }
@@ -274,17 +272,15 @@
         document.getElementById('p-youtube').innerText = gameState.youtube.toLocaleString() + '명';
         document.getElementById('p-sns').innerText = gameState.sns.toLocaleString() + '명';
 
-        // 주간 작성 버튼 상태 업데이트
         const currentWeek = Math.floor((gameState.day - 1) / 7);
         const btns = ["btn-write-cafe", "btn-write-ebem", "btn-write-yz"];
         const statusText = document.getElementById('comm-write-status');
-        
         if (gameState.lastWriteWeek === currentWeek) {
             btns.forEach(id => document.getElementById(id).disabled = true);
-            statusText.innerText = "이번 주 글 작성을 완료했습니다. 다음 주에 가능합니다.";
+            statusText.innerText = "이번 주 작성을 완료했습니다.";
         } else {
             btns.forEach(id => document.getElementById(id).disabled = false);
-            statusText.innerText = "이번 주에 작성 가능한 글이 있습니다.";
+            statusText.innerText = "작성 가능한 글이 있습니다.";
         }
         
         document.getElementById('member-grid-container').innerHTML = gameState.members.map(m => `
@@ -310,9 +306,7 @@
 
     function nextDay() {
         if (document.getElementById('eventModal').style.display === 'block') return;
-        
-        processCommunityResult(); // 커뮤니티 결과 처리
-
+        processCommunityResult();
         let totalProfit = Math.floor(Math.random() * 600001) + 400000;
         const actionsPool = ['vocal', 'dance', 'visual', 'variety', 'charm', 'rest'];
         gameState.members.forEach(m => {
@@ -338,12 +332,9 @@
         if (Math.random() < 0.45) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
         if (Math.random() < 0.45) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
         checkVirtualEvent();
-        gameState.finance += totalProfit; 
-        gameState.finance -= 500000; 
-        updateFandom(Math.floor(totalProfit / 10000));
+        gameState.finance += totalProfit; gameState.finance -= 500000; updateFandom(Math.floor(totalProfit / 10000));
         gameState.day++;
         gameState.members.forEach(m => m.fatigue = Math.max(0, m.fatigue - 10));
-        document.getElementById('profit-report').style.display = 'block';
         document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>`;
         updateDisplay();
         processNextPopup();
@@ -385,23 +376,19 @@
     function showTrainingReport(logs) {
         const modal = document.getElementById('eventModal');
         document.getElementById('modal-title').innerText = "🗓️ 주간 트레이닝 결산";
-        if (logs.length === 0) {
-            document.getElementById('modal-body').innerHTML = `<div style="text-align:center; padding:15px;">이번 주는 스탯 변화가 없었습니다.</div>`;
-        } else {
-            const summary = {};
-            logs.forEach(l => {
-                if (!summary[l.name]) summary[l.name] = [];
-                const statName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
-                summary[l.name].push(statName);
-            });
-            let listHtml = Object.entries(summary).map(([name, stats]) => {
-                const counts = {};
-                stats.forEach(s => counts[s] = (counts[s] || 0) + 1);
-                const statString = Object.entries(counts).map(([s, c]) => `${s} <span style="color:var(--success); font-weight:bold;">+${c}</span>`).join(', ');
-                return `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;"><span style="color:var(--point); font-weight:bold;">${name}</span><br>${statString}</div>`;
-            }).join('');
-            document.getElementById('modal-body').innerHTML = `<div style="text-align:left; background:#f8f9fa; padding:15px; border-radius:10px; font-size:14px; max-height:300px; overflow-y:auto;">${listHtml}</div>`;
-        }
+        const summary = {};
+        logs.forEach(l => {
+            if (!summary[l.name]) summary[l.name] = [];
+            const statName = {vocal:'보컬', dance:'댄스', visual:'비주얼', variety:'예능', charm:'매력'}[l.stat];
+            summary[l.name].push(statName);
+        });
+        let listHtml = Object.entries(summary).map(([name, stats]) => {
+            const counts = {};
+            stats.forEach(s => counts[s] = (counts[s] || 0) + 1);
+            const statString = Object.entries(counts).map(([s, c]) => `${s} <span style="color:var(--success); font-weight:bold;">+${c}</span>`).join(', ');
+            return `<div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;"><span style="color:var(--point); font-weight:bold;">${name}</span><br>${statString}</div>`;
+        }).join('');
+        document.getElementById('modal-body').innerHTML = listHtml || "변동 없음";
         document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인 (Space)</button>`;
         modal.style.display = 'block';
     }
@@ -412,10 +399,7 @@
         closeModal();
     }
 
-    function closeModal() { 
-        document.getElementById('eventModal').style.display = 'none'; 
-        setTimeout(processNextPopup, 150); 
-    }
+    function closeModal() { document.getElementById('eventModal').style.display = 'none'; setTimeout(processNextPopup, 150); }
 
     function manualTrainAction() {
         const name = document.getElementById('sel-member').value; const stat = document.getElementById('sel-stat').value;
