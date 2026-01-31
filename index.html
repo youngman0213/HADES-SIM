@@ -233,12 +233,12 @@
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
         members: [
-            createMember('키마', '04-22', 1), 
-            createMember('띵귤', '12-24', 2), 
-            // 수정: 챈나 멤버 생성 시 마지막 인자에 이미지 주소 전달
+            // 모든 멤버 이미지 주소 적용 완료
+            createMember('키마', '04-22', 1, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/29/513/80329513_20260120180131_org.jpg/melon/quality/80/optimize'), 
+            createMember('띵귤', '12-24', 2, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/813/80326813_20251224160243_org.jpg/melon/quality/80/optimize'), 
             createMember('챈나', '02-26', 3, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/812/80326812_20251224160127_org.jpg/melon/quality/80/optimize'),
-            createMember('솜주먹', '11-11', 4), 
-            createMember('연초록', '03-26', 5),
+            createMember('솜주먹', '11-11', 4, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/815/80326815_20251224160500_org.jpg/melon/quality/80/optimize'), 
+            createMember('연초록', '03-26', 5, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/814/80326814_20251224160415_org.jpg/melon/quality/80/optimize'),
         ],
         community: [], popupQueue: [], weeklyStats: [], pendingPost: null, hasPostedThisWeek: false,
         lastContents: { short: -999, mid: -999, long: -999 },
@@ -644,4 +644,3 @@
 </body>
 </html>
 ```
-
