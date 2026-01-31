@@ -4,15 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v23.5 (Balance Patch)</title>
+    <title>하데스 키우기 v23.7 (Chart Competition)</title>
     <style>
-        :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; --news: #495057; }
+        :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; --subak: #0ca678; --musicside: #1c7ed6; --tube: #f03e3e; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
         
         /* 시작 & 네비 */
         #start-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; color: white; text-align: center; }
         .start-logo { font-size: 3rem; font-weight: 900; color: var(--point); margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,77,148,0.5); }
-        .start-sub { font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px; }
         .start-btn { padding: 18px 60px; background: var(--point); color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(255,77,148,0.3); transition: 0.3s; }
         .start-btn:hover { transform: scale(1.05); }
         .nav-bar { display: none; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -32,11 +31,37 @@
         h2 { color: #222; font-size: 1.1rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; margin-bottom: 15px; }
         .money-text { color: var(--money); font-weight: bold; }
         
-        /* 스탯 & 커뮤니티 */
+        /* 스탯 */
         .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .stat-item { background: #f8f9fa; padding: 10px; border-radius: 10px; }
         .stat-item small { color: #777; font-size: 11px; }
         .stat-item strong { font-size: 15px; display: block; margin-top: 2px; }
+
+        /* 차트 전용 스타일 */
+        .chart-tabs { display: flex; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .chart-tab-btn { flex: 1; border: none; background: #f1f3f5; padding: 10px; cursor: pointer; font-size: 13px; font-weight: bold; color: #888; transition: 0.2s; }
+        .chart-tab-btn.active { background: white; color: #333; }
+        .chart-tab-btn.subak.active { color: var(--subak); border-bottom: 2px solid var(--subak); }
+        .chart-tab-btn.musicside.active { color: var(--musicside); border-bottom: 2px solid var(--musicside); }
+        .chart-tab-btn.tube.active { color: var(--tube); border-bottom: 2px solid var(--tube); }
+        
+        .chart-list { min-height: 300px; }
+        .chart-row { display: flex; align-items: center; padding: 10px 5px; border-bottom: 1px solid #f1f3f5; font-size: 13px; }
+        .chart-row:nth-child(1) .rank { color: #ffd43b; text-shadow: 1px 1px 0 #e67700; font-size: 16px; }
+        .chart-row:nth-child(2) .rank { color: #adb5bd; font-size: 15px; }
+        .chart-row:nth-child(3) .rank { color: #e599f7; font-size: 15px; }
+        .chart-row.my-song { background: #fff0f6; border-radius: 8px; border: 1px solid #fcc2d7; }
+        
+        .rank { width: 30px; font-weight: 900; text-align: center; margin-right: 10px; color: #495057; }
+        .rank-change { width: 20px; font-size: 10px; text-align: center; margin-right: 10px; color: #888; }
+        .rank-up { color: var(--danger); }
+        .rank-down { color: #1c7ed6; }
+        .song-info { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .song-title { font-weight: bold; display: block; }
+        .artist-name { font-size: 11px; color: #888; }
+        .chart-score { font-size: 10px; color: #adb5bd; text-align: right; width: 40px; }
+
+        /* 커뮤니티 */
         .comm-post { border-bottom: 1px solid #eee; padding: 10px 0; }
         .comm-site { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
         .site-ebem { background: #e7f5ff; color: #1971c2; }
@@ -45,9 +70,10 @@
         .site-yt { background: #ffe3e3; color: var(--yt); }
         .site-yz { background: #000; color: #fff; }
         .site-news { background: #343a40; color: #fff; }
+        .site-music { background: #e6fcf5; color: #0ca678; }
         #comm-container { max-height: 240px; overflow-y: auto; padding-right: 5px; scrollbar-width: thin; }
         
-        /* 멤버 카드 & 프로필 */
+        /* 멤버 & 컨텐츠 */
         .member-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 650px) { .member-grid { grid-template-columns: repeat(2, 1fr); } }
         .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; position: relative; transition: 0.3s; }
@@ -64,16 +90,15 @@
         .equipped-items { margin-top: 10px; font-size: 11px; color: #666; background: #f8f9fa; padding: 8px; border-radius: 6px; min-height: 20px;}
         .enhance-text { color: #845ef7; font-weight: bold; }
 
-        /* 컨텐츠 & 상점 */
-        .content-card { border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; background: #fff; transition:0.2s; }
+        .content-card { border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; background: #fff; transition:0.2s; position: relative; }
         .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .content-badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .badge-short { background: #e3fafc; color: #0c8599; }
         .badge-mid { background: #f3f0ff; color: #6741d9; }
         .badge-long { background: #fff0f6; color: #c2255c; }
         .badge-item { background: #f3f0ff; color: #5c7cfa; }
+        .badge-special { background: #fff5f5; color: #ff0000; border: 1px solid #ffc9c9; }
         .content-info { font-size: 12px; color: #555; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 10px; }
-        .content-stat { background: #f8f9fa; padding: 4px 8px; border-radius: 4px; }
         .content-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
         .btn-available { background: var(--point); box-shadow: 0 4px 6px rgba(255, 77, 148, 0.2); }
         .btn-available:hover { filter: brightness(0.9); }
@@ -112,7 +137,7 @@
 
 <div id="start-page">
     <div class="start-logo">HADES</div>
-    <div class="start-sub">Virtual Idol Management v23.5</div>
+    <div class="start-sub">Virtual Idol Management v23.7</div>
     <button class="start-btn" onclick="startGame()">게임 시작</button>
 </div>
 
@@ -138,9 +163,22 @@
                 <div class="stat-item"><small>너튜브 구독</small><strong id="p-youtube">20,000명</strong></div>
                 <div class="stat-item"><small>SNS 팔로워</small><strong id="p-sns">1,000명</strong></div>
                 <div class="stat-item"><small>현재 인지도</small><strong id="p-tier" style="color:#7950f2;">루키</strong></div>
-                <div class="stat-item"><small>누적 매출 (음반/수익)</small><strong id="p-sales">0원</strong></div>
+                <div class="stat-item"><small>누적 매출</small><strong id="p-sales">0원</strong></div>
             </div>
         </div>
+
+        <!-- NEW: 통합 차트 -->
+        <div class="card">
+            <h2>🏆 실시간 통합 차트</h2>
+            <div class="chart-tabs">
+                <button class="chart-tab-btn subak active" onclick="switchChartTab('subak')">🍈 수박</button>
+                <button class="chart-tab-btn musicside" onclick="switchChartTab('musicside')">💿 뮤직사이드</button>
+                <button class="chart-tab-btn tube" onclick="switchChartTab('tube')">📺 너튜브</button>
+            </div>
+            <div id="chart-list-container" class="chart-list"></div>
+            <div style="font-size:11px; text-align:center; color:#adb5bd; margin-top:10px;">* 매일 00시 순위 업데이트 (1~10위 표시)</div>
+        </div>
+
         <div class="half-grid">
             <div class="card" id="profit-report" style="display:none; background: #f2fcf0; border-color: #40c057;">
                 <h2>🎈 일일 리포트</h2>
@@ -173,7 +211,11 @@
 
     <div id="contents" class="page">
         <div class="card">
-            <h2>🎬 컨텐츠 제작</h2>
+            <h2>🔥 스페셜 프로젝트 (한정)</h2>
+            <div id="special-content-list"></div>
+        </div>
+        <div class="card">
+            <h2>🎬 일반 컨텐츠 제작</h2>
             <div id="content-list"></div>
         </div>
     </div>
@@ -216,15 +258,31 @@
 </div>
 
 <script>
+    // === 라이벌 데이터 ===
+    const rivalArtists = [
+        "시퀀서", "디지노믹", "글리치문", "뉴럴웨이브", "비트셸", "코어링크", "사이버리프", "픽셀헤이즈", "싱크비전", "벡터보이즈",
+        "알고리듬", "플로팅칩", "언리얼소울", "서브레이어", "메타모프", "하이퍼루프", "신스플로우", "누클리어스", "KRYX", "LYNQ",
+        "V-ZIT", "X-IEL", "JOYN", "N-ZIA", "RYZE-O", "QUV", "W-AVE", "SYLK", "F-REEL", "G-LOWD", "VEXEN", "TYRO", "Z-EEN",
+        "M-NEX", "O-RIT", "P-LEY", "B-ZON", "X-WAY", "H-YDE", "L-UVN", "S-YDE", "A-XIS", "N-TICK", "누보", "디트", "글릿",
+        "오로", "제로니", "싱크", "베이퍼플로", "에이든", "루미너", "코더", "서브", "텔레", "리셋", "미러", "고스트"
+    ];
+    const songSuffixes = ["Theory", "Protocol", "Love", "System", "Night", "Dream", "Code", "Signal", "Wave", "Zone", "Heart", "Drive", "Light", "Shadow", "Echo", "Future"];
+
+    function getRandomSong(artist) {
+        return `${artist} - ${songSuffixes[Math.floor(Math.random() * songSuffixes.length)]} ${Math.floor(Math.random()*9)+1}`;
+    }
+
+    // === 게임 로직 ===
     function startGame() {
         document.getElementById('start-page').style.display = 'none';
         document.getElementById('main-nav').style.display = 'flex';
         document.getElementById('main-container').style.display = 'block';
         document.getElementById('main-footer').style.display = 'block';
+        initRivalCharts(); // 라이벌 차트 초기화
         updateDisplay();
+        renderHomeCharts('subak'); // 초기 차트 렌더링
     }
 
-    // 수정: 멤버 생성 시 커스텀 스탯을 받을 수 있도록 수정
     function createMember(name, birth, imgId, customStats, customUrl = null) {
         let stats = customStats;
         const mental = Math.floor(Math.random() * 90) + 11; 
@@ -236,27 +294,47 @@
         };
     }
 
-    // 수정: 초기 멤버 능력치 총합 20으로 재분배 (최대 10)
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
         accumulatedSales: 0, 
         currentTier: "루키",
+        activeCharts: [], // 내 활동 곡 { name, releaseDate, scores: {subak, musicside, tube} }
+        rivalCharts: [], // 라이벌 곡 { artist, title, scores: {subak, musicside, tube} }
+        flags: { albumPaid: false, concertBought: false, concertDone: false },
+        currentChartTab: 'subak',
         members: [
-            // 키마: 보컬 특화 (8)
             createMember('키마', '04-22', 1, {vocal:8, dance:3, visual:3, variety:3, charm:3}, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/29/513/80329513_20260120180131_org.jpg/melon/quality/80/optimize'), 
-            // 띵귤: 보컬/예능 밸런스 (보컬 7)
             createMember('띵귤', '12-24', 2, {vocal:7, dance:3, visual:3, variety:4, charm:3}, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/813/80326813_20251224160243_org.jpg/melon/quality/80/optimize'), 
-            // 챈나: 비주얼 특화 (9)
             createMember('챈나', '02-26', 3, {vocal:2, dance:5, visual:9, variety:2, charm:2}, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/812/80326812_20251224160127_org.jpg/melon/quality/80/optimize'),
-            // 솜주먹: 예능 특화 (9)
             createMember('솜주먹', '11-11', 4, {vocal:2, dance:2, visual:3, variety:9, charm:4}, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/815/80326815_20251224160500_org.jpg/melon/quality/80/optimize'), 
-            // 연초록: 보컬 밸런스 (보컬 7)
             createMember('연초록', '03-26', 5, {vocal:7, dance:2, visual:5, variety:2, charm:4}, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/814/80326814_20251224160415_org.jpg/melon/quality/80/optimize'),
         ],
         community: [], popupQueue: [], weeklyStats: [], pendingPost: null, hasPostedThisWeek: false,
         lastContents: { short: -999, mid: -999, long: -999 },
         inventory: []
     };
+
+    // 차트 초기화 (라이벌 생성)
+    function initRivalCharts() {
+        if (gameState.rivalCharts.length > 0) return;
+        // 30개의 라이벌 곡 생성
+        for(let i=0; i<30; i++) {
+            const artist = rivalArtists[Math.floor(Math.random() * rivalArtists.length)];
+            const title = getRandomSong(artist);
+            // 초기 점수 랜덤 배정 (500 ~ 10000)
+            gameState.rivalCharts.push({
+                artist: artist,
+                title: title,
+                scores: {
+                    subak: Math.floor(Math.random() * 9500) + 500,
+                    musicside: Math.floor(Math.random() * 9500) + 500,
+                    tube: Math.floor(Math.random() * 9500) + 500
+                },
+                prevRanks: { subak: 0, musicside: 0, tube: 0 } // 이전 순위 저장용
+            });
+        }
+        updateChartRanks(); // 초기 순위 계산
+    }
 
     const shopItems = [
         { id: 'mic_1', name: 'USB 마이크', price: 300000, stat: 'vocal', val: 1, desc: '가성비 마이크 (보컬+1)' },
@@ -274,6 +352,7 @@
     };
 
     const newsHeadlines = ["버추얼 시장 급성장", "대기업, 버추얼 진출", "MZ세대 장래희망 1위 크리에이터", "음방에 버추얼 등장", "8K 모션캡쳐 시대", "유명 작곡가 버추얼 협업 희망", "K-POP 다음은 V-POP?", "버추얼 굿즈 품귀", "정부 크리에이터 지원", "메타버스 콘서트 인기"];
+    const musicReactions = ["이번 노래 편의점에서 계속 나옴 ㅋㅋ", "TV 광고 보는데 하데스 노래 나와서 깜놀", "후렴구 진짜 중독성 미쳤다", "길거리 지나가는데 이 노래 들림", "수능 금지곡 확정"];
     const upgradeConfig = { 0: { chance: 0.8, costMult: 0.3 }, 1: { chance: 0.5, costMult: 0.6 }, 2: { chance: 0.3, costMult: 1.0 } };
     
     const tierOrder = ["UNRANKED", "루키", "라이징스타", "국내에서 알려짐", "아시아에서 알려짐", "북미에서 알려짐", "전세계에서 알려짐"];
@@ -291,7 +370,10 @@
         });
         if(!loaded.inventory) loaded.inventory = [];
         if(loaded.accumulatedSales === undefined) loaded.accumulatedSales = 0;
-        
+        if(!loaded.flags) loaded.flags = { albumPaid: false, concertBought: false, concertDone: false };
+        if(!loaded.activeCharts) loaded.activeCharts = [];
+        if(!loaded.rivalCharts) { loaded.rivalCharts = []; initRivalCharts(); } // 구버전 호환
+
         gameState = loaded; gameState.startDate = new Date(gameState.startDate); 
         
         const score = calculateTierScore();
@@ -303,7 +385,6 @@
 
     const ebemMsgs = ["하데스 얘네는 진짜 모델링 퀄리티가 볼 때마다 감탄 나오네.", "키마 오늘 고음 뚫리는 거 보니까 목 상태 최상인 듯?", "띵귤 방송 감각은 진짜 타고났다. 오디오 안 비는 거 봐라 ㅋㅋㅋ", "연초록 아바타 텍스처 수정한 거임? 광택이 좀 달라진 거 같은데.", "솔직히 이 정도 퀄리티면 메이저랑 비벼도 안 꿀림.", "아니 챈나 춤선 억까하던 놈들 다 어디 갔냐? 리깅 자연스러운 거 봐라.", "솜주먹 예능감 미쳤네. 오늘 클립 각 하나 나왔다.", "근데 하데스 애들 연습량 진짜 장난 아닌 듯. 성장 속도가 보임.", "방금 리액션 타이밍 지렸다. 이게 버추얼의 맛이지.", "하데스 유입인데 입덕 가이드 어디서 봄?", "오늘 방송 보고 구독 눌렀다. 노래 주머니 든든하네.", "얘네는 멤버들끼리 티키타카가 잘 돼서 보기 편함.", "연초록 비주얼 실화냐? 썸네일 보고 홀린 듯 들어옴.", "솔직히 3D 라이브 할 때마다 기술력 발전하는 거 체감됨.", "키마 목소리는 진짜 독보적이다. 커버곡 하나 더 뽑아주라.", "오늘 띵귤 드립 때문에 광대 아파서 방송 못 보겠음 ㅋㅋㅋ", "하데스 정도면 버추얼 씬에서 탑티어 인정이지."];
     const cafeMsgs = ["하데스 멤버들 오늘도 고생 많았어요! 푹 쉬어요~", "케로 1기 여기 여기 모여라! 우리 하데스 지켜!", "키마님 목소리는 제 지친 일상의 유일한 비타민이에요.", "오늘 띵귤님 덕분에 배꼽 빠지게 웃었네요. 항상 고마워요!", "우리 챈나님 미모가 매일 경신되는데... 제 심장 책임지세요!", "연초록님의 따뜻한 위로 방송 덕분에 오늘 힐링하고 갑니다.", "솜주먹님 매력에 한 번 빠지면 출구가 없다는 게 학계의 정설!", "하데스 공식 굿즈 기다리고 있어요. 통장은 준비됐습니다!", "오늘 무대 보는데 눈물 날 뻔했어요. 우리 애들 다 컸네...", "항상 노력하는 모습이 너무 예쁜 하데스, 오래오래 가자!", "팬아트 그려봤는데 예쁘게 봐주시면 좋겠어요~", "우리 하데스 슈스길만 걷자! 언제나 응원할게.", "멤버들 건강이 최우선인 거 알죠? 아프지 마요 ㅠㅠ", "오늘 방송도 레전드! 하데스 덕분에 내일 출근도 버팁니다.", "세상에서 제일 빛나는 5명의 별, 하데스 사랑해!", "챈나님 댄스 브레이크 부분 무한 반복 중입니다. 너무 멋져요!", "노래면 노래, 춤이면 춤, 못하는 게 없는 하데스 최고!", "하데스 만나고 제 삶이 행복해졌어요. 고마워요 멤버들!", "오늘 밤은 하데스 노래 들으면서 좋은 꿈 꿀게요~"];
-    const yzMsgs = ["오늘 띵귤 폼 미쳤다 진짜... #하데스 #HADES #띵귤", "키마 고음 부분에서 소름 돋음. 이게 메인보컬이지. #KIMA", "하데스 신규 의상 실화야? 너무 예뻐서 기절함 ㅠㅠ #Hades_NewOutfit", "연초록 비주얼 공격 실화냐... 화면 가득 찬 미모에 정신 못 차림.", "하데스 멤버들 케미 진짜 좋아함. 이 조합 찬성이요. #하데스_합방", "실시간 트렌드에 하데스 떴다! 가보자고! #하데스_실트", "솜주먹 예능감에 오늘 하루 스트레스 다 날림 ㅋㅋㅋ #SOM", "챈나 춤선은 진짜 독보적이야. 3D 리깅이 춤선을 못 담네.", "하데스 노래 한 번만 들어보세요. 귀가 녹습니다. #버튜버추천", "나만 하데스 아는 줄 알았는데 구독자 느는 거 보니 뿌듯해.", "하데스 팝업스토어 열리면 밤샘 대기할 자신 있음. #HADES_POPUP", "오늘 리액션 짤 생성 완료. 너무 귀엽잖아... #하데스_클립", "버추얼 아이돌의 정점은 역시 하데스지. #VirtualIdol", "애들 목소리 합 진짜 좋다. 단체곡 나오면 무한 스밍 각.", "하데스 덕질하면서 인생의 진리를 깨달음. 귀여운 게 최고다.", "초록이 웃는 거 보니까 오늘 할 일 다 했다. #연초록", "하데스 팬덤 화력 무엇... 실시간 반응 속도 실화인가?", "내일도 하데스 방송 있다! 인생 살 맛 나네. #하데스_내일도"];
 
     window.addEventListener('keydown', e => { 
         if (document.activeElement.id === 'post-input') return;
@@ -344,10 +425,117 @@
         return { name: "루키", class: "tier-rookie" };
     }
 
+    // === 차트 관련 함수 ===
+    function updateChartRanks() {
+        // 1. 모든 곡 합치기 (라이벌 + 내 곡)
+        const allSongs = [];
+        
+        // 라이벌 곡 추가
+        gameState.rivalCharts.forEach(rc => {
+            allSongs.push({
+                artist: rc.artist,
+                title: rc.title,
+                scores: rc.scores,
+                isPlayer: false,
+                ref: rc // 참조 유지
+            });
+        });
+
+        // 플레이어 곡 추가
+        gameState.activeCharts.forEach(ac => {
+            if(ac.weekCount < 6) { // 5주차까지만 차트인
+                allSongs.push({
+                    artist: "HADES",
+                    title: ac.name,
+                    scores: ac.scores,
+                    isPlayer: true,
+                    ref: ac
+                });
+            }
+        });
+
+        // 2. 플랫폼별 정렬 및 순위 할당
+        const platforms = ['subak', 'musicside', 'tube'];
+        
+        platforms.forEach(plat => {
+            // 점수 내림차순 정렬
+            allSongs.sort((a, b) => b.scores[plat] - a.scores[plat]);
+            
+            // 순위 부여 및 등락 계산
+            allSongs.forEach((song, idx) => {
+                const rank = idx + 1;
+                // 이전 순위가 있으면 등락 계산, 없으면 NEW
+                let change = 'new';
+                if(song.ref.prevRanks && song.ref.prevRanks[plat] !== 0) {
+                    change = song.ref.prevRanks[plat] - rank; // 양수면 상승, 음수면 하락
+                }
+                
+                // 참조 객체에 현재 순위 저장 (다음 턴 비교용)
+                if(!song.ref.prevRanks) song.ref.prevRanks = {};
+                song.ref.prevRanks[plat] = rank;
+                
+                // 플레이어 곡의 경우 activeCharts 내 rank 속성 업데이트 (대표 순위는 수박 기준)
+                if(song.isPlayer && plat === 'subak') {
+                    song.ref.rank = rank;
+                }
+            });
+        });
+    }
+
+    function switchChartTab(tab) {
+        gameState.currentChartTab = tab;
+        document.querySelectorAll('.chart-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.chart-tab-btn.${tab}`).classList.add('active');
+        renderHomeCharts(tab);
+    }
+
+    function renderHomeCharts(platform) {
+        const container = document.getElementById('chart-list-container');
+        
+        // 현재 플랫폼 점수 기준으로 정렬된 리스트 생성
+        const allSongs = [];
+        gameState.rivalCharts.forEach(s => allSongs.push({...s, isPlayer: false}));
+        gameState.activeCharts.forEach(s => {
+            if(s.weekCount < 6) allSongs.push({artist: "HADES", title: s.name, scores: s.scores, prevRanks: s.prevRanks, isPlayer: true});
+        });
+
+        // 정렬
+        allSongs.sort((a, b) => b.scores[platform] - a.scores[platform]);
+
+        // Top 10 렌더링
+        const top10 = allSongs.slice(0, 10);
+        
+        container.innerHTML = top10.map((song, idx) => {
+            const rank = idx + 1;
+            let changeHtml = '<span class="rank-change">-</span>';
+            
+            if(song.prevRanks && song.prevRanks[platform]) {
+                const diff = song.prevRanks[platform] - rank;
+                if(diff > 0) changeHtml = `<span class="rank-change rank-up">▲${diff}</span>`;
+                else if(diff < 0) changeHtml = `<span class="rank-change rank-down">▼${Math.abs(diff)}</span>`;
+                else changeHtml = `<span class="rank-change">-</span>`;
+            } else {
+                changeHtml = `<span class="rank-change" style="color:#ff0000; font-weight:bold;">NEW</span>`;
+            }
+
+            return `
+            <div class="chart-row ${song.isPlayer ? 'my-song' : ''}">
+                <div class="rank">${rank}</div>
+                ${changeHtml}
+                <div class="song-info">
+                    <span class="song-title">${song.title}</span>
+                    <span class="artist-name">${song.artist}</span>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
     function updateDisplay() {
         document.getElementById('current-day').innerText = gameState.day;
         let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
-        document.getElementById('current-date').innerText = d.toISOString().split('T')[0];
+        const todayStr = d.toISOString().split('T')[0];
+        document.getElementById('current-date').innerText = todayStr;
+        
         document.getElementById('p-finance').innerText = gameState.finance.toLocaleString() + '원';
         document.getElementById('p-fandom').innerText = gameState.fandom.toLocaleString() + '명';
         document.getElementById('p-youtube').innerText = gameState.youtube.toLocaleString() + '명';
@@ -364,22 +552,19 @@
         if (gameState.hasPostedThisWeek) { postBtn.disabled = true; postBtn.innerText = "이번 주 작성 완료"; }
         else { postBtn.disabled = false; postBtn.innerText = "작성 완료"; }
 
+        // 멤버 업데이트
         document.getElementById('member-grid-container').innerHTML = gameState.members.map((m, idx) => {
             const bonuses = { vocal:0, dance:0, visual:0, variety:0, charm:0 };
             m.equipment.forEach(eq => { if(bonuses[eq.stat] !== undefined) bonuses[eq.stat] += getEquipVal(eq); });
-            
-            let mentalIcon = "😐", mentalDesc = "평범";
-            if (m.mental >= 80) { mentalIcon = "💎"; mentalDesc = "강철멘탈"; }
-            else if (m.mental <= 30) { mentalIcon = "☁️"; mentalDesc = "유리멘탈"; }
-            else if (m.mental >= 60) { mentalIcon = "🙂"; mentalDesc = "긍정적"; }
-
+            let mentalIcon = "😐";
+            if (m.mental >= 80) mentalIcon = "💎"; else if (m.mental <= 30) mentalIcon = "☁️"; else if (m.mental >= 60) mentalIcon = "🙂";
             return `
             <div class="member-card" style="${m.fatigue >= 100 ? 'border-color:var(--danger); background:#fff5f5;' : ''}">
                 <button class="equip-btn" onclick="openEquipModal(${idx})">🎒 장비/강화</button>
                 <div class="profile-container">
-                    <img src="${m.image}" class="profile-img" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${m.name}'" alt="프로필">
+                    <img src="${m.image}" class="profile-img" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${m.name}'">
                     <div class="profile-info">
-                        <div style="font-size:16px; font-weight:bold;">${m.name} <span style="font-size:12px; font-weight:normal;" title="성격: ${mentalDesc}">${mentalIcon}</span></div>
+                        <div style="font-size:16px; font-weight:bold;">${m.name} <span style="font-size:12px;">${mentalIcon}</span></div>
                         <div style="font-size:11px; color:#999;">🎂 ${m.birth}</div>
                     </div>
                 </div>
@@ -388,16 +573,18 @@
                 ${renderStat('비주얼', m.visual, bonuses.visual, 'var(--visual)')}
                 ${renderStat('예능', m.variety, bonuses.variety, 'var(--variety)')}
                 ${renderStat('매력', m.charm, bonuses.charm, 'var(--charm)')}
-                <div class="equipped-items">
-                    ${m.equipment.length > 0 ? m.equipment.map(e => `[${e.level>0 ? `+${e.level} ` : ''}${e.name}]`).join(' ') : '장비 없음'}
-                </div>
-                <div style="font-size:11px; text-align:right; color:${m.fatigue >= 100 ? 'var(--danger)' : '#888'}; font-weight:bold; margin-top:5px;">피로도: ${m.fatigue}%</div>
+                <div class="equipped-items">${m.equipment.length > 0 ? m.equipment.map(e => `[${e.level>0?`+${e.level} `:''}${e.name}]`).join(' ') : '장비 없음'}</div>
+                <div style="font-size:11px; text-align:right; color:${m.fatigue >= 100 ? 'var(--danger)' : '#888'}; font-weight:bold;">피로도: ${m.fatigue}%</div>
             </div>`;
         }).join('');
         
+        // 커뮤니티 업데이트
         document.getElementById('comm-container').innerHTML = gameState.community.map(c => `
-            <div class="comm-post"><span class="comm-site ${c.site==='속보'?'site-news':(c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':(c.site==='너튜브'?'site-yt':(c.site==='YZ'?'site-yz':'site-cafe'))))}">${c.site}</span><div style="font-size:13px; margin-top:4px;">${c.content}</div></div>
+            <div class="comm-post"><span class="comm-site ${c.site==='속보'?'site-news':(c.site==='음원반응'?'site-music':(c.site==='SNS'?'site-sns':(c.site==='에뱀'?'site-ebem':(c.site==='너튜브'?'site-yt':(c.site==='YZ'?'site-yz':'site-cafe')))))}">${c.site}</span><div style="font-size:13px; margin-top:4px;">${c.content}</div></div>
         `).reverse().join('');
+
+        // 차트 UI 렌더링
+        renderHomeCharts(gameState.currentChartTab);
     }
 
     function renderStat(l, base, bonus, c) { 
@@ -420,97 +607,29 @@
         gameState.hasPostedThisWeek = true; document.getElementById('post-input').value = ""; updateDisplay();
     }
 
-    function renderShop() {
-        const moneyDisplay = `<div style="padding:10px; background:#e9ecef; border-radius:8px; margin-bottom:15px; font-weight:bold; text-align:center;">현재 보유 자금: <span style="color:var(--money)">${gameState.finance.toLocaleString()}원</span></div>`;
-        document.getElementById('shop-list').innerHTML = moneyDisplay + shopItems.map(item => `
-            <div class="content-card">
-                <div class="content-header"><strong>${item.name}</strong><span class="content-badge badge-item">${item.stat.toUpperCase()} +${item.val}</span></div>
-                <div class="content-info"><div>💰 ${item.price.toLocaleString()}원</div><div>${item.desc}</div></div>
-                <button class="content-btn ${gameState.finance >= item.price ? 'btn-available' : 'btn-cooldown'}" 
-                    ${gameState.finance < item.price ? 'disabled' : ''} onclick="buyItem('${item.id}')">구매하기</button>
-            </div>
-        `).join('');
-    }
-
-    function buyItem(id) {
-        const item = shopItems.find(i => i.id === id);
-        if(gameState.finance >= item.price) {
-            gameState.finance -= item.price;
-            gameState.inventory.push({ ...item, level: 0 });
-            alert(`${item.name}을(를) 구매하여 창고에 보관했습니다.`);
-            updateDisplay(); renderShop();
-        }
-    }
-
-    function openEquipModal(memberIdx) {
-        const m = gameState.members[memberIdx];
-        document.getElementById('modal-title').innerText = `${m.name} 장비 & 강화`;
-        
-        let equipHtml = `<h4 style="margin:5px 0;">현재 착용 중 (강화 가능)</h4>`;
-        if(m.equipment.length === 0) equipHtml += `<div style="color:#999; font-size:12px; margin-bottom:10px;">착용 중인 장비가 없습니다.</div>`;
-        else {
-            equipHtml += m.equipment.map((eq, i) => {
-                const isMax = eq.level >= 3;
-                const nextCost = !isMax ? Math.floor(eq.price * upgradeConfig[eq.level].costMult) : 0;
-                
-                return `
-                <div class="choice-btn" style="margin-bottom:8px;">
-                    <div style="flex:1;">
-                        <span style="display:block;"><b>${eq.level>0 ? `<span class="enhance-text">+${eq.level}</span> ` : ''}${eq.name}</b> (${eq.stat} +${getEquipVal(eq)})</span>
-                        ${!isMax ? `<span style="font-size:11px; color:#666;">강화비용: ${nextCost.toLocaleString()}원</span>` : '<span style="font-size:11px; color:#845ef7;">최고 레벨 도달 (MAX)</span>'}
-                    </div>
-                    <div style="display:flex; align-items:center;">
-                        ${!isMax ? `<button class="upgrade-btn" onclick="tryUpgrade(${memberIdx}, ${i})">강화</button>` : ''}
-                        <button class="upgrade-btn" style="background:#fa5252;" onclick="unequipItem(${memberIdx}, ${i})">해제</button>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        let invHtml = `<h4 style="margin:15px 0 5px 0;">보유 장비 (창고)</h4>`;
-        if(gameState.inventory.length === 0) invHtml += `<div style="color:#999; font-size:12px;">창고가 비었습니다. 상점에서 구매하세요.</div>`;
-        else {
-            invHtml += gameState.inventory.map((item, i) => `<button class="choice-btn" onclick="equipItem(${memberIdx}, ${i})"><span>🔵 ${item.name} (${item.stat} +${item.val})</span><span>장착</span></button>`).join('');
-        }
-        document.getElementById('modal-body').innerHTML = `<div style="text-align:left;">${equipHtml}${invHtml}</div>`;
-        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">닫기</button>`;
-        document.getElementById('eventModal').style.display = 'block';
-    }
-
-    function tryUpgrade(memberIdx, eqIdx) {
-        const item = gameState.members[memberIdx].equipment[eqIdx];
-        const config = upgradeConfig[item.level];
-        const cost = Math.floor(item.price * config.costMult);
-        if (gameState.finance < cost) { alert("자금이 부족합니다."); return; }
-        
-        gameState.finance -= cost;
-        if (Math.random() < config.chance) {
-            item.level++;
-            alert(`✨ 강화 성공! (+${item.level})\n능력치가 상승했습니다.`);
-        } else {
-            alert(`💥 강화 실패...\n비용만 소모되었습니다. (수치 유지)`);
-        }
-        updateDisplay(); openEquipModal(memberIdx);
-    }
-
-    function equipItem(memberIdx, invIdx) { 
-        const item = gameState.inventory[invIdx];
-        const member = gameState.members[memberIdx];
-        
-        if (member.equipment.some(e => e.id === item.id)) {
-            alert("이미 동일한 장비를 착용하고 있습니다.");
-            return;
-        }
-
-        gameState.inventory.splice(invIdx, 1); 
-        member.equipment.push(item); 
-        openEquipModal(memberIdx); 
-        updateDisplay(); 
-    }
-
-    function unequipItem(memberIdx, eqIdx) { const item = gameState.members[memberIdx].equipment.splice(eqIdx, 1)[0]; gameState.inventory.push(item); openEquipModal(memberIdx); updateDisplay(); }
-
     function renderContents() {
+        const specialList = document.getElementById('special-content-list');
+        let albumStatus = gameState.flags.albumPaid ? 
+            `<button class="content-btn btn-cooldown" disabled>✅ 제작비 정산 완료 (발매 대기/활동 중)</button>` : 
+            `<button class="content-btn btn-cooldown" disabled>🔒 12월 25일 정산 예정 (6천만원 필요)</button>`;
+        
+        let concertStatus = gameState.flags.concertBought ?
+            `<button class="content-btn btn-cooldown" disabled>✅ 예매 완료 (1월 19일 개최)</button>` :
+            (gameState.flags.concertDone ? `<button class="content-btn btn-cooldown" disabled>🏁 개최 완료</button>` : `<button class="content-btn btn-available" onclick="buyConcert()">예매 시작 (비용 1억)</button>`);
+
+        specialList.innerHTML = `
+            <div class="content-card" style="border-color:#ff4d94; background:#fff0f6;">
+                <div class="content-header"><strong>💿 정규 프로젝트 (MEGA PIECE & 2nd Earth)</strong><span class="content-badge badge-special">필수</span></div>
+                <div class="content-info"><div>💰 60,000,000원</div><div>발매일: 12/26 & 01/09</div></div>
+                ${albumStatus}
+            </div>
+            <div class="content-card" style="border-color:#ae3ec9; background:#f3f0ff;">
+                <div class="content-header"><strong>🎤 온라인 콘서트 [B905]</strong><span class="content-badge badge-special">스페셜</span></div>
+                <div class="content-info"><div>💰 100,000,000원</div><div>개최일: 26년 01월 19일</div></div>
+                ${concertStatus}
+            </div>
+        `;
+
         const container = document.getElementById('content-list');
         container.innerHTML = Object.values(contentTypes).map(c => {
             const lastDay = gameState.lastContents[c.id];
@@ -524,6 +643,16 @@
         }).join('');
     }
 
+    function buyConcert() {
+        if (gameState.finance < 100000000) return alert("자금이 부족합니다. (1억 원 필요)");
+        if (confirm("온라인 콘서트 [B905]를 기획하시겠습니까?\n비용: 100,000,000원\n개최일: 2026년 1월 19일")) {
+            gameState.finance -= 100000000;
+            gameState.flags.concertBought = true;
+            alert("콘서트 기획이 시작되었습니다! 1월 19일을 기대해주세요.");
+            updateDisplay(); renderContents();
+        }
+    }
+
     function executeContent(typeId) {
         const content = contentTypes[typeId];
         gameState.finance -= content.cost;
@@ -532,40 +661,195 @@
         let resultTitle = "", resultText = "";
         
         gameState.members.forEach(m => m.fatigue = Math.min(100, m.fatigue + (typeId==='short'?10:25)));
-
         let revenue = 0;
 
-        // 수정: 컨텐츠 제작 성공 팬덤 증가량 50% 너프 적용
         if (roll <= content.risk) {
             const loss = Math.floor(content.rewardMin * 0.3); updateFandom(-loss);
             revenue = Math.floor(content.cost * 0.2); 
             resultTitle = "😱 컨텐츠 폭망..."; resultText = `반응이 싸늘합니다. (팬덤 -${loss}명)`;
         } else if (roll > 90) { 
             const rawBonus = content.rewardMax + Math.floor(Math.random() * content.rewardMax * 0.5);
-            const bonus = Math.floor(rawBonus * 0.5); // 50% 너프
+            const bonus = Math.floor(rawBonus * 0.5); 
             updateFandom(bonus);
-            
-            if(typeId === 'long') {
-                revenue = 50000000 + Math.floor(Math.random() * 50000000); 
-            } else {
-                revenue = Math.floor(content.cost * 1.5);
-            }
+            if(typeId === 'long') { revenue = 50000000 + Math.floor(Math.random() * 50000000); } 
+            else { revenue = Math.floor(content.cost * 1.5); }
             resultTitle = "🔥 초대박 발생!"; resultText = `실시간 트렌드 장악! (팬덤 +${bonus.toLocaleString()}명)`;
         } else {
             const rawGain = Math.floor(Math.random() * (content.rewardMax - content.rewardMin)) + content.rewardMin;
-            const gain = Math.floor(rawGain * 0.5); // 50% 너프
+            const gain = Math.floor(rawGain * 0.5); 
             updateFandom(gain);
-            
             revenue = Math.floor(content.cost * 0.8); 
             resultTitle = "✅ 제작 완료"; resultText = `무난한 반응입니다. (팬덤 +${gain.toLocaleString()}명)`;
         }
-
-        gameState.finance += revenue;
-        if(revenue > 0) gameState.accumulatedSales += revenue;
-
+        gameState.finance += revenue; if(revenue > 0) gameState.accumulatedSales += revenue;
         document.getElementById('modal-title').innerText = resultTitle; document.getElementById('modal-body').innerHTML = resultText;
         document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
         document.getElementById('eventModal').style.display = 'block'; updateDisplay(); renderContents();
+    }
+
+    function checkDateEvents(d) {
+        const dateStr = d.toISOString().split('T')[0];
+        
+        if (dateStr === '2025-12-25') {
+            gameState.popupQueue.unshift({ 
+                type: 'settlement',
+                event: {
+                    id: 'settle_1225', title: '💸 운명의 정산일', desc: 'MEGA PIECE HARMONY와 두 번째 지구 제작비 정산일입니다.\n필요 금액: 60,000,000원\n\n(납부하지 못하면 파산 처리됩니다.)',
+                    choices: [
+                        { text: "정산하기 (6천만원 지불)", effect: () => payAlbumCost() },
+                        { text: "돈이 없다... (배째라)", effect: () => { alert("제작비 미납으로 소속사가 압류되었습니다.\nGAME OVER"); location.reload(); } }
+                    ]
+                }
+            });
+        }
+        if (dateStr === '2025-12-26' && gameState.flags.albumPaid) { launchSong("MEGA PIECE HARMONY"); }
+        if (dateStr === '2026-01-09' && gameState.flags.albumPaid) { launchSong("두 번째 지구"); }
+        if (dateStr === '2026-01-19') {
+            if (gameState.flags.concertBought) { runConcert(); } 
+            else { gameState.community.push({site:'속보', content:'<b>[이슈] 하데스, 예산 부족으로 콘서트 무산... 팬들 "실망"</b>'}); }
+        }
+    }
+
+    function payAlbumCost() {
+        if (gameState.finance < 60000000) {
+            alert("자금이 부족합니다... 파산했습니다.");
+            location.reload();
+        } else {
+            gameState.finance -= 60000000;
+            gameState.flags.albumPaid = true;
+            alert("정산 완료! 이제 음원 발매 준비가 끝났습니다.");
+            updateDisplay(); renderContents();
+        }
+    }
+
+    function launchSong(title) {
+        // 내 곡 차트 진입 (초기 점수 5000)
+        gameState.activeCharts.push({ 
+            name: title, 
+            weekCount: 0, 
+            releaseDate: new Date(gameState.startDate.getTime() + (gameState.day-1)*86400000),
+            scores: { subak: 5000, musicside: 5000, tube: 5000 },
+            prevRanks: { subak: 0, musicside: 0, tube: 0 }
+        });
+
+        gameState.popupQueue.push({
+            type: 'release',
+            event: {
+                id: 'rel_'+title, title: `💿 [발매] ${title}`, desc: `디지털 싱글 <${title}>가 발매되었습니다!\n음원 사이트 차트 진입을 노려봅시다.`,
+                choices: [{ text: "확인", effect: () => updateDisplay() }]
+            }
+        });
+        gameState.community.push({site:'음원반응', content: `<b><${title}> 노래 개좋음;; 무한스밍 간다</b>`});
+    }
+
+    function runConcert() {
+        gameState.flags.concertDone = true;
+        const viewers = Math.floor(Math.random() * (60000 - 40000 + 1)) + 40000; 
+        const ticketPrice = 33000;
+        const revenue = viewers * ticketPrice;
+        const fanInc = Math.floor(viewers * 0.3);
+
+        gameState.finance += revenue;
+        gameState.accumulatedSales += revenue;
+        updateFandom(fanInc);
+
+        gameState.popupQueue.push({
+            type: 'concert',
+            event: {
+                id: 'con_b905', title: '🎤 온라인 콘서트 [B905] 종료',
+                desc: `콘서트가 성황리에 종료되었습니다!\n\n접속 시청자: ${viewers.toLocaleString()}명\n티켓 수익: ${revenue.toLocaleString()}원\n팬덤 유입: +${fanInc.toLocaleString()}명`,
+                choices: [{ text: "뒤풀이 회식하러 가자!", effect: () => { gameState.finance-=1000000; alert("회식비로 100만원을 썼습니다. 멤버들의 사기가 오릅니다!"); gameState.members.forEach(m=>m.mental=Math.min(100, m.mental+10)); } }]
+            }
+        });
+    }
+
+    // 일일 차트 로직 처리
+    function processCharts() {
+        // 멤버 평균 능력치 계산
+        let totalStat = 0;
+        gameState.members.forEach(m => {
+            let eqBonus = 0; m.equipment.forEach(e => eqBonus += getEquipVal(e));
+            totalStat += (m.vocal + m.dance + m.visual + m.variety + m.charm + eqBonus);
+        });
+        const teamScore = totalStat / 5; // 평균
+
+        // 1. 라이벌 점수 변동
+        gameState.rivalCharts.forEach(rc => {
+            // 랜덤 등락 (-500 ~ +500)
+            rc.scores.subak += Math.floor(Math.random() * 1000) - 500;
+            rc.scores.musicside += Math.floor(Math.random() * 1500) - 750; // 변동폭 큼
+            rc.scores.tube += Math.floor(Math.random() * 2000) - 1000; // 변동폭 매우 큼
+            
+            // 점수 보정 (0~12000 사이 유지)
+            for(let key in rc.scores) {
+                rc.scores[key] = Math.max(0, Math.min(12000, rc.scores[key]));
+            }
+        });
+
+        // 2. 내 곡 점수 변동
+        gameState.activeCharts.forEach(ac => {
+            if (ac.weekCount >= 6) return; // 차트 아웃
+
+            // 기본 성장력 (능력치 기반)
+            const power = Math.floor(teamScore * 2); 
+            
+            // 수박: 꾸준함 (능력치 비중 높음)
+            ac.scores.subak += power + Math.floor(Math.random() * 600) - 200;
+            
+            // 뮤직사이드: 팬덤 비중 높음
+            ac.scores.musicside += power + Math.floor(gameState.fandom / 5000) + Math.floor(Math.random() * 800) - 400;
+
+            // 너튜브: 랜덤 터짐 (능력치 낮아도 대박 가능)
+            if(Math.random() < 0.1) {
+                ac.scores.tube += 2000; // 알고리즘 탐
+                gameState.community.push({site:'너튜브', content: `<b>[알고리즘] <${ac.name}> 쇼츠 떡상 중 ㄷㄷ</b>`});
+            } else {
+                ac.scores.tube += power + Math.floor(Math.random() * 1000) - 500;
+            }
+
+            // 차트 아웃 방지 (최소 점수 보정)
+            for(let key in ac.scores) ac.scores[key] = Math.max(0, ac.scores[key]);
+        });
+
+        updateChartRanks(); // 순위 재계산
+
+        // 일간 보상 (수박 차트 기준)
+        gameState.activeCharts.forEach(ac => {
+            if(ac.rank <= 100) {
+                const dailyRevenue = (101 - ac.rank) * 10000; // 1위 100만원, 100위 1만원
+                const dailyFan = (101 - ac.rank) * 10;
+                gameState.finance += dailyRevenue;
+                gameState.accumulatedSales += dailyRevenue;
+                updateFandom(dailyFan);
+            }
+            
+            if(Math.random() < 0.2) {
+                gameState.community.push({site:'음원반응', content: musicReactions[Math.floor(Math.random()*musicReactions.length)]});
+            }
+        });
+        
+        // 주간 차트 체크
+        if (gameState.day % 7 === 0) {
+            gameState.activeCharts.forEach(song => {
+                song.weekCount++;
+                if (song.weekCount <= 5) {
+                    gameState.popupQueue.push({
+                        type: 'chart_week',
+                        event: {
+                            id: `wk_${song.name}_${song.weekCount}`, title: `📊 주간 차트 (${song.weekCount}주차)`,
+                            desc: `<${song.name}> 성적표\n\n🍈 수박: ${song.prevRanks.subak}위\n💿 뮤직사이드: ${song.prevRanks.musicside}위\n📺 너튜브: ${song.prevRanks.tube}위`,
+                            choices: [{ text: "확인", effect: () => {} }]
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    function checkBirthday() {
+        let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
+        let todayStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        gameState.members.forEach(m => { if(m.birth === todayStr) gameState.popupQueue.push({type: 'birthday', event: { id:'bday_'+m.name, title: `🎂 ${m.name} 생일`, desc: `오늘은 ${m.name}의 생일입니다!`, choices: [{ text: "파티 (팬덤+10000)", effect: () => updateFandom(10000) }] }}); });
     }
 
     function checkBusinessProposal() {
@@ -576,17 +860,16 @@
             gameState.popupQueue.push({
                 type: 'business',
                 event: {
-                    id: 'biz_'+gameState.day, title: `💼 [제안] ${type}`, desc: `${type} 제안이 들어왔습니다.\n성공 시 수익, 실패 시 손해가 발생합니다.\n(결과는 운에 맡겨야 합니다.)`,
+                    id: 'biz_'+gameState.day, title: `💼 [제안] ${type}`, desc: `${type} 제안이 들어왔습니다.\n성공 시 수익, 실패 시 손해가 발생합니다.`,
                     choices: [ { text: "수락하기 (도전!)", effect: () => executeBusiness(profit, type) }, { text: "거절하기", effect: () => {} } ]
                 }
             });
         }
     }
-
+    
     function executeBusiness(amount, type) {
         if (Math.random() < 0.7) { 
-            gameState.finance += amount;
-            gameState.accumulatedSales += amount; 
+            gameState.finance += amount; gameState.accumulatedSales += amount; 
             alert(`🎉 대성공!\n${type}가 대박나서 ${amount.toLocaleString()}원을 벌었습니다!`);
         } else { 
             gameState.finance -= amount;
@@ -598,17 +881,12 @@
     function checkTierUp() {
         const score = calculateTierScore();
         const newTierInfo = getTierInfo(score);
-        
         const oldTierName = gameState.currentTier || "UNRANKED";
-        const oldIdx = tierOrder.indexOf(oldTierName);
-        const newIdx = tierOrder.indexOf(newTierInfo.name);
-
-        if (newIdx > oldIdx) {
+        if (tierOrder.indexOf(newTierInfo.name) > tierOrder.indexOf(oldTierName)) {
             gameState.popupQueue.push({
                 type: 'tier_up',
                 event: {
-                    id: 'tierup_'+gameState.day,
-                    title: "🎉 인지도 등급 상승!",
+                    id: 'tierup_'+gameState.day, title: "🎉 인지도 등급 상승!",
                     desc: `축하합니다! 하데스의 인지도가 상승했습니다.`,
                     choices: [{ text: "확인", effect: () => {} }],
                     customHtml: `<div class="${newTierInfo.class} tier-badge">${newTierInfo.name}</div><div style="margin-top:10px;">이제 더 많은 사람들이 우리를 알아봅니다!</div>`
@@ -622,26 +900,13 @@
         if (gameState.day % 180 === 0) {
             const score = calculateTierScore();
             const info = getTierInfo(score);
-            let comment = "아직 인지도가 부족합니다.";
-            
-            if (score >= 15000000) comment = "전 세계가 당신의 이름을 압니다!";
-            else if (score >= 6000000) comment = "북미 시장 진출 성공!";
-            else if (score >= 2000000) comment = "아시아권에서 유명합니다.";
-            else if (score >= 600000) comment = "국내에서 꽤 알려졌습니다.";
-            else if (score >= 200000) comment = "떠오르는 유망주입니다.";
-            else comment = "이제 막 이름을 알리기 시작했습니다.";
-            
-            gameState.popupQueue.push({ type: 'season', event: { id: 'season_'+gameState.day, title: `🏆 시즌 ${gameState.day/180} 결산`, desc: "지난 6개월간의 성과 보고서입니다.", choices: [{ text: "확인", effect: () => {} }], customHtml: `<div class="${info.class} tier-badge">${info.name}</div><div style="color:#666; font-size:13px; margin-bottom:10px;">${comment}</div><div style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px; font-size:12px; text-align:left;">팬덤: ${gameState.fandom.toLocaleString()}<br>누적매출: ${gameState.accumulatedSales.toLocaleString()}원<br>종합점수: ${score.toLocaleString()}점</div>` } });
+            gameState.popupQueue.push({ type: 'season', event: { id: 'season_'+gameState.day, title: `🏆 시즌 ${gameState.day/180} 결산`, desc: "지난 6개월간의 성과 보고서입니다.", choices: [{ text: "확인", effect: () => {} }], customHtml: `<div class="${info.class} tier-badge">${info.name}</div><div style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px; font-size:12px; text-align:left;">팬덤: ${gameState.fandom.toLocaleString()}<br>누적매출: ${gameState.accumulatedSales.toLocaleString()}원<br>종합점수: ${score.toLocaleString()}점</div>` } });
         }
     }
 
     function nextDay() {
         if (document.getElementById('eventModal').style.display === 'block') return;
-        
-        if (gameState.finance < -50000000) { 
-            alert(`🚫 파산 선고 🚫\n\n최종 팬덤: ${gameState.fandom.toLocaleString()}명`); 
-            location.reload(); return; 
-        }
+        if (gameState.finance < -50000000) { alert(`🚫 파산 선고 🚫\n\n최종 팬덤: ${gameState.fandom.toLocaleString()}명`); location.reload(); return; }
 
         let totalProfit = Math.floor(Math.random() * 800001) + 400000;
         let isHit = totalProfit >= 1000000;
@@ -653,13 +918,11 @@
         gameState.members.forEach(m => {
             let action = m.manualAct || actionsPool[Math.floor(Math.random() * actionsPool.length)];
             let mentalFactor = 1.2 - ((m.mental / 100) * 0.4); 
-
             if (action === 'rest') m.fatigue = Math.max(0, m.fatigue - 40);
             else if (m.fatigue < 100) {
                 let prev = m[action];
                 if (m[action] < 50 && Math.random() < 0.4) { 
-                    m[action]++; 
-                    gameState.weeklyStats.push({name: m.name, stat: action, from: prev, to: m[action]}); 
+                    m[action]++; gameState.weeklyStats.push({name: m.name, stat: action, from: prev, to: m[action]}); 
                     m.fatigue = Math.min(100, m.fatigue + (20 * mentalFactor)); 
                 } else m.fatigue = Math.min(100, m.fatigue + (15 * mentalFactor));
             }
@@ -673,25 +936,21 @@
         if (gameState.pendingPost) { gameState.community.push({site: gameState.pendingPost.site, content: gameState.pendingPost.content}); updateFandom(gameState.pendingPost.bonus); gameState.pendingPost = null; }
         if (gameState.community.length > 50) gameState.community.shift();
 
+        let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
+        
+        checkDateEvents(d); 
+        processCharts(); // 차트 계산
         checkBirthday(); checkBusinessProposal(); checkTierUp(); checkSeasonReport(); 
 
         if(gameState.day % 7 === 0) { gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]}); gameState.weeklyStats = []; }
         
-        gameState.finance += totalProfit; 
-        gameState.accumulatedSales += totalProfit; 
-        
+        gameState.finance += totalProfit; gameState.accumulatedSales += totalProfit; 
         gameState.finance -= 500000; updateFandom(Math.floor(totalProfit / 10000));
         
         document.getElementById('profit-report').style.display = 'block';
         document.getElementById('profit-content').innerHTML = `수익: <span class="money-text">${totalProfit.toLocaleString()}원</span>${isHit ? '<br><span style="color:red;">🔥 조회수 급상승!</span>' : ''}`;
         
         gameState.day++; updateDisplay(); processNextPopup();
-    }
-
-    function checkBirthday() {
-        let d = new Date(gameState.startDate); d.setDate(d.getDate() + (gameState.day - 1));
-        let todayStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        gameState.members.forEach(m => { if(m.birth === todayStr) gameState.popupQueue.push({type: 'birthday', event: { id:'bday_'+m.name, title: `🎂 ${m.name} 생일`, desc: `오늘은 ${m.name}의 생일입니다!`, choices: [{ text: "파티 (팬덤+10000)", effect: () => updateFandom(10000) }] }}); });
     }
 
     let currentEvent = null;
@@ -729,6 +988,63 @@
     }
 
     function closeModal() { document.getElementById('eventModal').style.display = 'none'; setTimeout(processNextPopup, 150); }
+    
+    function renderShop() {
+        const moneyDisplay = `<div style="padding:10px; background:#e9ecef; border-radius:8px; margin-bottom:15px; font-weight:bold; text-align:center;">현재 보유 자금: <span style="color:var(--money)">${gameState.finance.toLocaleString()}원</span></div>`;
+        document.getElementById('shop-list').innerHTML = moneyDisplay + shopItems.map(item => `
+            <div class="content-card">
+                <div class="content-header"><strong>${item.name}</strong><span class="content-badge badge-item">${item.stat.toUpperCase()} +${item.val}</span></div>
+                <div class="content-info"><div>💰 ${item.price.toLocaleString()}원</div><div>${item.desc}</div></div>
+                <button class="content-btn ${gameState.finance >= item.price ? 'btn-available' : 'btn-cooldown'}" ${gameState.finance < item.price ? 'disabled' : ''} onclick="buyItem('${item.id}')">구매하기</button>
+            </div>
+        `).join('');
+    }
+    
+    function buyItem(id) {
+        const item = shopItems.find(i => i.id === id);
+        if(gameState.finance >= item.price) {
+            gameState.finance -= item.price;
+            gameState.inventory.push({ ...item, level: 0 });
+            alert(`${item.name}을(를) 구매하여 창고에 보관했습니다.`);
+            updateDisplay(); renderShop();
+        }
+    }
+    
+    function openEquipModal(memberIdx) {
+        const m = gameState.members[memberIdx];
+        document.getElementById('modal-title').innerText = `${m.name} 장비 & 강화`;
+        let equipHtml = `<h4 style="margin:5px 0;">현재 착용 중 (강화 가능)</h4>`;
+        if(m.equipment.length === 0) equipHtml += `<div style="color:#999; font-size:12px; margin-bottom:10px;">착용 중인 장비가 없습니다.</div>`;
+        else {
+            equipHtml += m.equipment.map((eq, i) => {
+                const isMax = eq.level >= 3; const nextCost = !isMax ? Math.floor(eq.price * upgradeConfig[eq.level].costMult) : 0;
+                return `<div class="choice-btn" style="margin-bottom:8px;"><div style="flex:1;"><span style="display:block;"><b>${eq.level>0 ? `<span class="enhance-text">+${eq.level}</span> ` : ''}${eq.name}</b> (${eq.stat} +${getEquipVal(eq)})</span>${!isMax ? `<span style="font-size:11px; color:#666;">강화비용: ${nextCost.toLocaleString()}원</span>` : '<span style="font-size:11px; color:#845ef7;">최고 레벨 도달 (MAX)</span>'}</div><div style="display:flex; align-items:center;">${!isMax ? `<button class="upgrade-btn" onclick="tryUpgrade(${memberIdx}, ${i})">강화</button>` : ''}<button class="upgrade-btn" style="background:#fa5252;" onclick="unequipItem(${memberIdx}, ${i})">해제</button></div></div>`;
+            }).join('');
+        }
+        let invHtml = `<h4 style="margin:15px 0 5px 0;">보유 장비 (창고)</h4>`;
+        if(gameState.inventory.length === 0) invHtml += `<div style="color:#999; font-size:12px;">창고가 비었습니다. 상점에서 구매하세요.</div>`;
+        else { invHtml += gameState.inventory.map((item, i) => `<button class="choice-btn" onclick="equipItem(${memberIdx}, ${i})"><span>🔵 ${item.name} (${item.stat} +${item.val})</span><span>장착</span></button>`).join(''); }
+        document.getElementById('modal-body').innerHTML = `<div style="text-align:left;">${equipHtml}${invHtml}</div>`;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">닫기</button>`;
+        document.getElementById('eventModal').style.display = 'block';
+    }
+    
+    function tryUpgrade(memberIdx, eqIdx) {
+        const item = gameState.members[memberIdx].equipment[eqIdx]; const config = upgradeConfig[item.level]; const cost = Math.floor(item.price * config.costMult);
+        if (gameState.finance < cost) { alert("자금이 부족합니다."); return; }
+        gameState.finance -= cost;
+        if (Math.random() < config.chance) { item.level++; alert(`✨ 강화 성공! (+${item.level})`); } else { alert(`💥 강화 실패...`); }
+        updateDisplay(); openEquipModal(memberIdx);
+    }
+    
+    function equipItem(memberIdx, invIdx) { 
+        const item = gameState.inventory[invIdx]; const member = gameState.members[memberIdx];
+        if (member.equipment.some(e => e.id === item.id)) { alert("이미 동일한 장비를 착용하고 있습니다."); return; }
+        gameState.inventory.splice(invIdx, 1); member.equipment.push(item); openEquipModal(memberIdx); updateDisplay(); 
+    }
+    
+    function unequipItem(memberIdx, eqIdx) { const item = gameState.members[memberIdx].equipment.splice(eqIdx, 1)[0]; gameState.inventory.push(item); openEquipModal(memberIdx); updateDisplay(); }
+
     function openPage(pId, btn) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(pId).classList.add('active');
         document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
