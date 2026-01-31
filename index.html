@@ -1,9 +1,19 @@
+네, 물론입니다. `createMember` 함수가 특정 이미지 주소를 받을 수 있도록 수정하고, '챈나' 부분에 해당 링크를 적용하겠습니다.
+
+**수정된 부분:**
+1.  `createMember` 함수에 **`customUrl`** 파라미터를 추가했습니다.
+2.  `gameState`의 멤버 리스트에서 **'챈나'** 부분에 주신 멜론 이미지 주소를 넣었습니다.
+    *   나중에 다른 멤버도 사진을 넣고 싶으면, `createMember('이름', '생일', 번호, '이미지주소')` 형식으로 넣으시면 됩니다.
+
+아래는 수정된 전체 코드입니다.
+
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v23.0 (Clean Ver)</title>
+    <title>하데스 키우기 v23.0 (Update)</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; --news: #495057; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
@@ -212,13 +222,18 @@
         updateDisplay();
     }
 
-    function createMember(name, birth, imgId) {
+    // 수정: customUrl 파라미터를 추가하여 특정 이미지 주소를 받을 수 있게 함
+    function createMember(name, birth, imgId, customUrl = null) {
         let stats = { vocal: 1, dance: 1, visual: 1, variety: 1, charm: 1 };
         for (let i = 0; i < 5; i++) stats[['vocal','dance','visual','variety','charm'][Math.floor(Math.random()*5)]]++;
         const mental = Math.floor(Math.random() * 90) + 11; 
+        
+        // customUrl이 있으면 그것을 쓰고, 없으면 주사위 아바타 사용
+        const imageUrl = customUrl ? customUrl : `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
+
         return { 
             name, birth, 
-            image: `member${imgId}.png`,
+            image: imageUrl, 
             vocal: stats.vocal, dance: stats.dance, visual: stats.visual, variety: stats.variety, charm: stats.charm, 
             fatigue: 0, mental: mental, manualAct: null, equipment: [] 
         };
@@ -227,8 +242,12 @@
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
         members: [
-            createMember('키마', '04-22', 1), createMember('띵귤', '12-24', 2), createMember('챈나', '02-26', 3),
-            createMember('솜주먹', '11-11', 4), createMember('연초록', '03-26', 5),
+            createMember('키마', '04-22', 1), 
+            createMember('띵귤', '12-24', 2), 
+            // 수정: 챈나 멤버 생성 시 마지막 인자에 이미지 주소 전달
+            createMember('챈나', '02-26', 3, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/812/80326812_20251224160127_org.jpg/melon/quality/80/optimize'),
+            createMember('솜주먹', '11-11', 4), 
+            createMember('연초록', '03-26', 5),
         ],
         community: [], popupQueue: [], weeklyStats: [], pendingPost: null, hasPostedThisWeek: false,
         lastContents: { short: -999, mid: -999, long: -999 },
@@ -236,18 +255,18 @@
     };
 
     const shopItems = [
-        { id: 'mic_1', name: 'USB 마이크', price: 300000, stat: 'vocal', val: 2, desc: '가성비 마이크 (보컬+2)' },
-        { id: 'cam_1', name: 'FHD 웹캠', price: 500000, stat: 'visual', val: 2, desc: '기본 캠 (비주얼+2)' },
-        { id: 'light_1', name: '방송용 조명', price: 800000, stat: 'charm', val: 3, desc: '화사한 조명 (매력+3)' },
-        { id: 'mic_2', name: '콘덴서 마이크', price: 2000000, stat: 'vocal', val: 5, desc: '깔끔한 음질 (보컬+5)' },
-        { id: 'cpu_1', name: '방송 송출컴', price: 2500000, stat: 'variety', val: 5, desc: '렉 없는 방송 (예능+5)' },
-        { id: 'tracker_1', name: '보급형 트래커', price: 3000000, stat: 'dance', val: 5, desc: '기본적인 움직임 (댄스+5)' }
+        { id: 'mic_1', name: 'USB 마이크', price: 300000, stat: 'vocal', val: 1, desc: '가성비 마이크 (보컬+1)' },
+        { id: 'cam_1', name: 'FHD 웹캠', price: 500000, stat: 'visual', val: 1, desc: '기본 캠 (비주얼+1)' },
+        { id: 'light_1', name: '방송용 조명', price: 800000, stat: 'charm', val: 1, desc: '화사한 조명 (매력+1)' },
+        { id: 'mic_2', name: '콘덴서 마이크', price: 2000000, stat: 'vocal', val: 1, desc: '깔끔한 음질 (보컬+1)' },
+        { id: 'cpu_1', name: '방송 송출컴', price: 2500000, stat: 'variety', val: 1, desc: '렉 없는 방송 (예능+1)' },
+        { id: 'tracker_1', name: '보급형 트래커', price: 3000000, stat: 'dance', val: 1, desc: '기본적인 움직임 (댄스+1)' }
     ];
 
     const contentTypes = {
-        short: { id: 'short', name: '커버곡 / 숏츠', type: '단기', badge: 'badge-short', cooldown: 14, cost: 2000000, risk: 10, rewardMin: 1500, rewardMax: 3000 },
-        mid: { id: 'mid', name: '합동 기획', type: '중기', badge: 'badge-mid', cooldown: 30, cost: 15000000, risk: 20, rewardMin: 8000, rewardMax: 15000 },
-        long: { id: 'long', name: '싱글 / 콘서트', type: '장기', badge: 'badge-long', cooldown: 90, cost: 50000000, risk: 30, rewardMin: 40000, rewardMax: 80000 }
+        short: { id: 'short', name: '커버곡 / 숏츠 챌린지', type: '단기', badge: 'badge-short', cooldown: 14, cost: 2000000, risk: 10, desc: '트렌드를 따라가는 가벼운 컨텐츠', rewardMin: 1500, rewardMax: 3000 },
+        mid: { id: 'mid', name: '합동 모션캡쳐 기획', type: '중기', badge: 'badge-mid', cooldown: 30, cost: 15000000, risk: 20, desc: '타 기업세/개인세와 기술 제휴 합방', rewardMin: 8000, rewardMax: 15000 },
+        long: { id: 'long', name: '싱글 발매 / 단독 콘서트', type: '장기', badge: 'badge-long', cooldown: 90, cost: 50000000, risk: 30, desc: '그룹의 사활을 건 대형 프로젝트', rewardMin: 40000, rewardMax: 80000 }
     };
 
     const newsHeadlines = ["버추얼 시장 급성장", "대기업, 버추얼 진출", "MZ세대 장래희망 1위 크리에이터", "음방에 버추얼 등장", "8K 모션캡쳐 시대", "유명 작곡가 버추얼 협업 희망", "K-POP 다음은 V-POP?", "버추얼 굿즈 품귀", "정부 크리에이터 지원", "메타버스 콘서트 인기"];
@@ -266,7 +285,8 @@
         loaded.members.forEach((m, i) => { 
             if(!m.equipment) m.equipment = []; 
             if(!m.mental) m.mental = Math.floor(Math.random() * 90) + 11;
-            if(!m.image) m.image = `member${i+1}.png`;
+            // 로드 시에도 이미지 없으면 기본값, 있으면 유지
+            if(!m.image) m.image = `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.name}`;
             m.equipment.forEach(e => { if(e.level === undefined) e.level = 0; });
         });
         if(!loaded.inventory) loaded.inventory = [];
@@ -403,13 +423,12 @@
             equipHtml += m.equipment.map((eq, i) => {
                 const isMax = eq.level >= 3;
                 const nextCost = !isMax ? Math.floor(eq.price * upgradeConfig[eq.level].costMult) : 0;
-                const nextChance = !isMax ? upgradeConfig[eq.level].chance * 100 : 0;
                 
                 return `
                 <div class="choice-btn" style="margin-bottom:8px;">
                     <div style="flex:1;">
                         <span style="display:block;"><b>${eq.level>0 ? `<span class="enhance-text">+${eq.level}</span> ` : ''}${eq.name}</b> (${eq.stat} +${getEquipVal(eq)})</span>
-                        ${!isMax ? `<span style="font-size:11px; color:#666;">강화비용: ${nextCost.toLocaleString()}원 (${nextChance}%)</span>` : '<span style="font-size:11px; color:#845ef7;">최고 레벨 도달 (MAX)</span>'}
+                        ${!isMax ? `<span style="font-size:11px; color:#666;">강화비용: ${nextCost.toLocaleString()}원</span>` : '<span style="font-size:11px; color:#845ef7;">최고 레벨 도달 (MAX)</span>'}
                     </div>
                     <div style="display:flex; align-items:center;">
                         ${!isMax ? `<button class="upgrade-btn" onclick="tryUpgrade(${memberIdx}, ${i})">강화</button>` : ''}
@@ -458,7 +477,7 @@
             if (gameState.finance < c.cost) btnHtml = `<button class="content-btn btn-cooldown" disabled>자금 부족</button>`;
             else if (isAvailable) btnHtml = `<button class="content-btn btn-available" onclick="executeContent('${c.id}')">제작하기 (-${(c.cost/10000).toLocaleString()}만)</button>`;
             else btnHtml = `<button class="content-btn btn-cooldown" disabled>준비 중 (D-${remain})</button>`;
-            return `<div class="content-card"><div class="content-header"><strong>${c.name}</strong><span class="content-badge ${c.badge}">${c.type}</span></div><div class="content-info"><div class="content-stat">💰 ${(c.cost/10000).toLocaleString()}만원</div><div class="content-stat">🎲 성공률 ${100 - c.risk}%</div></div>${btnHtml}</div>`;
+            return `<div class="content-card"><div class="content-header"><strong>${c.name}</strong><span class="content-badge ${c.badge}">${c.type}</span></div><div class="content-info"><div class="content-stat">💰 ${(c.cost/10000).toLocaleString()}만원</div></div>${btnHtml}</div>`;
         }).join('');
     }
 
@@ -495,7 +514,7 @@
             gameState.popupQueue.push({
                 type: 'business',
                 event: {
-                    id: 'biz_'+gameState.day, title: `💼 [제안] ${type}`, desc: `${type} 제안이 들어왔습니다.\n성공 시 수익, 실패 시 손해가 발생합니다.\n(확률 7:3 / 규모 3~5천만원)`,
+                    id: 'biz_'+gameState.day, title: `💼 [제안] ${type}`, desc: `${type} 제안이 들어왔습니다.\n성공 시 수익, 실패 시 손해가 발생합니다.\n(결과는 운에 맡겨야 합니다.)`,
                     choices: [ { text: "수락하기 (도전!)", effect: () => executeBusiness(profit, type) }, { text: "거절하기", effect: () => {} } ]
                 }
             });
@@ -515,14 +534,19 @@
 
     function checkSeasonReport() {
         if (gameState.day % 180 === 0) {
-            const score = gameState.fandom + gameState.youtube + gameState.sns;
-            let rank = "ROOKIE", rankClass = "tier-rookie", comment = "아직 갈 길이 멉니다.";
-            if (score > 1000000) { rank = "WORLD CLASS"; rankClass = "tier-world"; comment = "전 세계가 당신의 이름을 압니다!"; }
-            else if (score > 500000) { rank = "BILLBOARD"; rankClass = "tier-na"; comment = "북미 시장 진출 성공!"; }
-            else if (score > 200000) { rank = "ASIA TOP"; rankClass = "tier-asia"; comment = "아시아권에서 유명합니다."; }
-            else if (score > 50000) { rank = "DOMESTIC"; rankClass = "tier-domestic"; comment = "국내에서 꽤 알려졌습니다."; }
-            else if (score > 10000) { rank = "RISING STAR"; rankClass = "tier-rising"; comment = "떠오르는 유망주입니다."; }
-            gameState.popupQueue.push({ type: 'season', event: { id: 'season_'+gameState.day, title: `🏆 시즌 ${gameState.day/180} 결산`, desc: "지난 6개월간의 성과 보고서입니다.", choices: [{ text: "확인", effect: () => {} }], customHtml: `<div class="${rankClass} tier-badge">${rank}</div><div style="font-size:14px; margin-bottom:10px;">인지도 점수: ${score.toLocaleString()}</div><div style="color:#666; font-size:13px;">${comment}</div><div style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px; font-size:12px; text-align:left;">팬덤: ${gameState.fandom.toLocaleString()}<br>구독자: ${gameState.youtube.toLocaleString()}<br>수익금: ${gameState.finance.toLocaleString()}원</div>` } });
+            const rawScore = gameState.fandom + gameState.youtube;
+            const score = Math.floor(rawScore / 30);
+            
+            let rank = "UNRANKED", rankClass = "tier-rookie", comment = "아직 인지도가 부족합니다.";
+            
+            if (score >= 9000) { rank = "WORLD CLASS"; rankClass = "tier-world"; comment = "전 세계가 당신의 이름을 압니다!"; }
+            else if (score >= 8000) { rank = "BILLBOARD"; rankClass = "tier-na"; comment = "북미 시장 진출 성공!"; }
+            else if (score >= 7000) { rank = "ASIA TOP"; rankClass = "tier-asia"; comment = "아시아권에서 유명합니다."; }
+            else if (score >= 6000) { rank = "DOMESTIC"; rankClass = "tier-domestic"; comment = "국내에서 꽤 알려졌습니다."; }
+            else if (score >= 5000) { rank = "RISING STAR"; rankClass = "tier-rising"; comment = "떠오르는 유망주입니다."; }
+            else if (score >= 4000) { rank = "ROOKIE"; rankClass = "tier-rookie"; comment = "이제 막 이름을 알리기 시작했습니다."; }
+            
+            gameState.popupQueue.push({ type: 'season', event: { id: 'season_'+gameState.day, title: `🏆 시즌 ${gameState.day/180} 결산`, desc: "지난 6개월간의 성과 보고서입니다.", choices: [{ text: "확인", effect: () => {} }], customHtml: `<div class="${rankClass} tier-badge">${rank}</div><div style="color:#666; font-size:13px; margin-bottom:10px;">${comment}</div><div style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px; font-size:12px; text-align:left;">팬덤: ${gameState.fandom.toLocaleString()}<br>구독자: ${gameState.youtube.toLocaleString()}<br>수익금: ${gameState.finance.toLocaleString()}원</div>` } });
         }
     }
 
@@ -628,3 +652,4 @@
 </script>
 </body>
 </html>
+```
