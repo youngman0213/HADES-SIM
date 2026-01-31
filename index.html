@@ -4,24 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v23.0 (Update)</title>
+    <title>하데스 키우기 v23.2 (Updated)</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; --news: #495057; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
         
         /* 시작 & 네비 */
         #start-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; color: white; text-align: center; }
         .start-logo { font-size: 3rem; font-weight: 900; color: var(--point); margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,77,148,0.5); }
         .start-sub { font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px; }
         .start-btn { padding: 18px 60px; background: var(--point); color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(255,77,148,0.3); transition: 0.3s; }
+        .start-btn:hover { transform: scale(1.05); }
         .nav-bar { display: none; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .nav-btn { flex: 1; padding: 15px 5px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s; white-space: nowrap; }
         .nav-btn.active { color: var(--point); border-bottom: 3px solid var(--point); background: #fffafc; }
         
         /* 레이아웃 */
         .container { display: none; max-width: 900px; margin: 0 auto; padding: 15px 15px 100px 15px; }
-        .page { display: none; }
+        .page { display: none; animation: fadeIn 0.3s; }
         .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
         .date-display { position: relative; text-align: right; margin-bottom: 10px; }
         @media (min-width: 600px) { .date-display { position: absolute; top: 15px; right: 25px; } }
@@ -43,12 +45,13 @@
         .site-yt { background: #ffe3e3; color: var(--yt); }
         .site-yz { background: #000; color: #fff; }
         .site-news { background: #343a40; color: #fff; }
-        #comm-container { max-height: 240px; overflow-y: auto; padding-right: 5px; }
+        #comm-container { max-height: 240px; overflow-y: auto; padding-right: 5px; scrollbar-width: thin; }
         
         /* 멤버 카드 & 프로필 */
         .member-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 650px) { .member-grid { grid-template-columns: repeat(2, 1fr); } }
-        .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; position: relative; }
+        .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; position: relative; transition: 0.3s; }
+        .member-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .profile-container { display: flex; align-items: center; margin-bottom: 15px; }
         .profile-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); margin-right: 12px; background: #eee; }
         .profile-info { flex: 1; }
@@ -71,39 +74,45 @@
         .badge-item { background: #f3f0ff; color: #5c7cfa; }
         .content-info { font-size: 12px; color: #555; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 10px; }
         .content-stat { background: #f8f9fa; padding: 4px 8px; border-radius: 4px; }
-        .content-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; }
+        .content-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
         .btn-available { background: var(--point); box-shadow: 0 4px 6px rgba(255, 77, 148, 0.2); }
+        .btn-available:hover { filter: brightness(0.9); }
         .btn-cooldown { background: #adb5bd; cursor: not-allowed; }
         .risk-high { color: #fa5252; font-weight: bold; }
         
         /* 버튼 & 모달 */
         .next-day-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px; border-top: 1px solid var(--border); text-align: center; z-index: 100; box-sizing: border-box; }
-        .primary-btn { width: 100%; padding: 14px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .primary-btn { width: 100%; padding: 14px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition:0.2s; }
+        .primary-btn:hover { background: #e64980; }
         .primary-btn:disabled { background: #adb5bd; cursor: not-allowed; }
-        .choice-btn { width: 100%; padding: 14px; background: #f1f3f5; color: #333; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 8px; text-align: left; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .choice-btn { width: 100%; padding: 14px; background: #f1f3f5; color: #333; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; margin-bottom: 8px; text-align: left; font-size: 14px; display: flex; justify-content: space-between; align-items: center; transition:0.2s; }
+        .choice-btn:hover { background: #e9ecef; }
         .upgrade-btn { padding: 4px 8px; font-size: 11px; background: #7950f2; color:white; border:none; border-radius:4px; cursor:pointer; margin-left:5px; font-weight:bold; }
         .upgrade-btn:disabled { background: #ccc; cursor: not-allowed; }
         .modal-overlay { display: none; position: fixed; z-index: 9000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter: blur(3px); }
-        .modal-content { background:white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding:25px; width: 85%; max-width:400px; border-radius:20px; text-align:center; box-sizing: border-box; max-height: 80vh; overflow-y: auto; }
+        .modal-content { background:white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding:25px; width: 85%; max-width:400px; border-radius:20px; text-align:center; box-sizing: border-box; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .half-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .save-load-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .save-btn { background: #495057; color: white; padding: 10px; border-radius: 8px; border: none; font-size: 12px; cursor: pointer; }
         
         /* 시즌 티어 */
-        .tier-badge { font-size: 20px; font-weight: 900; margin: 10px 0; display: inline-block; padding: 5px 15px; border-radius: 50px; color:white; }
+        .tier-badge { font-size: 16px; font-weight: 900; margin: 10px 0; display: inline-block; padding: 8px 20px; border-radius: 50px; color:white; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .tier-rookie { background: #ced4da; color: #495057; }
         .tier-rising { background: #74c0fc; }
         .tier-domestic { background: #40c057; }
         .tier-asia { background: #fab005; }
         .tier-na { background: #e64980; }
-        .tier-world { background: linear-gradient(45deg, #a5d8ff, #7950f2, #ff8787); box-shadow: 0 0 10px rgba(121, 80, 242, 0.5); }
+        .tier-world { background: linear-gradient(45deg, #a5d8ff, #7950f2, #ff8787); box-shadow: 0 0 15px rgba(121, 80, 242, 0.5); position: relative; overflow: hidden; }
+        .tier-world::after { content:''; position: absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); animation: shine 2s infinite; }
+        @keyframes shine { 100% { left: 100%; } }
     </style>
 </head>
 <body>
 
 <div id="start-page">
     <div class="start-logo">HADES</div>
-    <div class="start-sub">Virtual Idol Management</div>
+    <div class="start-sub">Virtual Idol Management v23.2</div>
     <button class="start-btn" onclick="startGame()">게임 시작</button>
 </div>
 
@@ -128,8 +137,7 @@
                 <div class="stat-item"><small>팬카페 회원</small><strong id="p-fandom">110,000명</strong></div>
                 <div class="stat-item"><small>너튜브 구독</small><strong id="p-youtube">20,000명</strong></div>
                 <div class="stat-item"><small>SNS 팔로워</small><strong id="p-sns">1,000명</strong></div>
-                <!-- 수정: 현재 인지도 상태창 추가 -->
-                <div class="stat-item"><small>현재 인지도</small><strong id="p-tier" style="color:#7950f2;">ROOKIE</strong></div>
+                <div class="stat-item"><small>현재 인지도</small><strong id="p-tier" style="color:#7950f2;">루키</strong></div>
             </div>
         </div>
         <div class="half-grid">
@@ -219,12 +227,9 @@
         let stats = { vocal: 1, dance: 1, visual: 1, variety: 1, charm: 1 };
         for (let i = 0; i < 5; i++) stats[['vocal','dance','visual','variety','charm'][Math.floor(Math.random()*5)]]++;
         const mental = Math.floor(Math.random() * 90) + 11; 
-        
         const imageUrl = customUrl ? customUrl : `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`;
-
         return { 
-            name, birth, 
-            image: imageUrl, 
+            name, birth, image: imageUrl, 
             vocal: stats.vocal, dance: stats.dance, visual: stats.visual, variety: stats.variety, charm: stats.charm, 
             fatigue: 0, mental: mental, manualAct: null, equipment: [] 
         };
@@ -232,7 +237,7 @@
 
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
-        currentTier: "ROOKIE", // 현재 티어 저장용
+        currentTier: "루키",
         members: [
             createMember('키마', '04-22', 1, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/29/513/80329513_20260120180131_org.jpg/melon/quality/80/optimize'), 
             createMember('띵귤', '12-24', 2, 'https://cdnimg.melon.co.kr/cm2/photo/images/000/803/26/813/80326813_20251224160243_org.jpg/melon/quality/80/optimize'), 
@@ -261,12 +266,10 @@
     };
 
     const newsHeadlines = ["버추얼 시장 급성장", "대기업, 버추얼 진출", "MZ세대 장래희망 1위 크리에이터", "음방에 버추얼 등장", "8K 모션캡쳐 시대", "유명 작곡가 버추얼 협업 희망", "K-POP 다음은 V-POP?", "버추얼 굿즈 품귀", "정부 크리에이터 지원", "메타버스 콘서트 인기"];
-
-    const upgradeConfig = {
-        0: { chance: 0.8, costMult: 0.3 },
-        1: { chance: 0.5, costMult: 0.6 },
-        2: { chance: 0.3, costMult: 1.0 }
-    };
+    const upgradeConfig = { 0: { chance: 0.8, costMult: 0.3 }, 1: { chance: 0.5, costMult: 0.6 }, 2: { chance: 0.3, costMult: 1.0 } };
+    
+    // 수정: 요청하신 티어 명칭 적용
+    const tierOrder = ["UNRANKED", "루키", "라이징스타", "국내에서 알려짐", "아시아에서 알려짐", "북미에서 알려짐", "전세계에서 알려짐"];
 
     function saveGame() { localStorage.setItem('hades_save_v23', JSON.stringify(gameState)); alert("저장되었습니다."); }
     function loadGame() { 
@@ -281,7 +284,6 @@
         });
         if(!loaded.inventory) loaded.inventory = [];
         
-        // 현재 등급 정보 갱신
         const score = Math.floor((loaded.fandom + loaded.youtube) / 30);
         const rankInfo = getTierInfo(score);
         loaded.currentTier = rankInfo.name;
@@ -313,20 +315,18 @@
 
     function getEquipVal(item) {
         let bonus = 0;
-        if (item.level === 1) bonus = 1;
-        else if (item.level === 2) bonus = 4;
-        else if (item.level >= 3) bonus = 9;
+        if (item.level === 1) bonus = 1; else if (item.level === 2) bonus = 4; else if (item.level >= 3) bonus = 9;
         return item.val + bonus;
     }
 
-    // 수정: 점수별 등급 정보 반환 함수 추가
+    // 수정: 티어 명칭 변경 로직 반영
     function getTierInfo(score) {
-        if (score >= 9000) return { name: "WORLD CLASS", class: "tier-world" };
-        if (score >= 8000) return { name: "BILLBOARD", class: "tier-na" };
-        if (score >= 7000) return { name: "ASIA TOP", class: "tier-asia" };
-        if (score >= 6000) return { name: "DOMESTIC", class: "tier-domestic" };
-        if (score >= 5000) return { name: "RISING STAR", class: "tier-rising" };
-        if (score >= 4000) return { name: "ROOKIE", class: "tier-rookie" };
+        if (score >= 9000) return { name: "전세계에서 알려짐", class: "tier-world" };
+        if (score >= 8000) return { name: "북미에서 알려짐", class: "tier-na" };
+        if (score >= 7000) return { name: "아시아에서 알려짐", class: "tier-asia" };
+        if (score >= 6000) return { name: "국내에서 알려짐", class: "tier-domestic" };
+        if (score >= 5000) return { name: "라이징스타", class: "tier-rising" };
+        if (score >= 4000) return { name: "루키", class: "tier-rookie" };
         return { name: "UNRANKED", class: "tier-rookie" };
     }
 
@@ -339,15 +339,11 @@
         document.getElementById('p-youtube').innerText = gameState.youtube.toLocaleString() + '명';
         document.getElementById('p-sns').innerText = gameState.sns.toLocaleString() + '명';
         
-        // 수정: 상태창에 현재 티어 표시
         const score = Math.floor((gameState.fandom + gameState.youtube) / 30);
         const tierInfo = getTierInfo(score);
         const tierEl = document.getElementById('p-tier');
         tierEl.innerText = tierInfo.name;
-        // 색상은 등급에 따라 약간 다르게 (CSS 클래스 활용은 아니지만 간단히)
-        if(score >= 9000) tierEl.style.color = '#e64980'; 
-        else if(score >= 4000) tierEl.style.color = '#7950f2';
-        else tierEl.style.color = '#868e96';
+        if(score >= 9000) tierEl.style.color = '#e64980'; else if(score >= 4000) tierEl.style.color = '#7950f2'; else tierEl.style.color = '#868e96';
 
         const postBtn = document.getElementById('post-submit-btn');
         if (gameState.hasPostedThisWeek) { postBtn.disabled = true; postBtn.innerText = "이번 주 작성 완료"; }
@@ -409,8 +405,10 @@
         gameState.hasPostedThisWeek = true; document.getElementById('post-input').value = ""; updateDisplay();
     }
 
+    // 수정: 상점에 남은 수익금 표기 추가
     function renderShop() {
-        document.getElementById('shop-list').innerHTML = shopItems.map(item => `
+        const moneyDisplay = `<div style="padding:10px; background:#e9ecef; border-radius:8px; margin-bottom:15px; font-weight:bold; text-align:center;">현재 보유 자금: <span style="color:var(--money)">${gameState.finance.toLocaleString()}원</span></div>`;
+        document.getElementById('shop-list').innerHTML = moneyDisplay + shopItems.map(item => `
             <div class="content-card">
                 <div class="content-header"><strong>${item.name}</strong><span class="content-badge badge-item">${item.stat.toUpperCase()} +${item.val}</span></div>
                 <div class="content-info"><div>💰 ${item.price.toLocaleString()}원</div><div>${item.desc}</div></div>
@@ -481,7 +479,23 @@
         updateDisplay(); openEquipModal(memberIdx);
     }
 
-    function equipItem(memberIdx, invIdx) { const item = gameState.inventory.splice(invIdx, 1)[0]; gameState.members[memberIdx].equipment.push(item); openEquipModal(memberIdx); updateDisplay(); }
+    // 수정: 같은 장비 중복 장착 불가 기능
+    function equipItem(memberIdx, invIdx) { 
+        const item = gameState.inventory[invIdx];
+        const member = gameState.members[memberIdx];
+        
+        // 중복 체크 (ID가 같은 아이템이 이미 착용 중인지 확인)
+        if (member.equipment.some(e => e.id === item.id)) {
+            alert("이미 동일한 장비를 착용하고 있습니다.");
+            return;
+        }
+
+        gameState.inventory.splice(invIdx, 1); 
+        member.equipment.push(item); 
+        openEquipModal(memberIdx); 
+        updateDisplay(); 
+    }
+
     function unequipItem(memberIdx, eqIdx) { const item = gameState.members[memberIdx].equipment.splice(eqIdx, 1)[0]; gameState.inventory.push(item); openEquipModal(memberIdx); updateDisplay(); }
 
     function renderContents() {
@@ -549,15 +563,16 @@
         updateDisplay();
     }
 
-    // 수정: 등급 상승 체크 함수 추가
     function checkTierUp() {
         const score = Math.floor((gameState.fandom + gameState.youtube) / 30);
         const newTierInfo = getTierInfo(score);
         
-        // 이전 등급과 다르고, 점수가 더 높아서 올라간 경우 (초기화 단계 제외)
-        if (gameState.currentTier && newTierInfo.name !== gameState.currentTier) {
-            // 등급이 올라갔다고 가정하고 알림 큐에 추가
-             gameState.popupQueue.push({
+        const oldTierName = gameState.currentTier || "UNRANKED";
+        const oldIdx = tierOrder.indexOf(oldTierName);
+        const newIdx = tierOrder.indexOf(newTierInfo.name);
+
+        if (newIdx > oldIdx) {
+            gameState.popupQueue.push({
                 type: 'tier_up',
                 event: {
                     id: 'tierup_'+gameState.day,
@@ -626,12 +641,7 @@
         if (gameState.pendingPost) { gameState.community.push({site: gameState.pendingPost.site, content: gameState.pendingPost.content}); updateFandom(gameState.pendingPost.bonus); gameState.pendingPost = null; }
         if (gameState.community.length > 50) gameState.community.shift();
 
-        checkBirthday(); checkBusinessProposal(); 
-        
-        // 수정: 매일 티어 상승 체크
-        checkTierUp();
-        
-        checkSeasonReport(); 
+        checkBirthday(); checkBusinessProposal(); checkTierUp(); checkSeasonReport(); 
 
         if(gameState.day % 7 === 0) { gameState.popupQueue.push({type: 'training_report', data: [...gameState.weeklyStats]}); gameState.weeklyStats = []; }
         
@@ -654,7 +664,7 @@
         if (document.getElementById('eventModal').style.display === 'block' || gameState.popupQueue.length === 0) return;
         const item = gameState.popupQueue.shift();
         
-        if(item.type === 'season' || item.type === 'tier_up') { // 티어 상승도 커스텀 HTML 사용
+        if(item.type === 'season' || item.type === 'tier_up') {
             document.getElementById('modal-title').innerText = item.event.title;
             document.getElementById('modal-body').innerHTML = item.event.customHtml;
             document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
@@ -695,5 +705,3 @@
 </script>
 </body>
 </html>
-```
-
