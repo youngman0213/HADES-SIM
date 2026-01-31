@@ -3,31 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>하데스 키우기 v16.3</title>
+    <title>하데스 키우기 v17.0 (Content Update)</title>
     <style>
         :root { --bg: #f5f7fa; --card: #ffffff; --point: #ff4d94; --text: #333; --border: #e1e4e8; --success: #40c057; --vocal: #ff4d94; --dance: #ae3ec9; --visual: #4dadff; --variety: #fab005; --charm: #f06595; --money: #2b8a3e; --danger: #fa5252; --sns: #405de6; --yt: #ff0000; --yz: #000000; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; line-height: 1.5; overflow-x: hidden; }
+        
+        /* 시작 페이지 */
         #start-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; color: white; text-align: center; }
         .start-logo { font-size: 3rem; font-weight: 900; color: var(--point); margin-bottom: 10px; text-shadow: 0 0 20px rgba(255,77,148,0.5); }
         .start-sub { font-size: 1.1rem; opacity: 0.8; margin-bottom: 40px; }
         .start-btn { padding: 18px 60px; background: var(--point); color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(255,77,148,0.3); transition: 0.3s; }
+        
+        /* 네비게이션 */
         .nav-bar { display: none; background: white; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .nav-btn { flex: 1; padding: 15px 5px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .nav-btn { flex: 1; padding: 15px 5px; border: none; background: transparent; color: #666; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; white-space: nowrap; }
         .nav-btn.active { color: var(--point); border-bottom: 3px solid var(--point); background: #fffafc; }
+        
+        /* 레이아웃 */
         .container { display: none; max-width: 900px; margin: 0 auto; padding: 15px 15px 100px 15px; }
         .page { display: none; }
         .page.active { display: block; }
         .card { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
+        
+        /* 상단 정보 */
         .date-display { position: relative; text-align: right; margin-bottom: 10px; }
         @media (min-width: 600px) { .date-display { position: absolute; top: 15px; right: 25px; } }
         .day-count { font-weight: bold; color: var(--point); font-size: 18px; display: block; }
         .real-date { font-size: 12px; color: #888; }
         h2 { color: #222; font-size: 1.1rem; margin-top: 0; border-left: 4px solid var(--point); padding-left: 10px; margin-bottom: 15px; }
         .money-text { color: var(--money); font-weight: bold; }
+        
+        /* 스탯 그리드 */
         .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .stat-item { background: #f8f9fa; padding: 10px; border-radius: 10px; }
         .stat-item small { color: #777; font-size: 11px; }
         .stat-item strong { font-size: 15px; display: block; margin-top: 2px; }
+        
+        /* 커뮤니티 */
         .comm-post { border-bottom: 1px solid #eee; padding: 10px 0; }
         .comm-site { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
         .site-ebem { background: #e7f5ff; color: #1971c2; }
@@ -36,8 +48,8 @@
         .site-yt { background: #ffe3e3; color: var(--yt); }
         .site-yz { background: #000; color: #fff; }
         #comm-container { max-height: 240px; overflow-y: auto; padding-right: 5px; }
-        #comm-container::-webkit-scrollbar { width: 4px; }
-        #comm-container::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+        
+        /* 멤버 카드 */
         .member-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 650px) { .member-grid { grid-template-columns: repeat(2, 1fr); } }
         .member-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 15px; }
@@ -45,6 +57,22 @@
         .stat-label { width: 40px; color: #777; font-size: 11px; }
         .stat-bar-bg { flex: 1; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 0 8px; }
         .stat-bar-fill { height: 100%; border-radius: 4px; transition: 0.5s; }
+
+        /* 컨텐츠 탭 스타일 (New) */
+        .content-card { border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; background: #fff; transition:0.2s; }
+        .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .content-badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .badge-short { background: #e3fafc; color: #0c8599; }
+        .badge-mid { background: #f3f0ff; color: #6741d9; }
+        .badge-long { background: #fff0f6; color: #c2255c; }
+        .content-info { font-size: 12px; color: #555; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 10px; }
+        .content-stat { background: #f8f9fa; padding: 4px 8px; border-radius: 4px; }
+        .content-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-available { background: var(--point); box-shadow: 0 4px 6px rgba(255, 77, 148, 0.2); }
+        .btn-cooldown { background: #adb5bd; cursor: not-allowed; }
+        .risk-high { color: #fa5252; font-weight: bold; }
+        
+        /* 공통 버튼 및 모달 */
         .next-day-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 12px; border-top: 1px solid var(--border); text-align: center; z-index: 100; box-sizing: border-box; }
         .primary-btn { width: 100%; padding: 14px; background: var(--point); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
         .primary-btn:disabled { background: #adb5bd; cursor: not-allowed; }
@@ -67,10 +95,12 @@
 <div class="nav-bar" id="main-nav">
     <button class="nav-btn active" onclick="openPage('home', this)">📊 홈</button>
     <button class="nav-btn" onclick="openPage('members', this)">👥 멤버</button>
+    <button class="nav-btn" onclick="openPage('contents', this)">🎬 컨텐츠</button>
     <button class="nav-btn" onclick="openPage('manual', this)">📅 지시</button>
 </div>
 
 <div class="container" id="main-container">
+    <!-- 홈 탭 -->
     <div id="home" class="page active">
         <div class="card">
             <div class="date-display">
@@ -114,10 +144,24 @@
         </div>
     </div>
 
+    <!-- 멤버 탭 -->
     <div id="members" class="page">
         <div class="member-grid" id="member-grid-container"></div>
     </div>
 
+    <!-- 컨텐츠 탭 -->
+    <div id="contents" class="page">
+        <div class="card">
+            <h2>🎬 컨텐츠 제작</h2>
+            <p style="font-size:12px; color:#666; margin-bottom:15px; line-height:1.4;">
+                정기적인 컨텐츠 제작은 팬덤 성장의 핵심입니다.<br>
+                실패 시 비용만 소모(리스크)되지만, 대성공 시 막대한 수익을 얻습니다.
+            </p>
+            <div id="content-list"></div>
+        </div>
+    </div>
+
+    <!-- 지시 탭 -->
     <div id="manual" class="page">
         <div class="card">
             <h2>수동 지시</h2>
@@ -140,6 +184,7 @@
     <button class="primary-btn" style="background: #40c057;" onclick="nextDay()">🌙 다음날로 (Space)</button>
 </div>
 
+<!-- 모달 팝업 -->
 <div id="eventModal" class="modal-overlay">
     <div class="modal-content">
         <h2 id="modal-title"></h2>
@@ -157,22 +202,37 @@
         updateDisplay();
     }
 
+    // 멤버 초기 생성: 능력치 총합 10 랜덤 분배
+    function createMember(name, birth) {
+        let stats = { vocal: 1, dance: 1, visual: 1, variety: 1, charm: 1 };
+        let remainingPoints = 5;
+        const keys = ['vocal', 'dance', 'visual', 'variety', 'charm'];
+        for (let i = 0; i < remainingPoints; i++) {
+            stats[keys[Math.floor(Math.random() * keys.length)]]++;
+        }
+        return { name: name, birth: birth, vocal: stats.vocal, dance: stats.dance, visual: stats.visual, variety: stats.variety, charm: stats.charm, fatigue: 0, manualAct: null };
+    }
+
     let gameState = {
         day: 1, startDate: new Date('2025-09-05'), finance: 200000000, fandom: 110000, youtube: 20000, sns: 1000,
         members: [
-            {name: '키마', birth: '04-22', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, manualAct: null},
-            {name: '띵귤', birth: '12-24', vocal: 11, dance: 10, visual: 10, variety: 9, charm: 10, fatigue: 0, manualAct: null},
-            {name: '챈나', birth: '02-26', vocal: 9, dance: 10, visual: 11, variety: 9, charm: 10, fatigue: 0, manualAct: null},
-            {name: '솜주먹', birth: '11-11', vocal: 9, dance: 10, visual: 10, variety: 11, charm: 10, fatigue: 0, manualAct: null},
-            {name: '연초록', birth: '03-26', vocal: 11, dance: 10, visual: 10, variety: 10, charm: 10, fatigue: 0, manualAct: null},
+            createMember('키마', '04-22'), createMember('띵귤', '12-24'), createMember('챈나', '02-26'),
+            createMember('솜주먹', '11-11'), createMember('연초록', '03-26'),
         ],
-        community: [], popupQueue: [], weeklyStats: [], pendingPost: null,
-        hasPostedThisWeek: false
+        community: [], popupQueue: [], weeklyStats: [], pendingPost: null, hasPostedThisWeek: false,
+        lastContents: { short: -999, mid: -999, long: -999 }
     };
 
-    function saveGame() { localStorage.setItem('hades_save_v16_3', JSON.stringify(gameState)); alert("저장되었습니다."); }
+    // 컨텐츠 데이터 정의
+    const contentTypes = {
+        short: { id: 'short', name: '커버곡 / 숏츠 챌린지', type: '단기', badge: 'badge-short', cooldown: 14, cost: 2000000, risk: 10, desc: '트렌드를 따라가는 가벼운 컨텐츠', rewardMin: 1500, rewardMax: 3000 },
+        mid: { id: 'mid', name: '합동 모션캡쳐 기획', type: '중기', badge: 'badge-mid', cooldown: 30, cost: 15000000, risk: 20, desc: '타 기업세/개인세와 기술 제휴 합방', rewardMin: 8000, rewardMax: 15000 },
+        long: { id: 'long', name: '싱글 발매 / 단독 콘서트', type: '장기', badge: 'badge-long', cooldown: 90, cost: 50000000, risk: 30, desc: '그룹의 사활을 건 대형 프로젝트', rewardMin: 40000, rewardMax: 80000 }
+    };
+
+    function saveGame() { localStorage.setItem('hades_save_v17', JSON.stringify(gameState)); alert("저장되었습니다."); }
     function loadGame() { 
-        const saved = localStorage.getItem('hades_save_v16_3'); 
+        const saved = localStorage.getItem('hades_save_v17'); 
         if (!saved) return alert("데이터 없음"); 
         gameState = JSON.parse(saved); gameState.startDate = new Date(gameState.startDate); 
         updateDisplay(); alert("불러오기 완료"); 
@@ -239,6 +299,8 @@
         `).reverse().join('');
     }
 
+    function renderStat(l, v, c) { return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/20)*100}%; background:${v>=20?'#333':c}"></div></div><div style="font-size:10px;">${v}</div></div>`; }
+
     function submitPost() {
         if (gameState.hasPostedThisWeek) return;
         const text = document.getElementById('post-input').value; if (!text) return;
@@ -246,22 +308,96 @@
         const site = document.getElementById('post-site').value;
         const reactionCount = Math.floor(Math.random() * 301); 
         let bonus = Math.floor((reactionCount / 300) * 800) + 100; 
-        
         let label = (site === '에뱀') ? "추천👍" : (site === 'YZ' ? "LIKE ♡" : "좋아요♥");
 
-        // 팝업 없이 예약만 함
         gameState.pendingPost = { 
             site: site, 
             content: `<b>[작성글] ${text} (${label} ${reactionCount}) <span style="color:var(--success);">+${bonus.toLocaleString()}명</span></b>`, 
             bonus: bonus 
         };
-        
         gameState.hasPostedThisWeek = true; 
         document.getElementById('post-input').value = ""; 
         updateDisplay();
     }
 
-    function renderStat(l, v, c) { return `<div class="stat-row"><div class="stat-label">${l}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${(v/20)*100}%; background:${v>=20?'#333':c}"></div></div><div style="font-size:10px;">${v}</div></div>`; }
+    function renderContents() {
+        const container = document.getElementById('content-list');
+        container.innerHTML = Object.values(contentTypes).map(c => {
+            const lastDay = gameState.lastContents[c.id];
+            const dayPassed = gameState.day - lastDay;
+            const remain = c.cooldown - dayPassed;
+            const isAvailable = remain <= 0;
+            
+            let btnHtml = '';
+            if (gameState.finance < c.cost) {
+                btnHtml = `<button class="content-btn btn-cooldown" disabled>자금 부족 (${(c.cost - gameState.finance).toLocaleString()}원 필요)</button>`;
+            } else if (isAvailable) {
+                btnHtml = `<button class="content-btn btn-available" onclick="executeContent('${c.id}')">제작하기 (-${(c.cost/10000).toLocaleString()}만)</button>`;
+            } else {
+                btnHtml = `<button class="content-btn btn-cooldown" disabled>준비 중 (D-${remain})</button>`;
+            }
+
+            return `
+                <div class="content-card">
+                    <div class="content-header">
+                        <strong>${c.name}</strong>
+                        <span class="content-badge ${c.badge}">${c.type} (주기 ${c.cooldown}일)</span>
+                    </div>
+                    <div class="content-info">
+                        <div class="content-stat">💰 비용: ${(c.cost/10000).toLocaleString()}만원</div>
+                        <div class="content-stat">🎲 성공률: ${100 - c.risk}%</div>
+                        <div class="content-stat">📈 예상 팬덤: ${c.rewardMin}~${(c.rewardMax/1000).toFixed(1)}k</div>
+                        <div class="content-stat">⚠️ 리스크: <span class="${c.risk >= 20 ? 'risk-high' : ''}">${c.risk}%</span></div>
+                    </div>
+                    ${btnHtml}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function executeContent(typeId) {
+        const content = contentTypes[typeId];
+        gameState.finance -= content.cost;
+        gameState.lastContents[typeId] = gameState.day;
+
+        const roll = Math.floor(Math.random() * 100) + 1;
+        let resultTitle = "", resultText = "";
+        
+        // 피로도 증가
+        const fatigueCost = typeId === 'short' ? 10 : (typeId === 'mid' ? 25 : 50);
+        gameState.members.forEach(m => m.fatigue = Math.min(100, m.fatigue + fatigueCost));
+
+        if (roll <= content.risk) {
+            const lossFandom = Math.floor(content.rewardMin * 0.3);
+            updateFandom(-lossFandom);
+            resultTitle = "😱 컨텐츠 폭망...";
+            resultText = `${content.name} 반응이 싸늘합니다.<br>알고리즘의 선택을 받지 못했습니다.<br>(팬덤 -${lossFandom}명)`;
+            gameState.community.push({site:'YZ', content: `[비추] 이번 ${content.name} 솔직히 감 다 죽은 듯;;`});
+        } else if (roll > 100 - 10) { 
+            const bonus = Math.floor(Math.random() * (content.rewardMax * 0.5));
+            const totalGain = content.rewardMax + bonus;
+            let moneyGain = 0;
+            if(typeId === 'long') moneyGain = Math.floor(Math.random() * 50000000) + 30000000;
+            if(moneyGain > 0) gameState.finance += moneyGain;
+
+            updateFandom(totalGain);
+            resultTitle = "🔥 초대박 발생!";
+            resultText = `반응이 폭발적입니다! 실시간 트렌드 장악!<br>(팬덤 +${totalGain.toLocaleString()}명${moneyGain ? `, 수익 +${moneyGain.toLocaleString()}원` : ''})`;
+            gameState.community.push({site:'너튜브', content: `<b>[인급동] 와 ${content.name} 퀄리티 미쳤다... 이건 꼭 봐야 됨</b>`});
+        } else {
+            const gain = Math.floor(Math.random() * (content.rewardMax - content.rewardMin)) + content.rewardMin;
+            updateFandom(gain);
+            resultTitle = "✅ 제작 완료";
+            resultText = `무난하게 컨텐츠가 업로드되었습니다.<br>나쁘지 않은 반응이네요.<br>(팬덤 +${gain.toLocaleString()}명)`;
+        }
+
+        document.getElementById('modal-title').innerText = resultTitle;
+        document.getElementById('modal-body').innerHTML = resultText;
+        document.getElementById('modal-choices').innerHTML = `<button class="primary-btn" onclick="closeModal()">확인</button>`;
+        document.getElementById('eventModal').style.display = 'block';
+        updateDisplay();
+        renderContents();
+    }
 
     function nextDay() {
         if (document.getElementById('eventModal').style.display === 'block') return;
@@ -296,13 +432,11 @@
         if (Math.random() < 0.3) gameState.community.push({site:'팬카페', content: cafeMsgs[Math.floor(Math.random()*cafeMsgs.length)]});
         if (Math.random() < 0.3) gameState.community.push({site:'YZ', content: yzMsgs[Math.floor(Math.random()*yzMsgs.length)]});
         
-        // 예약된 커뮤니티 글을 다음 날 실시간 반응에 추가
         if (gameState.pendingPost) { 
             gameState.community.push({site: gameState.pendingPost.site, content: gameState.pendingPost.content}); 
             updateFandom(gameState.pendingPost.bonus); 
             gameState.pendingPost = null; 
         }
-
         if (gameState.community.length > 50) gameState.community.shift();
 
         checkBirthday();
@@ -401,6 +535,9 @@
         if(pId === 'manual') {
             const sel = document.getElementById('sel-member');
             sel.innerHTML = gameState.members.map((m,i)=>`<option value="${i}">${m.name} (피로:${m.fatigue}%)</option>`).join('');
+        }
+        if(pId === 'contents') {
+            renderContents();
         }
     }
 
